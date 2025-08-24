@@ -1,3 +1,7 @@
+# LogisticEnsembles 0.6.0
+
+* Added functions to allow setting a seed, so results are fully reproducible.
+
 # LogisticEnsembles 0.5.0
 
 # LogisticEnsembles 0.4.0

@@ -12,6 +12,7 @@ Logistic(
   remove_ensemble_correlations_greater_than,
   save_all_trained_models = c("Y", "N"),
   save_all_plots = c("Y", "N"),
+  set_seed = c("Y", "N"),
   how_to_handle_strings = c("0", "1"),
   do_you_have_new_data = c("Y", "N"),
   use_parallel = c("Y", "N"),
@@ -34,6 +35,8 @@ Logistic(
 \item{save_all_trained_models}{"Y" or "N". Places all the trained models in the Environment}
 
 \item{save_all_plots}{Options to save all plots}
+
+\item{set_seed}{Asks the user to set a seed to create reproducible results}
 
 \item{how_to_handle_strings}{0: No strings, 1: Factor values}
 
