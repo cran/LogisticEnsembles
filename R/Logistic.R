@@ -52,7 +52,7 @@
 #' @importFrom readr cols
 #' @importFrom rpart rpart
 #' @importFrom scales percent
-#' @importFrom stats binomial cor lm predict reorder sd
+#' @importFrom stats binomial cor lm model.matrix predict reorder sd
 #' @importFrom tidyr gather pivot_longer
 #' @importFrom tree tree
 #' @importFrom utils head read.csv str
@@ -79,6 +79,15 @@ if(set_seed == "N"){
   df <- df[sample(1:nrow(df)), ] # randomizes the rows
 }
 
+if(set_seed == "Y"){
+  seed = as.integer(readline("Which integer would you like to use for the seed? "))
+}
+
+if (how_to_handle_strings == 1) {
+  df <- dplyr::mutate_if(df, is.character, as.factor)
+  df <- dplyr::mutate_if(df, is.factor, as.numeric)
+}
+
 vif <- car::vif(stats::lm(y ~ ., data = df[, 1:ncol(df)]))
 for (i in 1:ncol(df)) {
   if(max(vif) > remove_VIF_greater_than){
@@ -92,15 +101,6 @@ VIF_results <- reactable::reactable(as.data.frame(vif),
                                     striped = TRUE, highlight = TRUE, resizable = TRUE
 )%>%
   reactablefmtr::add_title("Variance Inflation Factor (VIF)")
-
-if(set_seed == "Y"){
-  seed = as.integer(readline("Which integer would you like to use for the seed? "))
-}
-
-if (how_to_handle_strings == 1) {
-  df <- dplyr::mutate_if(df, is.character, as.factor)
-  df <- dplyr::mutate_if(df, is.factor, as.numeric)
-}
 
 if (do_you_have_new_data == "Y") {
   newdata <- readline("What is the URL for the new data? ")
@@ -127,154 +127,6 @@ head_df <- reactable::reactable(head(df),
 
 
 #### Initialize values to 0, in alphabetical order ####
-
-bagging_train_true_positive_rate <- 0
-bagging_train_true_negative_rate <- 0
-bagging_train_false_positive_rate <- 0
-bagging_train_false_negative_rate <- 0
-bagging_train_accuracy <- 0
-bagging_train_F1_score <- 0
-bagging_test_true_positive_rate <- 0
-bagging_test_true_negative_rate <- 0
-bagging_test_false_positive_rate <- 0
-bagging_test_false_negative_rate <- 0
-bagging_test_accuracy <- 0
-bagging_test_F1_score <- 0
-bagging_validation_true_positive_rate <- 0
-bagging_validation_true_negative_rate <- 0
-bagging_validation_false_positive_rate <- 0
-bagging_validation_false_negative_rate <- 0
-bagging_validation_accuracy <- 0
-bagging_validation_F1_score <- 0
-bagging_holdout_true_positive_rate <- 0
-bagging_holdout_true_negative_rate <- 0
-bagging_holdout_false_positive_rate <- 0
-bagging_holdout_false_negative_rate <- 0
-bagging_holdout_accuracy <- 0
-bagging_holdout_F1_score <- 0
-bagging_duration <- 0
-bagging_train_positive_predictive_value <- 0
-bagging_train_negative_predictive_value <- 0
-bagging_test_positive_predictive_value <- 0
-bagging_test_negative_predictive_value <- 0
-bagging_validation_positive_predictive_value <- 0
-bagging_validation_negative_predictive_value <- 0
-bagging_holdout_positive_predictive_value <- 0
-bagging_holdout_negative_predictive_value <- 0
-bagging_holdout_overfitting <- 0
-bagging_holdout_overfitting_mean <- 0
-bagging_table_total <- 0
-
-bag_rf_train_true_positive_rate <- 0
-bag_rf_train_true_negative_rate <- 0
-bag_rf_train_false_positive_rate <- 0
-bag_rf_train_false_negative_rate <- 0
-bag_rf_train_accuracy <- 0
-bag_rf_train_F1_score <- 0
-bag_rf_test_true_positive_rate <- 0
-bag_rf_test_true_negative_rate <- 0
-bag_rf_test_false_positive_rate <- 0
-bag_rf_test_false_negative_rate <- 0
-bag_rf_test_accuracy <- 0
-bag_rf_test_F1_score <- 0
-bag_rf_validation_true_positive_rate <- 0
-bag_rf_validation_true_negative_rate <- 0
-bag_rf_validation_false_positive_rate <- 0
-bag_rf_validation_false_negative_rate <- 0
-bag_rf_validation_accuracy <- 0
-bag_rf_validation_F1_score <- 0
-bag_rf_holdout_true_positive_rate <- 0
-bag_rf_holdout_true_negative_rate <- 0
-bag_rf_holdout_false_positive_rate <- 0
-bag_rf_holdout_false_negative_rate <- 0
-bag_rf_holdout_accuracy <- 0
-bag_rf_holdout_F1_score <- 0
-bag_rf_duration <- 0
-bag_rf_train_positive_predictive_value <- 0
-bag_rf_train_negative_predictive_value <- 0
-bag_rf_test_positive_predictive_value <- 0
-bag_rf_test_negative_predictive_value <- 0
-bag_rf_validation_positive_predictive_value <- 0
-bag_rf_validation_negative_predictive_value <- 0
-bag_rf_holdout_positive_predictive_value <- 0
-bag_rf_holdout_negative_predictive_value <- 0
-bag_rf_holdout_overfitting <- 0
-bag_rf_holdout_overfitting_mean <- 0
-bag_rf_table_total <- 0
-
-bayesglm_train_true_positive_rate <- 0
-bayesglm_train_true_negative_rate <- 0
-bayesglm_train_false_positive_rate <- 0
-bayesglm_train_false_negative_rate <- 0
-bayesglm_train_accuracy <- 0
-bayesglm_train_F1_score <- 0
-bayesglm_test_true_positive_rate <- 0
-bayesglm_test_true_negative_rate <- 0
-bayesglm_test_false_positive_rate <- 0
-bayesglm_test_false_negative_rate <- 0
-bayesglm_test_accuracy <- 0
-bayesglm_test_F1_score <- 0
-bayesglm_validation_true_positive_rate <- 0
-bayesglm_validation_true_negative_rate <- 0
-bayesglm_validation_false_positive_rate <- 0
-bayesglm_validation_false_negative_rate <- 0
-bayesglm_validation_accuracy <- 0
-bayesglm_validation_F1_score <- 0
-bayesglm_holdout_true_positive_rate <- 0
-bayesglm_holdout_true_negative_rate <- 0
-bayesglm_holdout_false_positive_rate <- 0
-bayesglm_holdout_false_negative_rate <- 0
-bayesglm_holdout_accuracy <- 0
-bayesglm_holdout_F1_score <- 0
-bayesglm_duration <- 0
-bayesglm_train_positive_predictive_value <- 0
-bayesglm_train_negative_predictive_value <- 0
-bayesglm_test_positive_predictive_value <- 0
-bayesglm_test_negative_predictive_value <- 0
-bayesglm_validation_positive_predictive_value <- 0
-bayesglm_validation_negative_predictive_value <- 0
-bayesglm_holdout_positive_predictive_value <- 0
-bayesglm_holdout_negative_predictive_value <- 0
-bayesglm_holdout_overfitting <- 0
-bayesglm_holdout_overfitting_mean <- 0
-bayesglm_table_total <- 0
-
-C50_train_true_positive_rate <- 0
-C50_train_true_negative_rate <- 0
-C50_train_false_positive_rate <- 0
-C50_train_false_negative_rate <- 0
-C50_train_accuracy <- 0
-C50_train_F1_score <- 0
-C50_test_true_positive_rate <- 0
-C50_test_true_negative_rate <- 0
-C50_test_false_positive_rate <- 0
-C50_test_false_negative_rate <- 0
-C50_test_accuracy <- 0
-C50_test_F1_score <- 0
-C50_validation_true_positive_rate <- 0
-C50_validation_true_negative_rate <- 0
-C50_validation_false_positive_rate <- 0
-C50_validation_false_negative_rate <- 0
-C50_validation_accuracy <- 0
-C50_validation_F1_score <- 0
-C50_holdout_true_positive_rate <- 0
-C50_holdout_true_negative_rate <- 0
-C50_holdout_false_positive_rate <- 0
-C50_holdout_false_negative_rate <- 0
-C50_holdout_accuracy <- 0
-C50_holdout_F1_score <- 0
-C50_duration <- 0
-C50_train_positive_predictive_value <- 0
-C50_train_negative_predictive_value <- 0
-C50_test_positive_predictive_value <- 0
-C50_test_negative_predictive_value <- 0
-C50_validation_positive_predictive_value <- 0
-C50_validation_negative_predictive_value <- 0
-C50_holdout_positive_predictive_value <- 0
-C50_holdout_negative_predictive_value <- 0
-C50_holdout_overfitting <- 0
-C50_holdout_overfitting_mean <- 0
-C50_table_total <- 0
 
 cubist_train_true_positive_rate <- 0
 cubist_train_true_negative_rate <- 0
@@ -387,43 +239,6 @@ gam_holdout_overfitting <- 0
 gam_holdout_overfitting_mean <- 0
 gam_table_total <- 0
 
-gb_train_true_positive_rate <- 0
-gb_train_true_negative_rate <- 0
-gb_train_false_positive_rate <- 0
-gb_train_false_negative_rate <- 0
-gb_train_accuracy <- 0
-gb_train_F1_score <- 0
-gb_test_true_positive_rate <- 0
-gb_test_true_negative_rate <- 0
-gb_test_false_positive_rate <- 0
-gb_test_false_negative_rate <- 0
-gb_test_accuracy <- 0
-gb_test_F1_score <- 0
-gb_validation_true_positive_rate <- 0
-gb_validation_true_negative_rate <- 0
-gb_validation_false_positive_rate <- 0
-gb_validation_false_negative_rate <- 0
-gb_validation_accuracy <- 0
-gb_validation_F1_score <- 0
-gb_holdout_true_positive_rate <- 0
-gb_holdout_true_negative_rate <- 0
-gb_holdout_false_positive_rate <- 0
-gb_holdout_false_negative_rate <- 0
-gb_holdout_accuracy <- 0
-gb_holdout_F1_score <- 0
-gb_duration <- 0
-gb_train_positive_predictive_value <- 0
-gb_train_negative_predictive_value <- 0
-gb_test_positive_predictive_value <- 0
-gb_test_negative_predictive_value <- 0
-gb_validation_positive_predictive_value <- 0
-gb_validation_negative_predictive_value <- 0
-gb_holdout_positive_predictive_value <- 0
-gb_holdout_negative_predictive_value <- 0
-gb_holdout_overfitting <- 0
-gb_holdout_overfitting_mean <- 0
-gb_table_total <- 0
-
 glm_train_true_positive_rate <- 0
 glm_train_true_negative_rate <- 0
 glm_train_false_positive_rate <- 0
@@ -460,6 +275,43 @@ glm_holdout_negative_predictive_value <- 0
 glm_holdout_overfitting <- 0
 glm_holdout_overfitting_mean <- 0
 glm_table_total <- 0
+
+lasso_train_true_positive_rate <- 0
+lasso_train_true_negative_rate <- 0
+lasso_train_false_positive_rate <- 0
+lasso_train_false_negative_rate <- 0
+lasso_train_accuracy <- 0
+lasso_train_F1_score <- 0
+lasso_test_true_positive_rate <- 0
+lasso_test_true_negative_rate <- 0
+lasso_test_false_positive_rate <- 0
+lasso_test_false_negative_rate <- 0
+lasso_test_accuracy <- 0
+lasso_test_F1_score <- 0
+lasso_validation_true_positive_rate <- 0
+lasso_validation_true_negative_rate <- 0
+lasso_validation_false_positive_rate <- 0
+lasso_validation_false_negative_rate <- 0
+lasso_validation_accuracy <- 0
+lasso_validation_F1_score <- 0
+lasso_holdout_true_positive_rate <- 0
+lasso_holdout_true_negative_rate <- 0
+lasso_holdout_false_positive_rate <- 0
+lasso_holdout_false_negative_rate <- 0
+lasso_holdout_accuracy <- 0
+lasso_holdout_F1_score <- 0
+lasso_duration <- 0
+lasso_train_positive_predictive_value <- 0
+lasso_train_negative_predictive_value <- 0
+lasso_test_positive_predictive_value <- 0
+lasso_test_negative_predictive_value <- 0
+lasso_validation_positive_predictive_value <- 0
+lasso_validation_negative_predictive_value <- 0
+lasso_holdout_positive_predictive_value <- 0
+lasso_holdout_negative_predictive_value <- 0
+lasso_holdout_overfitting <- 0
+lasso_holdout_overfitting_mean <- 0
+lasso_table_total <- 0
 
 linear_train_true_positive_rate <- 0
 linear_train_true_negative_rate <- 0
@@ -534,80 +386,6 @@ lda_holdout_negative_predictive_value <- 0
 lda_holdout_overfitting <- 0
 lda_holdout_overfitting_mean <- 0
 lda_table_total <- 0
-
-mda_train_true_positive_rate <- 0
-mda_train_true_negative_rate <- 0
-mda_train_false_positive_rate <- 0
-mda_train_false_negative_rate <- 0
-mda_train_accuracy <- 0
-mda_train_F1_score <- 0
-mda_test_true_positive_rate <- 0
-mda_test_true_negative_rate <- 0
-mda_test_false_positive_rate <- 0
-mda_test_false_negative_rate <- 0
-mda_test_accuracy <- 0
-mda_test_F1_score <- 0
-mda_validation_true_positive_rate <- 0
-mda_validation_true_negative_rate <- 0
-mda_validation_false_positive_rate <- 0
-mda_validation_false_negative_rate <- 0
-mda_validation_accuracy <- 0
-mda_validation_F1_score <- 0
-mda_holdout_true_positive_rate <- 0
-mda_holdout_true_negative_rate <- 0
-mda_holdout_false_positive_rate <- 0
-mda_holdout_false_negative_rate <- 0
-mda_holdout_accuracy <- 0
-mda_holdout_F1_score <- 0
-mda_duration <- 0
-mda_train_positive_predictive_value <- 0
-mda_train_negative_predictive_value <- 0
-mda_test_positive_predictive_value <- 0
-mda_test_negative_predictive_value <- 0
-mda_validation_positive_predictive_value <- 0
-mda_validation_negative_predictive_value <- 0
-mda_holdout_positive_predictive_value <- 0
-mda_holdout_negative_predictive_value <- 0
-mda_holdout_overfitting <- 0
-mda_holdout_overfitting_mean <- 0
-mda_table_total <- 0
-
-n_bayes_train_true_positive_rate <- 0
-n_bayes_train_true_negative_rate <- 0
-n_bayes_train_false_positive_rate <- 0
-n_bayes_train_false_negative_rate <- 0
-n_bayes_train_accuracy <- 0
-n_bayes_train_F1_score <- 0
-n_bayes_test_true_positive_rate <- 0
-n_bayes_test_true_negative_rate <- 0
-n_bayes_test_false_positive_rate <- 0
-n_bayes_test_false_negative_rate <- 0
-n_bayes_test_accuracy <- 0
-n_bayes_test_F1_score <- 0
-n_bayes_validation_true_positive_rate <- 0
-n_bayes_validation_true_negative_rate <- 0
-n_bayes_validation_false_positive_rate <- 0
-n_bayes_validation_false_negative_rate <- 0
-n_bayes_validation_accuracy <- 0
-n_bayes_validation_F1_score <- 0
-n_bayes_holdout_true_positive_rate <- 0
-n_bayes_holdout_true_negative_rate <- 0
-n_bayes_holdout_false_positive_rate <- 0
-n_bayes_holdout_false_negative_rate <- 0
-n_bayes_holdout_accuracy <- 0
-n_bayes_holdout_F1_score <- 0
-n_bayes_duration <- 0
-n_bayes_train_positive_predictive_value <- 0
-n_bayes_train_negative_predictive_value <- 0
-n_bayes_test_positive_predictive_value <- 0
-n_bayes_test_negative_predictive_value <- 0
-n_bayes_validation_positive_predictive_value <- 0
-n_bayes_validation_negative_predictive_value <- 0
-n_bayes_holdout_positive_predictive_value <- 0
-n_bayes_holdout_negative_predictive_value <- 0
-n_bayes_holdout_overfitting <- 0
-n_bayes_holdout_overfitting_mean <- 0
-n_bayes_table_total <- 0
 
 pda_train_true_positive_rate <- 0
 pda_train_true_negative_rate <- 0
@@ -720,79 +498,42 @@ rf_holdout_overfitting <- 0
 rf_holdout_overfitting_mean <- 0
 rf_table_total <- 0
 
-ranger_train_true_positive_rate <- 0
-ranger_train_true_negative_rate <- 0
-ranger_train_false_positive_rate <- 0
-ranger_train_false_negative_rate <- 0
-ranger_train_accuracy <- 0
-ranger_train_F1_score <- 0
-ranger_test_true_positive_rate <- 0
-ranger_test_true_negative_rate <- 0
-ranger_test_false_positive_rate <- 0
-ranger_test_false_negative_rate <- 0
-ranger_test_accuracy <- 0
-ranger_test_F1_score <- 0
-ranger_validation_true_positive_rate <- 0
-ranger_validation_true_negative_rate <- 0
-ranger_validation_false_positive_rate <- 0
-ranger_validation_false_negative_rate <- 0
-ranger_validation_accuracy <- 0
-ranger_validation_F1_score <- 0
-ranger_holdout_true_positive_rate <- 0
-ranger_holdout_true_negative_rate <- 0
-ranger_holdout_false_positive_rate <- 0
-ranger_holdout_false_negative_rate <- 0
-ranger_holdout_accuracy <- 0
-ranger_holdout_F1_score <- 0
-ranger_duration <- 0
-ranger_train_positive_predictive_value <- 0
-ranger_train_negative_predictive_value <- 0
-ranger_test_positive_predictive_value <- 0
-ranger_test_negative_predictive_value <- 0
-ranger_validation_positive_predictive_value <- 0
-ranger_validation_negative_predictive_value <- 0
-ranger_holdout_positive_predictive_value <- 0
-ranger_holdout_negative_predictive_value <- 0
-ranger_holdout_overfitting <- 0
-ranger_holdout_overfitting_mean <- 0
-ranger_table_total <- 0
-
-rpart_train_true_positive_rate <- 0
-rpart_train_true_negative_rate <- 0
-rpart_train_false_positive_rate <- 0
-rpart_train_false_negative_rate <- 0
-rpart_train_accuracy <- 0
-rpart_train_F1_score <- 0
-rpart_test_true_positive_rate <- 0
-rpart_test_true_negative_rate <- 0
-rpart_test_false_positive_rate <- 0
-rpart_test_false_negative_rate <- 0
-rpart_test_accuracy <- 0
-rpart_test_F1_score <- 0
-rpart_validation_true_positive_rate <- 0
-rpart_validation_true_negative_rate <- 0
-rpart_validation_false_positive_rate <- 0
-rpart_validation_false_negative_rate <- 0
-rpart_validation_accuracy <- 0
-rpart_validation_F1_score <- 0
-rpart_holdout_true_positive_rate <- 0
-rpart_holdout_true_negative_rate <- 0
-rpart_holdout_false_positive_rate <- 0
-rpart_holdout_false_negative_rate <- 0
-rpart_holdout_accuracy <- 0
-rpart_holdout_F1_score <- 0
-rpart_duration <- 0
-rpart_train_positive_predictive_value <- 0
-rpart_train_negative_predictive_value <- 0
-rpart_test_positive_predictive_value <- 0
-rpart_test_negative_predictive_value <- 0
-rpart_validation_positive_predictive_value <- 0
-rpart_validation_negative_predictive_value <- 0
-rpart_holdout_positive_predictive_value <- 0
-rpart_holdout_negative_predictive_value <- 0
-rpart_holdout_overfitting <- 0
-rpart_holdout_overfitting_mean <- 0
-rpart_table_total <- 0
+ridge_train_true_positive_rate <- 0
+ridge_train_true_negative_rate <- 0
+ridge_train_false_positive_rate <- 0
+ridge_train_false_negative_rate <- 0
+ridge_train_accuracy <- 0
+ridge_train_F1_score <- 0
+ridge_test_true_positive_rate <- 0
+ridge_test_true_negative_rate <- 0
+ridge_test_false_positive_rate <- 0
+ridge_test_false_negative_rate <- 0
+ridge_test_accuracy <- 0
+ridge_test_F1_score <- 0
+ridge_validation_true_positive_rate <- 0
+ridge_validation_true_negative_rate <- 0
+ridge_validation_false_positive_rate <- 0
+ridge_validation_false_negative_rate <- 0
+ridge_validation_accuracy <- 0
+ridge_validation_F1_score <- 0
+ridge_holdout_true_positive_rate <- 0
+ridge_holdout_true_negative_rate <- 0
+ridge_holdout_false_positive_rate <- 0
+ridge_holdout_false_negative_rate <- 0
+ridge_holdout_accuracy <- 0
+ridge_holdout_F1_score <- 0
+ridge_duration <- 0
+ridge_train_positive_predictive_value <- 0
+ridge_train_negative_predictive_value <- 0
+ridge_test_positive_predictive_value <- 0
+ridge_test_negative_predictive_value <- 0
+ridge_validation_positive_predictive_value <- 0
+ridge_validation_negative_predictive_value <- 0
+ridge_holdout_positive_predictive_value <- 0
+ridge_holdout_negative_predictive_value <- 0
+ridge_holdout_overfitting <- 0
+ridge_holdout_overfitting_mean <- 0
+ridge_table_total <- 0
 
 svm_train_true_positive_rate <- 0
 svm_train_true_negative_rate <- 0
@@ -867,43 +608,6 @@ tree_holdout_negative_predictive_value <- 0
 tree_holdout_overfitting <- 0
 tree_holdout_overfitting_mean <- 0
 tree_table_total <- 0
-
-xgb_train_true_positive_rate <- 0
-xgb_train_true_negative_rate <- 0
-xgb_train_false_positive_rate <- 0
-xgb_train_false_negative_rate <- 0
-xgb_train_accuracy <- 0
-xgb_train_F1_score <- 0
-xgb_test_true_positive_rate <- 0
-xgb_test_true_negative_rate <- 0
-xgb_test_false_positive_rate <- 0
-xgb_test_false_negative_rate <- 0
-xgb_test_accuracy <- 0
-xgb_test_F1_score <- 0
-xgb_validation_true_positive_rate <- 0
-xgb_validation_true_negative_rate <- 0
-xgb_validation_false_positive_rate <- 0
-xgb_validation_false_negative_rate <- 0
-xgb_validation_accuracy <- 0
-xgb_validation_F1_score <- 0
-xgb_holdout_true_positive_rate <- 0
-xgb_holdout_true_negative_rate <- 0
-xgb_holdout_false_positive_rate <- 0
-xgb_holdout_false_negative_rate <- 0
-xgb_holdout_accuracy <- 0
-xgb_holdout_F1_score <- 0
-xgb_duration <- 0
-xgb_train_positive_predictive_value <- 0
-xgb_train_negative_predictive_value <- 0
-xgb_test_positive_predictive_value <- 0
-xgb_test_negative_predictive_value <- 0
-xgb_validation_positive_predictive_value <- 0
-xgb_validation_negative_predictive_value <- 0
-xgb_holdout_positive_predictive_value <- 0
-xgb_holdout_negative_predictive_value <- 0
-xgb_holdout_overfitting <- 0
-xgb_holdout_overfitting_mean <- 0
-xgb_table_total <- 0
 
 ensemble_bagging_train_true_positive_rate <- 0
 ensemble_bagging_train_true_negative_rate <- 0
@@ -1016,6 +720,43 @@ ensemble_gb_holdout_overfitting <- 0
 ensemble_gb_holdout_overfitting_mean <- 0
 ensemble_gb_table_total <- 0
 
+ensemble_lasso_train_true_positive_rate <- 0
+ensemble_lasso_train_true_negative_rate <- 0
+ensemble_lasso_train_false_positive_rate <- 0
+ensemble_lasso_train_false_negative_rate <- 0
+ensemble_lasso_train_accuracy <- 0
+ensemble_lasso_train_F1_score <- 0
+ensemble_lasso_test_true_positive_rate <- 0
+ensemble_lasso_test_true_negative_rate <- 0
+ensemble_lasso_test_false_positive_rate <- 0
+ensemble_lasso_test_false_negative_rate <- 0
+ensemble_lasso_test_accuracy <- 0
+ensemble_lasso_test_F1_score <- 0
+ensemble_lasso_validation_true_positive_rate <- 0
+ensemble_lasso_validation_true_negative_rate <- 0
+ensemble_lasso_validation_false_positive_rate <- 0
+ensemble_lasso_validation_false_negative_rate <- 0
+ensemble_lasso_validation_accuracy <- 0
+ensemble_lasso_validation_F1_score <- 0
+ensemble_lasso_holdout_true_positive_rate <- 0
+ensemble_lasso_holdout_true_negative_rate <- 0
+ensemble_lasso_holdout_false_positive_rate <- 0
+ensemble_lasso_holdout_false_negative_rate <- 0
+ensemble_lasso_holdout_accuracy <- 0
+ensemble_lasso_holdout_F1_score <- 0
+ensemble_lasso_duration <- 0
+ensemble_lasso_train_positive_predictive_value <- 0
+ensemble_lasso_train_negative_predictive_value <- 0
+ensemble_lasso_test_positive_predictive_value <- 0
+ensemble_lasso_test_negative_predictive_value <- 0
+ensemble_lasso_validation_positive_predictive_value <- 0
+ensemble_lasso_validation_negative_predictive_value <- 0
+ensemble_lasso_holdout_positive_predictive_value <- 0
+ensemble_lasso_holdout_negative_predictive_value <- 0
+ensemble_lasso_holdout_overfitting <- 0
+ensemble_lasso_holdout_overfitting_mean <- 0
+ensemble_lasso_table_total <- 0
+
 ensemble_pls_train_true_positive_rate <- 0
 ensemble_pls_train_true_negative_rate <- 0
 ensemble_pls_train_false_positive_rate <- 0
@@ -1090,116 +831,42 @@ ensemble_pda_holdout_overfitting <- 0
 ensemble_pda_holdout_overfitting_mean <- 0
 ensemble_pda_table_total <- 0
 
-ensemble_rf_train_true_positive_rate <- 0
-ensemble_rf_train_true_negative_rate <- 0
-ensemble_rf_train_false_positive_rate <- 0
-ensemble_rf_train_false_negative_rate <- 0
-ensemble_rf_train_accuracy <- 0
-ensemble_rf_train_F1_score <- 0
-ensemble_rf_test_true_positive_rate <- 0
-ensemble_rf_test_true_negative_rate <- 0
-ensemble_rf_test_false_positive_rate <- 0
-ensemble_rf_test_false_negative_rate <- 0
-ensemble_rf_test_accuracy <- 0
-ensemble_rf_test_F1_score <- 0
-ensemble_rf_validation_true_positive_rate <- 0
-ensemble_rf_validation_true_negative_rate <- 0
-ensemble_rf_validation_false_positive_rate <- 0
-ensemble_rf_validation_false_negative_rate <- 0
-ensemble_rf_validation_accuracy <- 0
-ensemble_rf_validation_F1_score <- 0
-ensemble_rf_holdout_true_positive_rate <- 0
-ensemble_rf_holdout_true_negative_rate <- 0
-ensemble_rf_holdout_false_positive_rate <- 0
-ensemble_rf_holdout_false_negative_rate <- 0
-ensemble_rf_holdout_accuracy <- 0
-ensemble_rf_holdout_F1_score <- 0
-ensemble_rf_duration <- 0
-ensemble_rf_train_positive_predictive_value <- 0
-ensemble_rf_train_negative_predictive_value <- 0
-ensemble_rf_test_positive_predictive_value <- 0
-ensemble_rf_test_negative_predictive_value <- 0
-ensemble_rf_validation_positive_predictive_value <- 0
-ensemble_rf_validation_negative_predictive_value <- 0
-ensemble_rf_holdout_positive_predictive_value <- 0
-ensemble_rf_holdout_negative_predictive_value <- 0
-ensemble_rf_holdout_overfitting <- 0
-ensemble_rf_holdout_overfitting_mean <- 0
-ensemble_rf_table_total <- 0
-
-ensemble_ranger_train_true_positive_rate <- 0
-ensemble_ranger_train_true_negative_rate <- 0
-ensemble_ranger_train_false_positive_rate <- 0
-ensemble_ranger_train_false_negative_rate <- 0
-ensemble_ranger_train_accuracy <- 0
-ensemble_ranger_train_F1_score <- 0
-ensemble_ranger_test_true_positive_rate <- 0
-ensemble_ranger_test_true_negative_rate <- 0
-ensemble_ranger_test_false_positive_rate <- 0
-ensemble_ranger_test_false_negative_rate <- 0
-ensemble_ranger_test_accuracy <- 0
-ensemble_ranger_test_F1_score <- 0
-ensemble_ranger_validation_true_positive_rate <- 0
-ensemble_ranger_validation_true_negative_rate <- 0
-ensemble_ranger_validation_false_positive_rate <- 0
-ensemble_ranger_validation_false_negative_rate <- 0
-ensemble_ranger_validation_accuracy <- 0
-ensemble_ranger_validation_F1_score <- 0
-ensemble_ranger_holdout_true_positive_rate <- 0
-ensemble_ranger_holdout_true_negative_rate <- 0
-ensemble_ranger_holdout_false_positive_rate <- 0
-ensemble_ranger_holdout_false_negative_rate <- 0
-ensemble_ranger_holdout_accuracy <- 0
-ensemble_ranger_holdout_F1_score <- 0
-ensemble_ranger_duration <- 0
-ensemble_ranger_train_positive_predictive_value <- 0
-ensemble_ranger_train_negative_predictive_value <- 0
-ensemble_ranger_test_positive_predictive_value <- 0
-ensemble_ranger_test_negative_predictive_value <- 0
-ensemble_ranger_validation_positive_predictive_value <- 0
-ensemble_ranger_validation_negative_predictive_value <- 0
-ensemble_ranger_holdout_positive_predictive_value <- 0
-ensemble_ranger_holdout_negative_predictive_value <- 0
-ensemble_ranger_holdout_overfitting <- 0
-ensemble_ranger_holdout_overfitting_mean <- 0
-ensemble_ranger_table_total <- 0
-
-ensemble_rda_train_true_positive_rate <- 0
-ensemble_rda_train_true_negative_rate <- 0
-ensemble_rda_train_false_positive_rate <- 0
-ensemble_rda_train_false_negative_rate <- 0
-ensemble_rda_train_accuracy <- 0
-ensemble_rda_train_F1_score <- 0
-ensemble_rda_test_true_positive_rate <- 0
-ensemble_rda_test_true_negative_rate <- 0
-ensemble_rda_test_false_positive_rate <- 0
-ensemble_rda_test_false_negative_rate <- 0
-ensemble_rda_test_accuracy <- 0
-ensemble_rda_test_F1_score <- 0
-ensemble_rda_validation_true_positive_rate <- 0
-ensemble_rda_validation_true_negative_rate <- 0
-ensemble_rda_validation_false_positive_rate <- 0
-ensemble_rda_validation_false_negative_rate <- 0
-ensemble_rda_validation_accuracy <- 0
-ensemble_rda_validation_F1_score <- 0
-ensemble_rda_holdout_true_positive_rate <- 0
-ensemble_rda_holdout_true_negative_rate <- 0
-ensemble_rda_holdout_false_positive_rate <- 0
-ensemble_rda_holdout_false_negative_rate <- 0
-ensemble_rda_holdout_accuracy <- 0
-ensemble_rda_holdout_F1_score <- 0
-ensemble_rda_duration <- 0
-ensemble_rda_train_positive_predictive_value <- 0
-ensemble_rda_train_negative_predictive_value <- 0
-ensemble_rda_test_positive_predictive_value <- 0
-ensemble_rda_test_negative_predictive_value <- 0
-ensemble_rda_validation_positive_predictive_value <- 0
-ensemble_rda_validation_negative_predictive_value <- 0
-ensemble_rda_holdout_positive_predictive_value <- 0
-ensemble_rda_holdout_negative_predictive_value <- 0
-ensemble_rda_holdout_overfitting <- 0
-ensemble_rda_holdout_overfitting_mean <- 0
-ensemble_rda_table_total <- 0
+ensemble_ridge_train_true_positive_rate <- 0
+ensemble_ridge_train_true_negative_rate <- 0
+ensemble_ridge_train_false_positive_rate <- 0
+ensemble_ridge_train_false_negative_rate <- 0
+ensemble_ridge_train_accuracy <- 0
+ensemble_ridge_train_F1_score <- 0
+ensemble_ridge_test_true_positive_rate <- 0
+ensemble_ridge_test_true_negative_rate <- 0
+ensemble_ridge_test_false_positive_rate <- 0
+ensemble_ridge_test_false_negative_rate <- 0
+ensemble_ridge_test_accuracy <- 0
+ensemble_ridge_test_F1_score <- 0
+ensemble_ridge_validation_true_positive_rate <- 0
+ensemble_ridge_validation_true_negative_rate <- 0
+ensemble_ridge_validation_false_positive_rate <- 0
+ensemble_ridge_validation_false_negative_rate <- 0
+ensemble_ridge_validation_accuracy <- 0
+ensemble_ridge_validation_F1_score <- 0
+ensemble_ridge_holdout_true_positive_rate <- 0
+ensemble_ridge_holdout_true_negative_rate <- 0
+ensemble_ridge_holdout_false_positive_rate <- 0
+ensemble_ridge_holdout_false_negative_rate <- 0
+ensemble_ridge_holdout_accuracy <- 0
+ensemble_ridge_holdout_F1_score <- 0
+ensemble_ridge_duration <- 0
+ensemble_ridge_train_positive_predictive_value <- 0
+ensemble_ridge_train_negative_predictive_value <- 0
+ensemble_ridge_test_positive_predictive_value <- 0
+ensemble_ridge_test_negative_predictive_value <- 0
+ensemble_ridge_validation_positive_predictive_value <- 0
+ensemble_ridge_validation_negative_predictive_value <- 0
+ensemble_ridge_holdout_positive_predictive_value <- 0
+ensemble_ridge_holdout_negative_predictive_value <- 0
+ensemble_ridge_holdout_overfitting <- 0
+ensemble_ridge_holdout_overfitting_mean <- 0
+ensemble_ridge_table_total <- 0
 
 ensemble_rpart_train_true_positive_rate <- 0
 ensemble_rpart_train_true_negative_rate <- 0
@@ -1528,408 +1195,6 @@ for (i in 1:numresamples) {
     y_validation <- validation$y
   }
 
-  #### Bagged Random Forest ####
-  bag_rf_start <- Sys.time()
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    bag_rf_train_fit <- randomForest(as.factor(y_train) ~ ., data = train01, mtry = ncol(train), importance = TRUE)
-  }
-  if(set_seed == "N"){
-    bag_rf_train_fit <- randomForest(as.factor(y_train) ~ ., data = train01, mtry = ncol(train), importance = TRUE)
-  }
-  bag_rf_train_pred <- stats::predict(bag_rf_train_fit, train01, type = "prob")
-  bag_rf_train_predictions <- ifelse(bag_rf_train_pred > 0.5, 1, 0)
-  bag_rf_train_table <- table(bag_rf_train_predictions[, 2], y_train)
-  bag_rf_train_true_positive_rate[i] <- bag_rf_train_table[2, 2] / sum(bag_rf_train_table[2, 2] + bag_rf_train_table[1, 2])
-  bag_rf_train_true_positive_rate_mean <- mean(bag_rf_train_true_positive_rate)
-  bag_rf_train_true_negative_rate[i] <- bag_rf_train_table[1, 1] / sum(bag_rf_train_table[1, 1] + bag_rf_train_table[2, 1])
-  bag_rf_train_true_negative_rate_mean <- mean(bag_rf_train_true_negative_rate)
-  bag_rf_train_false_positive_rate[i] <- bag_rf_train_table[2, 1] / sum(bag_rf_train_table[2, 1] + bag_rf_train_table[1, 1])
-  bag_rf_train_false_positive_rate_mean <- mean(bag_rf_train_false_positive_rate)
-  bag_rf_train_false_negative_rate[i] <- bag_rf_train_table[1, 2] / sum(bag_rf_train_table[1, 2] + bag_rf_train_table[2, 2])
-  bag_rf_train_false_negative_rate_mean <- mean(bag_rf_train_false_negative_rate)
-  bag_rf_train_accuracy[i] <- (bag_rf_train_table[1, 1] + bag_rf_train_table[2, 2]) / sum(bag_rf_train_table)
-  bag_rf_train_accuracy_mean <- mean(bag_rf_train_accuracy)
-  bag_rf_train_F1_score[i] <- 2 * (bag_rf_train_table[2, 2]) / sum(2 * bag_rf_train_table[2, 2] + bag_rf_train_table[1, 2] + bag_rf_train_table[2, 1])
-  bag_rf_train_F1_score_mean <- mean(bag_rf_train_F1_score)
-  bag_rf_train_positive_predictive_value[i] <- bag_rf_train_table[2, 2] / sum(bag_rf_train_table[2, 2] + bag_rf_train_table[2, 1])
-  bag_rf_train_positive_predictive_value_mean <- mean(bag_rf_train_positive_predictive_value)
-  bag_rf_train_negative_predictive_value[i] <- bag_rf_train_table[1, 1] / sum(bag_rf_train_table[1, 1] + bag_rf_train_table[1, 2])
-  bag_rf_train_negative_predictive_value_mean <- mean(bag_rf_train_negative_predictive_value)
-
-  bag_rf_test_pred <- stats::predict(bag_rf_train_fit, test01, type = "prob")
-  bag_rf_test_predictions <- ifelse(bag_rf_test_pred > 0.5, 1, 0)
-  bag_rf_test_table <- table(bag_rf_test_predictions[, 2], y_test)
-  bag_rf_test_true_positive_rate[i] <- bag_rf_test_table[2, 2] / sum(bag_rf_test_table[2, 2] + bag_rf_test_table[1, 2])
-  bag_rf_test_true_positive_rate_mean <- mean(bag_rf_test_true_positive_rate)
-  bag_rf_test_true_negative_rate[i] <- bag_rf_test_table[1, 1] / sum(bag_rf_test_table[1, 1] + bag_rf_test_table[2, 1])
-  bag_rf_test_true_negative_rate_mean <- mean(bag_rf_test_true_negative_rate)
-  bag_rf_test_false_positive_rate[i] <- bag_rf_test_table[2, 1] / sum(bag_rf_test_table[2, 1] + bag_rf_test_table[1, 1])
-  bag_rf_test_false_positive_rate_mean <- mean(bag_rf_test_false_positive_rate)
-  bag_rf_test_false_negative_rate[i] <- bag_rf_test_table[1, 2] / sum(bag_rf_test_table[1, 2] + bag_rf_test_table[2, 2])
-  bag_rf_test_false_negative_rate_mean <- mean(bag_rf_test_false_negative_rate)
-  bag_rf_test_accuracy[i] <- (bag_rf_test_table[1, 1] + bag_rf_test_table[2, 2]) / sum(bag_rf_test_table)
-  bag_rf_test_accuracy_mean <- mean(bag_rf_test_accuracy)
-  bag_rf_test_F1_score[i] <- 2 * (bag_rf_test_table[2, 2]) / sum(2 * bag_rf_test_table[2, 2] + bag_rf_test_table[1, 2] + bag_rf_test_table[2, 1])
-  bag_rf_test_F1_score_mean <- mean(bag_rf_test_F1_score)
-  bag_rf_test_positive_predictive_value[i] <- bag_rf_test_table[2, 2] / sum(bag_rf_test_table[2, 2] + bag_rf_test_table[2, 1])
-  bag_rf_test_positive_predictive_value_mean <- mean(bag_rf_test_positive_predictive_value)
-  bag_rf_test_negative_predictive_value[i] <- bag_rf_test_table[1, 1] / sum(bag_rf_test_table[1, 1] + bag_rf_test_table[1, 2])
-  bag_rf_test_negative_predictive_value_mean <- mean(bag_rf_test_negative_predictive_value)
-
-  bag_rf_validation_pred <- stats::predict(bag_rf_train_fit, validation01, type = "prob")
-  bag_rf_validation_predictions <- ifelse(bag_rf_validation_pred > 0.5, 1, 0)
-  bag_rf_validation_table <- table(bag_rf_validation_predictions[, 2], y_validation)
-  bag_rf_validation_true_positive_rate[i] <- bag_rf_validation_table[2, 2] / sum(bag_rf_validation_table[2, 2] + bag_rf_validation_table[1, 2])
-  bag_rf_validation_true_positive_rate_mean <- mean(bag_rf_validation_true_positive_rate)
-  bag_rf_validation_true_negative_rate[i] <- bag_rf_validation_table[1, 1] / sum(bag_rf_validation_table[1, 1] + bag_rf_validation_table[2, 1])
-  bag_rf_validation_true_negative_rate_mean <- mean(bag_rf_validation_true_negative_rate)
-  bag_rf_validation_false_positive_rate[i] <- bag_rf_validation_table[2, 1] / sum(bag_rf_validation_table[2, 1] + bag_rf_validation_table[1, 1])
-  bag_rf_validation_false_positive_rate_mean <- mean(bag_rf_validation_false_positive_rate)
-  bag_rf_validation_false_negative_rate[i] <- bag_rf_validation_table[1, 2] / sum(bag_rf_validation_table[1, 2] + bag_rf_validation_table[2, 2])
-  bag_rf_validation_false_negative_rate_mean <- mean(bag_rf_validation_false_negative_rate)
-  bag_rf_validation_accuracy[i] <- (bag_rf_validation_table[1, 1] + bag_rf_validation_table[2, 2]) / sum(bag_rf_validation_table)
-  bag_rf_validation_accuracy_mean <- mean(bag_rf_validation_accuracy)
-  bag_rf_validation_F1_score[i] <- 2 * (bag_rf_validation_table[2, 2]) / sum(2 * bag_rf_validation_table[2, 2] + bag_rf_validation_table[1, 2] + bag_rf_validation_table[2, 1])
-  bag_rf_validation_F1_score_mean <- mean(bag_rf_validation_F1_score)
-  bag_rf_validation_positive_predictive_value[i] <- bag_rf_validation_table[2, 2] / sum(bag_rf_validation_table[2, 2] + bag_rf_validation_table[2, 1])
-  bag_rf_validation_positive_predictive_value_mean <- mean(bag_rf_validation_positive_predictive_value)
-  bag_rf_validation_negative_predictive_value[i] <- bag_rf_validation_table[1, 1] / sum(bag_rf_validation_table[1, 1] + bag_rf_validation_table[1, 2])
-  bag_rf_validation_negative_predictive_value_mean <- mean(bag_rf_validation_negative_predictive_value)
-
-  bag_rf_holdout_true_positive_rate[i] <- (bag_rf_test_true_positive_rate[i] + bag_rf_validation_true_positive_rate[i]) / 2
-  bag_rf_holdout_true_positive_rate_mean <- mean(bag_rf_holdout_true_positive_rate)
-  bag_rf_holdout_true_negative_rate[i] <- (bag_rf_test_true_negative_rate[i] + bag_rf_validation_true_negative_rate[i]) / 2
-  bag_rf_holdout_true_negative_rate_mean <- mean(bag_rf_holdout_true_negative_rate)
-  bag_rf_holdout_false_positive_rate[i] <- (bag_rf_test_false_positive_rate[i] + bag_rf_validation_false_positive_rate[i]) / 2
-  bag_rf_holdout_false_positive_rate_mean <- mean(bag_rf_holdout_false_positive_rate)
-  bag_rf_holdout_false_negative_rate[i] <- (bag_rf_test_false_negative_rate[i] + bag_rf_validation_false_negative_rate[i]) / 2
-  bag_rf_holdout_false_negative_rate_mean <- mean(bag_rf_holdout_false_negative_rate)
-  bag_rf_holdout_accuracy[i] <- (bag_rf_test_accuracy[i] + bag_rf_validation_accuracy[i]) / 2
-  bag_rf_holdout_accuracy_mean <- mean(bag_rf_holdout_accuracy)
-  bag_rf_holdout_accuracy_sd <- sd(bag_rf_holdout_accuracy)
-  bag_rf_holdout_F1_score[i] <- (bag_rf_test_F1_score[i] + bag_rf_validation_F1_score[i]) / 2
-  bag_rf_holdout_F1_score_mean <- mean(bag_rf_holdout_F1_score)
-  bag_rf_holdout_positive_predictive_value[i] <- (bag_rf_test_positive_predictive_value[i] + bag_rf_validation_positive_predictive_value[i]) / 2
-  bag_rf_holdout_positive_predictive_value_mean <- mean(bag_rf_holdout_positive_predictive_value)
-  bag_rf_holdout_negative_predictive_value[i] <- (bag_rf_test_negative_predictive_value[i] + bag_rf_validation_negative_predictive_value[i]) / 2
-  bag_rf_holdout_negative_predictive_value_mean <- mean(bag_rf_holdout_negative_predictive_value)
-  bag_rf_holdout_overfitting[i] <- bag_rf_holdout_accuracy[i] / bag_rf_train_accuracy[i]
-  bag_rf_holdout_overfitting_mean <- mean(bag_rf_holdout_overfitting)
-  bag_rf_holdout_overfitting_range <- range(bag_rf_holdout_overfitting)
-  bag_rf_holdout_overfitting_sd <- sd(bag_rf_holdout_overfitting)
-
-  bag_rf_table <- bag_rf_test_table + bag_rf_validation_table
-  bag_rf_table_total <-  bag_rf_table_total + bag_rf_table
-
-  bag_rf_end <- Sys.time()
-  bag_rf_duration[i] <- bag_rf_end - bag_rf_start
-  bag_rf_duration_mean <- mean(bag_rf_duration)
-  bag_rf_duration_sd <- sd(bag_rf_duration)
-
-
-  #### Bagging ####
-  bagging_start <- Sys.time()
-
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    bagging_train_fit <- ipred::bagging(as.factor(y) ~ ., data = train01)
-  }
-  if(set_seed == "N"){
-    bagging_train_fit <- ipred::bagging(as.factor(y) ~ ., data = train01)
-  }
-  bagging_train_pred <- stats::predict(bagging_train_fit, train01, type = "prob")
-  bagging_train_predictions <- ifelse(bagging_train_pred > 0.5, 1, 0)
-  bagging_train_table <- table(bagging_train_predictions[, 2], y_train)
-  bagging_train_true_positive_rate[i] <- bagging_train_table[2, 2] / sum(bagging_train_table[2, 2] + bagging_train_table[1, 2])
-  bagging_train_true_positive_rate_mean <- mean(bagging_train_true_positive_rate)
-  bagging_train_true_negative_rate[i] <- bagging_train_table[1, 1] / sum(bagging_train_table[1, 1] + bagging_train_table[2, 1])
-  bagging_train_true_negative_rate_mean <- mean(bagging_train_true_negative_rate)
-  bagging_train_false_positive_rate[i] <- bagging_train_table[2, 1] / sum(bagging_train_table[2, 1] + bagging_train_table[1, 1])
-  bagging_train_false_positive_rate_mean <- mean(bagging_train_false_positive_rate)
-  bagging_train_false_negative_rate[i] <- bagging_train_table[1, 2] / sum(bagging_train_table[1, 2] + bagging_train_table[2, 2])
-  bagging_train_false_negative_rate_mean <- mean(bagging_train_false_negative_rate)
-  bagging_train_accuracy[i] <- (bagging_train_table[1, 1] + bagging_train_table[2, 2]) / sum(bagging_train_table)
-  bagging_train_accuracy_mean <- mean(bagging_train_accuracy)
-  bagging_train_F1_score[i] <- 2 * (bagging_train_table[2, 2]) / sum(2 * bagging_train_table[2, 2] + bagging_train_table[1, 2] + bagging_train_table[2, 1])
-  bagging_train_F1_score_mean <- mean(bagging_train_F1_score)
-  bagging_train_positive_predictive_value[i] <- bagging_train_table[2, 2] / sum(bagging_train_table[2, 2] + bagging_train_table[2, 1])
-  bagging_train_positive_predictive_value_mean <- mean(bagging_train_positive_predictive_value)
-  bagging_train_negative_predictive_value[i] <- bagging_train_table[1, 1] / sum(bagging_train_table[1, 1] + bagging_train_table[1, 2])
-  bagging_train_negative_predictive_value_mean <- mean(bagging_train_negative_predictive_value)
-
-  bagging_test_pred <- stats::predict(bagging_train_fit, test01, type = "prob")
-  bagging_test_predictions <- ifelse(bagging_test_pred > 0.5, 1, 0)
-  bagging_test_table <- table(bagging_test_predictions[, 2], y_test)
-  bagging_test_true_positive_rate[i] <- bagging_test_table[2, 2] / sum(bagging_test_table[2, 2] + bagging_test_table[1, 2])
-  bagging_test_true_positive_rate_mean <- mean(bagging_test_true_positive_rate)
-  bagging_test_true_negative_rate[i] <- bagging_test_table[1, 1] / sum(bagging_test_table[1, 1] + bagging_test_table[2, 1])
-  bagging_test_true_negative_rate_mean <- mean(bagging_test_true_negative_rate)
-  bagging_test_false_positive_rate[i] <- bagging_test_table[2, 1] / sum(bagging_test_table[2, 1] + bagging_test_table[1, 1])
-  bagging_test_false_positive_rate_mean <- mean(bagging_test_false_positive_rate)
-  bagging_test_false_negative_rate[i] <- bagging_test_table[1, 2] / sum(bagging_test_table[1, 2] + bagging_test_table[2, 2])
-  bagging_test_false_negative_rate_mean <- mean(bagging_test_false_negative_rate)
-  bagging_test_accuracy[i] <- (bagging_test_table[1, 1] + bagging_test_table[2, 2]) / sum(bagging_test_table)
-  bagging_test_accuracy_mean <- mean(bagging_test_accuracy)
-  bagging_test_F1_score[i] <- 2 * (bagging_test_table[2, 2]) / sum(2 * bagging_test_table[2, 2] + bagging_test_table[1, 2] + bagging_test_table[2, 1])
-  bagging_test_F1_score_mean <- mean(bagging_test_F1_score)
-  bagging_test_positive_predictive_value[i] <- bagging_test_table[2, 2] / sum(bagging_test_table[2, 2] + bagging_test_table[2, 1])
-  bagging_test_positive_predictive_value_mean <- mean(bagging_test_positive_predictive_value)
-  bagging_test_negative_predictive_value[i] <- bagging_test_table[1, 1] / sum(bagging_test_table[1, 1] + bagging_test_table[1, 2])
-  bagging_test_negative_predictive_value_mean <- mean(bagging_test_negative_predictive_value)
-
-  bagging_validation_pred <- stats::predict(bagging_train_fit, validation01, type = "prob")
-  bagging_validation_predictions <- ifelse(bagging_validation_pred > 0.5, 1, 0)
-  bagging_validation_table <- table(bagging_validation_predictions[, 2], y_validation)
-  bagging_validation_true_positive_rate[i] <- bagging_validation_table[2, 2] / sum(bagging_validation_table[2, 2] + bagging_validation_table[1, 2])
-  bagging_validation_true_positive_rate_mean <- mean(bagging_validation_true_positive_rate)
-  bagging_validation_true_negative_rate[i] <- bagging_validation_table[1, 1] / sum(bagging_validation_table[1, 1] + bagging_validation_table[2, 1])
-  bagging_validation_true_negative_rate_mean <- mean(bagging_validation_true_negative_rate)
-  bagging_validation_false_positive_rate[i] <- bagging_validation_table[2, 1] / sum(bagging_validation_table[2, 1] + bagging_validation_table[1, 1])
-  bagging_validation_false_positive_rate_mean <- mean(bagging_validation_false_positive_rate)
-  bagging_validation_false_negative_rate[i] <- bagging_validation_table[1, 2] / sum(bagging_validation_table[1, 2] + bagging_validation_table[2, 2])
-  bagging_validation_false_negative_rate_mean <- mean(bagging_validation_false_negative_rate)
-  bagging_validation_accuracy[i] <- (bagging_validation_table[1, 1] + bagging_validation_table[2, 2]) / sum(bagging_validation_table)
-  bagging_validation_accuracy_mean <- mean(bagging_validation_accuracy)
-  bagging_validation_F1_score[i] <- 2 * (bagging_validation_table[2, 2]) / sum(2 * bagging_validation_table[2, 2] + bagging_validation_table[1, 2] + bagging_validation_table[2, 1])
-  bagging_validation_F1_score_mean <- mean(bagging_validation_F1_score)
-  bagging_validation_positive_predictive_value[i] <- bagging_validation_table[2, 2] / sum(bagging_validation_table[2, 2] + bagging_validation_table[2, 1])
-  bagging_validation_positive_predictive_value_mean <- mean(bagging_validation_positive_predictive_value)
-  bagging_validation_negative_predictive_value[i] <- bagging_validation_table[1, 1] / sum(bagging_validation_table[1, 1] + bagging_validation_table[1, 2])
-  bagging_validation_negative_predictive_value_mean <- mean(bagging_validation_negative_predictive_value)
-
-  bagging_holdout_true_positive_rate[i] <- (bagging_test_true_positive_rate[i] + bagging_validation_true_positive_rate[i]) / 2
-  bagging_holdout_true_positive_rate_mean <- mean(bagging_holdout_true_positive_rate)
-  bagging_holdout_true_negative_rate[i] <- (bagging_test_true_negative_rate[i] + bagging_validation_true_negative_rate[i]) / 2
-  bagging_holdout_true_negative_rate_mean <- mean(bagging_holdout_true_negative_rate)
-  bagging_holdout_false_positive_rate[i] <- (bagging_test_false_positive_rate[i] + bagging_validation_false_positive_rate[i]) / 2
-  bagging_holdout_false_positive_rate_mean <- mean(bagging_holdout_false_positive_rate)
-  bagging_holdout_false_negative_rate[i] <- (bagging_test_false_negative_rate[i] + bagging_validation_false_negative_rate[i]) / 2
-  bagging_holdout_false_negative_rate_mean <- mean(bagging_holdout_false_negative_rate)
-  bagging_holdout_accuracy[i] <- (bagging_test_accuracy[i] + bagging_validation_accuracy[i]) / 2
-  bagging_holdout_accuracy_mean <- mean(bagging_holdout_accuracy)
-  bagging_holdout_accuracy_sd <- sd(bagging_holdout_accuracy)
-  bagging_holdout_F1_score[i] <- (bagging_test_F1_score[i] + bagging_validation_F1_score[i]) / 2
-  bagging_holdout_F1_score_mean <- mean(bagging_holdout_F1_score)
-  bagging_holdout_positive_predictive_value[i] <- (bagging_test_positive_predictive_value[i] + bagging_validation_positive_predictive_value[i]) / 2
-  bagging_holdout_positive_predictive_value_mean <- mean(bagging_holdout_positive_predictive_value)
-  bagging_holdout_negative_predictive_value[i] <- (bagging_test_negative_predictive_value[i] + bagging_validation_negative_predictive_value[i]) / 2
-  bagging_holdout_negative_predictive_value_mean <- mean(bagging_holdout_negative_predictive_value)
-  bagging_holdout_overfitting[i] <- bagging_holdout_accuracy[i] / bagging_train_accuracy[i]
-  bagging_holdout_overfitting_mean <- mean(bagging_holdout_overfitting)
-  bagging_holdout_overfitting_range <- range(bagging_holdout_overfitting)
-  bagging_holdout_overfitting_sd <- sd(bagging_holdout_overfitting)
-
-  bagging_table <- bagging_test_table + bagging_validation_table
-  bagging_table_total <- bagging_table_total + bagging_table
-
-  bagging_end <- Sys.time()
-  bagging_duration[i] <- bagging_end - bagging_start
-  bagging_duration_mean <- mean(bagging_duration)
-  bagging_duration_sd <- sd(bagging_duration)
-
-
-  #### bayesglm ####
-  bayesglm_start <- Sys.time()
-
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    bayesglm_train_fit <- arm::bayesglm(y ~ ., data = train, family = binomial)
-  }
-  if(set_seed == "N"){
-    bayesglm_train_fit <- arm::bayesglm(y ~ ., data = train, family = binomial)
-  }
-  bayesglm_train_pred <- stats::predict(bayesglm_train_fit, train01, type = "response")
-  bayesglm_train_predictions <- ifelse(bayesglm_train_pred > 0.5, 1, 0)
-  bayesglm_train_table <- table(bayesglm_train_predictions, y_train)
-  bayesglm_train_true_positive_rate[i] <- bayesglm_train_table[2, 2] / sum(bayesglm_train_table[2, 2] + bayesglm_train_table[1, 2])
-  bayesglm_train_true_positive_rate_mean <- mean(bayesglm_train_true_positive_rate)
-  bayesglm_train_true_negative_rate[i] <- bayesglm_train_table[1, 1] / sum(bayesglm_train_table[1, 1] + bayesglm_train_table[2, 1])
-  bayesglm_train_true_negative_rate_mean <- mean(bayesglm_train_true_negative_rate)
-  bayesglm_train_false_positive_rate[i] <- bayesglm_train_table[2, 1] / sum(bayesglm_train_table[2, 1] + bayesglm_train_table[1, 1])
-  bayesglm_train_false_positive_rate_mean <- mean(bayesglm_train_false_positive_rate)
-  bayesglm_train_false_negative_rate[i] <- bayesglm_train_table[1, 2] / sum(bayesglm_train_table[1, 2] + bayesglm_train_table[2, 2])
-  bayesglm_train_false_negative_rate_mean <- mean(bayesglm_train_false_negative_rate)
-  bayesglm_train_accuracy[i] <- (bayesglm_train_table[1, 1] + bayesglm_train_table[2, 2]) / sum(bayesglm_train_table)
-  bayesglm_train_accuracy_mean <- mean(bayesglm_train_accuracy)
-  bayesglm_train_F1_score[i] <- 2 * (bayesglm_train_table[2, 2]) / sum(2 * bayesglm_train_table[2, 2] + bayesglm_train_table[1, 2] + bayesglm_train_table[2, 1])
-  bayesglm_train_F1_score_mean <- mean(bayesglm_train_F1_score)
-  bayesglm_train_positive_predictive_value[i] <- bayesglm_train_table[2, 2] / sum(bayesglm_train_table[2, 2] + bayesglm_train_table[2, 1])
-  bayesglm_train_positive_predictive_value_mean <- mean(bayesglm_train_positive_predictive_value)
-  bayesglm_train_negative_predictive_value[i] <- bayesglm_train_table[1, 1] / sum(bayesglm_train_table[1, 1] + bayesglm_train_table[1, 2])
-  bayesglm_train_negative_predictive_value_mean <- mean(bayesglm_train_negative_predictive_value)
-
-  bayesglm_test_pred <- stats::predict(bayesglm_train_fit, test01, type = "response")
-  bayesglm_test_predictions <- ifelse(bayesglm_test_pred > 0.5, 1, 0)
-  bayesglm_test_table <- table(bayesglm_test_predictions, y_test)
-  bayesglm_test_true_positive_rate[i] <- bayesglm_test_table[2, 2] / sum(bayesglm_test_table[2, 2] + bayesglm_test_table[1, 2])
-  bayesglm_test_true_positive_rate_mean <- mean(bayesglm_test_true_positive_rate)
-  bayesglm_test_true_negative_rate[i] <- bayesglm_test_table[1, 1] / sum(bayesglm_test_table[1, 1] + bayesglm_test_table[2, 1])
-  bayesglm_test_true_negative_rate_mean <- mean(bayesglm_test_true_negative_rate)
-  bayesglm_test_false_positive_rate[i] <- bayesglm_test_table[2, 1] / sum(bayesglm_test_table[2, 1] + bayesglm_test_table[1, 1])
-  bayesglm_test_false_positive_rate_mean <- mean(bayesglm_test_false_positive_rate)
-  bayesglm_test_false_negative_rate[i] <- bayesglm_test_table[1, 2] / sum(bayesglm_test_table[1, 2] + bayesglm_test_table[2, 2])
-  bayesglm_test_false_negative_rate_mean <- mean(bayesglm_test_false_negative_rate)
-  bayesglm_test_accuracy[i] <- (bayesglm_test_table[1, 1] + bayesglm_test_table[2, 2]) / sum(bayesglm_test_table)
-  bayesglm_test_accuracy_mean <- mean(bayesglm_test_accuracy)
-  bayesglm_test_F1_score[i] <- 2 * (bayesglm_test_table[2, 2]) / sum(2 * bayesglm_test_table[2, 2] + bayesglm_test_table[1, 2] + bayesglm_test_table[2, 1])
-  bayesglm_test_F1_score_mean <- mean(bayesglm_test_F1_score)
-  bayesglm_test_positive_predictive_value[i] <- bayesglm_test_table[2, 2] / sum(bayesglm_test_table[2, 2] + bayesglm_test_table[2, 1])
-  bayesglm_test_positive_predictive_value_mean <- mean(bayesglm_test_positive_predictive_value)
-  bayesglm_test_negative_predictive_value[i] <- bayesglm_test_table[1, 1] / sum(bayesglm_test_table[1, 1] + bayesglm_test_table[1, 2])
-  bayesglm_test_negative_predictive_value_mean <- mean(bayesglm_test_negative_predictive_value)
-
-  bayesglm_validation_pred <- stats::predict(bayesglm_train_fit, validation01, type = "response")
-  bayesglm_validation_predictions <- ifelse(bayesglm_validation_pred > 0.5, 1, 0)
-  bayesglm_validation_table <- table(bayesglm_validation_predictions, y_validation)
-  bayesglm_validation_true_positive_rate[i] <- bayesglm_validation_table[2, 2] / sum(bayesglm_validation_table[2, 2] + bayesglm_validation_table[1, 2])
-  bayesglm_validation_true_positive_rate_mean <- mean(bayesglm_validation_true_positive_rate)
-  bayesglm_validation_true_negative_rate[i] <- bayesglm_validation_table[1, 1] / sum(bayesglm_validation_table[1, 1] + bayesglm_validation_table[2, 1])
-  bayesglm_validation_true_negative_rate_mean <- mean(bayesglm_validation_true_negative_rate)
-  bayesglm_validation_false_positive_rate[i] <- bayesglm_validation_table[2, 1] / sum(bayesglm_validation_table[2, 1] + bayesglm_validation_table[1, 1])
-  bayesglm_validation_false_positive_rate_mean <- mean(bayesglm_validation_false_positive_rate)
-  bayesglm_validation_false_negative_rate[i] <- bayesglm_validation_table[1, 2] / sum(bayesglm_validation_table[1, 2] + bayesglm_validation_table[2, 2])
-  bayesglm_validation_false_negative_rate_mean <- mean(bayesglm_validation_false_negative_rate)
-  bayesglm_validation_accuracy[i] <- (bayesglm_validation_table[1, 1] + bayesglm_validation_table[2, 2]) / sum(bayesglm_validation_table)
-  bayesglm_validation_accuracy_mean <- mean(bayesglm_validation_accuracy)
-  bayesglm_validation_F1_score[i] <- 2 * (bayesglm_validation_table[2, 2]) / sum(2 * bayesglm_validation_table[2, 2] + bayesglm_validation_table[1, 2] + bayesglm_validation_table[2, 1])
-  bayesglm_validation_F1_score_mean <- mean(bayesglm_validation_F1_score)
-  bayesglm_validation_positive_predictive_value[i] <- bayesglm_validation_table[2, 2] / sum(bayesglm_validation_table[2, 2] + bayesglm_validation_table[2, 1])
-  bayesglm_validation_positive_predictive_value_mean <- mean(bayesglm_validation_positive_predictive_value)
-  bayesglm_validation_negative_predictive_value[i] <- bayesglm_validation_table[1, 1] / sum(bayesglm_validation_table[1, 1] + bayesglm_validation_table[1, 2])
-  bayesglm_validation_negative_predictive_value_mean <- mean(bayesglm_validation_negative_predictive_value)
-
-  bayesglm_holdout_true_positive_rate[i] <- (bayesglm_test_true_positive_rate[i] + bayesglm_validation_true_positive_rate[i]) / 2
-  bayesglm_holdout_true_positive_rate_mean <- mean(bayesglm_holdout_true_positive_rate)
-  bayesglm_holdout_true_negative_rate[i] <- (bayesglm_test_true_negative_rate[i] + bayesglm_validation_true_negative_rate[i]) / 2
-  bayesglm_holdout_true_negative_rate_mean <- mean(bayesglm_holdout_true_negative_rate)
-  bayesglm_holdout_false_positive_rate[i] <- (bayesglm_test_false_positive_rate[i] + bayesglm_validation_false_positive_rate[i]) / 2
-  bayesglm_holdout_false_positive_rate_mean <- mean(bayesglm_holdout_false_positive_rate)
-  bayesglm_holdout_false_negative_rate[i] <- (bayesglm_test_false_negative_rate[i] + bayesglm_validation_false_negative_rate[i]) / 2
-  bayesglm_holdout_false_negative_rate_mean <- mean(bayesglm_holdout_false_negative_rate)
-  bayesglm_holdout_accuracy[i] <- (bayesglm_test_accuracy[i] + bayesglm_validation_accuracy[i]) / 2
-  bayesglm_holdout_accuracy_mean <- mean(bayesglm_holdout_accuracy)
-  bayesglm_holdout_accuracy_sd <- sd(bayesglm_holdout_accuracy)
-  bayesglm_holdout_F1_score[i] <- (bayesglm_test_F1_score[i] + bayesglm_validation_F1_score[i]) / 2
-  bayesglm_holdout_F1_score_mean <- mean(bayesglm_holdout_F1_score)
-  bayesglm_holdout_positive_predictive_value[i] <- (bayesglm_test_positive_predictive_value[i] + bayesglm_validation_positive_predictive_value[i]) / 2
-  bayesglm_holdout_positive_predictive_value_mean <- mean(bayesglm_holdout_positive_predictive_value)
-  bayesglm_holdout_negative_predictive_value[i] <- (bayesglm_test_negative_predictive_value[i] + bayesglm_validation_negative_predictive_value[i]) / 2
-  bayesglm_holdout_negative_predictive_value_mean <- mean(bayesglm_holdout_negative_predictive_value)
-  bayesglm_holdout_overfitting[i] <- bayesglm_holdout_accuracy[i] / bayesglm_train_accuracy[i]
-  bayesglm_holdout_overfitting_mean <- mean(bayesglm_holdout_overfitting)
-  bayesglm_holdout_overfitting_range <- range(bayesglm_holdout_overfitting)
-  bayesglm_holdout_overfitting_sd <- sd(bayesglm_holdout_overfitting)
-
-  bayesglm_table <- bayesglm_test_table + bayesglm_validation_table
-  bayesglm_table_total <- bayesglm_table_total + bayesglm_table
-
-  bayesglm_end <- Sys.time()
-  bayesglm_duration[i] <- bayesglm_end - bayesglm_start
-  bayesglm_duration_mean <- mean(bayesglm_duration)
-  bayesglm_duration_sd <- sd(bayesglm_duration)
-
-  #### C50 ####
-  C50_start <- Sys.time()
-
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    C50_train_fit <- C50::C5.0(as.factor(y_train) ~ ., data = train)
-  }
-  if(set_seed == "N"){
-    C50_train_fit <- C50::C5.0(as.factor(y_train) ~ ., data = train)
-  }
-  C50_train_pred <- stats::predict(C50_train_fit, train01, type = "prob")
-  C50_train_predictions <- ifelse(C50_train_pred[, 2] > 0.5, 1, 0)
-  C50_train_table <- table(C50_train_predictions, y_train)
-  C50_train_true_positive_rate[i] <- C50_train_table[2, 2] / sum(C50_train_table[2, 2] + C50_train_table[1, 2])
-  C50_train_true_positive_rate_mean <- mean(C50_train_true_positive_rate)
-  C50_train_true_negative_rate[i] <- C50_train_table[1, 1] / sum(C50_train_table[1, 1] + C50_train_table[2, 1])
-  C50_train_true_negative_rate_mean <- mean(C50_train_true_negative_rate)
-  C50_train_false_positive_rate[i] <- C50_train_table[2, 1] / sum(C50_train_table[2, 1] + C50_train_table[1, 1])
-  C50_train_false_positive_rate_mean <- mean(C50_train_false_positive_rate)
-  C50_train_false_negative_rate[i] <- C50_train_table[1, 2] / sum(C50_train_table[1, 2] + C50_train_table[2, 2])
-  C50_train_false_negative_rate_mean <- mean(C50_train_false_negative_rate)
-  C50_train_accuracy[i] <- (C50_train_table[1, 1] + C50_train_table[2, 2]) / sum(C50_train_table)
-  C50_train_accuracy_mean <- mean(C50_train_accuracy)
-  C50_train_F1_score[i] <- 2 * (C50_train_table[2, 2]) / sum(2 * C50_train_table[2, 2] + C50_train_table[1, 2] + C50_train_table[2, 1])
-  C50_train_F1_score_mean <- mean(C50_train_F1_score)
-  C50_train_positive_predictive_value[i] <- C50_train_table[2, 2] / sum(C50_train_table[2, 2] + C50_train_table[2, 1])
-  C50_train_positive_predictive_value_mean <- mean(C50_train_positive_predictive_value)
-  C50_train_negative_predictive_value[i] <- C50_train_table[1, 1] / sum(C50_train_table[1, 1] + C50_train_table[1, 2])
-  C50_train_negative_predictive_value_mean <- mean(C50_train_negative_predictive_value)
-
-  C50_test_pred <- stats::predict(C50_train_fit, test01, type = "prob")
-  C50_test_predictions <- ifelse(C50_test_pred[, 2] > 0.5, 1, 0)
-  C50_test_table <- table(C50_test_predictions, y_test)
-  C50_test_true_positive_rate[i] <- C50_test_table[2, 2] / sum(C50_test_table[2, 2] + C50_test_table[1, 2])
-  C50_test_true_positive_rate_mean <- mean(C50_test_true_positive_rate)
-  C50_test_true_negative_rate[i] <- C50_test_table[1, 1] / sum(C50_test_table[1, 1] + C50_test_table[2, 1])
-  C50_test_true_negative_rate_mean <- mean(C50_test_true_negative_rate)
-  C50_test_false_positive_rate[i] <- C50_test_table[2, 1] / sum(C50_test_table[2, 1] + C50_test_table[1, 1])
-  C50_test_false_positive_rate_mean <- mean(C50_test_false_positive_rate)
-  C50_test_false_negative_rate[i] <- C50_test_table[1, 2] / sum(C50_test_table[1, 2] + C50_test_table[2, 2])
-  C50_test_false_negative_rate_mean <- mean(C50_test_false_negative_rate)
-  C50_test_accuracy[i] <- (C50_test_table[1, 1] + C50_test_table[2, 2]) / sum(C50_test_table)
-  C50_test_accuracy_mean <- mean(C50_test_accuracy)
-  C50_test_F1_score[i] <- 2 * (C50_test_table[2, 2]) / sum(2 * C50_test_table[2, 2] + C50_test_table[1, 2] + C50_test_table[2, 1])
-  C50_test_F1_score_mean <- mean(C50_test_F1_score)
-  C50_test_positive_predictive_value[i] <- C50_test_table[2, 2] / sum(C50_test_table[2, 2] + C50_test_table[2, 1])
-  C50_test_positive_predictive_value_mean <- mean(C50_test_positive_predictive_value)
-  C50_test_negative_predictive_value[i] <- C50_test_table[1, 1] / sum(C50_test_table[1, 1] + C50_test_table[1, 2])
-  C50_test_negative_predictive_value_mean <- mean(C50_test_negative_predictive_value)
-
-  C50_validation_pred <- stats::predict(C50_train_fit, validation01, type = "prob")
-  C50_validation_predictions <- ifelse(C50_validation_pred[, 2] > 0.5, 1, 0)
-  C50_validation_table <- table(C50_validation_predictions, y_validation)
-  C50_validation_true_positive_rate[i] <- C50_validation_table[2, 2] / sum(C50_validation_table[2, 2] + C50_validation_table[1, 2])
-  C50_validation_true_positive_rate_mean <- mean(C50_validation_true_positive_rate)
-  C50_validation_true_negative_rate[i] <- C50_validation_table[1, 1] / sum(C50_validation_table[1, 1] + C50_validation_table[2, 1])
-  C50_validation_true_negative_rate_mean <- mean(C50_validation_true_negative_rate)
-  C50_validation_false_positive_rate[i] <- C50_validation_table[2, 1] / sum(C50_validation_table[2, 1] + C50_validation_table[1, 1])
-  C50_validation_false_positive_rate_mean <- mean(C50_validation_false_positive_rate)
-  C50_validation_false_negative_rate[i] <- C50_validation_table[1, 2] / sum(C50_validation_table[1, 2] + C50_validation_table[2, 2])
-  C50_validation_false_negative_rate_mean <- mean(C50_validation_false_negative_rate)
-  C50_validation_accuracy[i] <- (C50_validation_table[1, 1] + C50_validation_table[2, 2]) / sum(C50_validation_table)
-  C50_validation_accuracy_mean <- mean(C50_validation_accuracy)
-  C50_validation_F1_score[i] <- 2 * (C50_validation_table[2, 2]) / sum(2 * C50_validation_table[2, 2] + C50_validation_table[1, 2] + C50_validation_table[2, 1])
-  C50_validation_F1_score_mean <- mean(C50_validation_F1_score)
-  C50_validation_positive_predictive_value[i] <- C50_validation_table[2, 2] / sum(C50_validation_table[2, 2] + C50_validation_table[2, 1])
-  C50_validation_positive_predictive_value_mean <- mean(C50_validation_positive_predictive_value)
-  C50_validation_negative_predictive_value[i] <- C50_validation_table[1, 1] / sum(C50_validation_table[1, 1] + C50_validation_table[1, 2])
-  C50_validation_negative_predictive_value_mean <- mean(C50_validation_negative_predictive_value)
-
-  C50_holdout_true_positive_rate[i] <- (C50_test_true_positive_rate[i] + C50_validation_true_positive_rate[i]) / 2
-  C50_holdout_true_positive_rate_mean <- mean(C50_holdout_true_positive_rate)
-  C50_holdout_true_negative_rate[i] <- (C50_test_true_negative_rate[i] + C50_validation_true_negative_rate[i]) / 2
-  C50_holdout_true_negative_rate_mean <- mean(C50_holdout_true_negative_rate)
-  C50_holdout_false_positive_rate[i] <- (C50_test_false_positive_rate[i] + C50_validation_false_positive_rate[i]) / 2
-  C50_holdout_false_positive_rate_mean <- mean(C50_holdout_false_positive_rate)
-  C50_holdout_false_negative_rate[i] <- (C50_test_false_negative_rate[i] + C50_validation_false_negative_rate[i]) / 2
-  C50_holdout_false_negative_rate_mean <- mean(C50_holdout_false_negative_rate)
-  C50_holdout_accuracy[i] <- (C50_test_accuracy[i] + C50_validation_accuracy[i]) / 2
-  C50_holdout_accuracy_mean <- mean(C50_holdout_accuracy)
-  C50_holdout_accuracy_sd <- sd(C50_holdout_accuracy)
-  C50_holdout_F1_score[i] <- (C50_test_F1_score[i] + C50_validation_F1_score[i]) / 2
-  C50_holdout_F1_score_mean <- mean(C50_holdout_F1_score)
-  C50_holdout_positive_predictive_value[i] <- (C50_test_positive_predictive_value[i] + C50_validation_positive_predictive_value[i]) / 2
-  C50_holdout_positive_predictive_value_mean <- mean(C50_holdout_positive_predictive_value)
-  C50_holdout_negative_predictive_value[i] <- (C50_test_negative_predictive_value[i] + C50_validation_negative_predictive_value[i]) / 2
-  C50_holdout_negative_predictive_value_mean <- mean(C50_holdout_negative_predictive_value)
-  C50_holdout_overfitting[i] <- C50_holdout_accuracy[i] / C50_train_accuracy[i]
-  C50_holdout_overfitting_mean <- mean(C50_holdout_overfitting)
-  C50_holdout_overfitting_range <- range(C50_holdout_overfitting)
-  C50_holdout_overfitting_sd <- sd(C50_holdout_overfitting)
-
-  C50_table <- C50_test_table + C50_validation_table
-  C50_table_total <- C50_table_total + C50_table
-
-  C50_end <- Sys.time()
-  C50_duration[i] <- C50_end - C50_start
-  C50_duration_mean <- mean(C50_duration)
-  C50_duration_sd <- sd(C50_duration)
-
-
   #### cubist ####
   cubist_start <- Sys.time()
 
@@ -1940,8 +1205,10 @@ for (i in 1:numresamples) {
   if(set_seed == "N"){
     cubist_train_fit <- Cubist::cubist(x = as.data.frame(train), y = train$y)
   }
-  cubist_train_pred <- stats::predict(cubist_train_fit, train01, type = "prob")
-  cubist_train_table <- table(cubist_train_pred, y_train)
+  cubist_train_pred <- stats::predict(cubist_train_fit, train01, type = "numeric")
+  cubist_train_predictions <- plogis(cubist_train_pred)
+  cubist_train_predictions_binomial <- rbinom(n = length(cubist_train_predictions), size = 1, prob = cubist_train_predictions)
+  cubist_train_table <- table(cubist_train_predictions_binomial, y_train)
   cubist_train_true_positive_rate[i] <- cubist_train_table[2, 2] / sum(cubist_train_table[2, 2] + cubist_train_table[1, 2])
   cubist_train_true_positive_rate_mean <- mean(cubist_train_true_positive_rate)
   cubist_train_true_negative_rate[i] <- cubist_train_table[1, 1] / sum(cubist_train_table[1, 1] + cubist_train_table[2, 1])
@@ -1959,8 +1226,10 @@ for (i in 1:numresamples) {
   cubist_train_negative_predictive_value[i] <- cubist_train_table[1, 1] / sum(cubist_train_table[1, 1] + cubist_train_table[1, 2])
   cubist_train_negative_predictive_value_mean <- mean(cubist_train_negative_predictive_value)
 
-  cubist_test_pred <- stats::predict(cubist_train_fit, test01, type = "prob")
-  cubist_test_table <- table(cubist_test_pred, y_test)
+  cubist_test_pred <- stats::predict(cubist_train_fit, test01, type = "numeric")
+  cubist_test_predictions <- plogis(cubist_test_pred)
+  cubist_test_predictions_binomial <- rbinom(n = length(cubist_test_predictions), size = 1, prob = cubist_test_predictions)
+  cubist_test_table <- table(cubist_test_predictions_binomial, y_test)
   cubist_test_true_positive_rate[i] <- cubist_test_table[2, 2] / sum(cubist_test_table[2, 2] + cubist_test_table[1, 2])
   cubist_test_true_positive_rate_mean <- mean(cubist_test_true_positive_rate)
   cubist_test_true_negative_rate[i] <- cubist_test_table[1, 1] / sum(cubist_test_table[1, 1] + cubist_test_table[2, 1])
@@ -1978,8 +1247,10 @@ for (i in 1:numresamples) {
   cubist_test_negative_predictive_value[i] <- cubist_test_table[1, 1] / sum(cubist_test_table[1, 1] + cubist_test_table[1, 2])
   cubist_test_negative_predictive_value_mean <- mean(cubist_test_negative_predictive_value)
 
-  cubist_validation_pred <- stats::predict(cubist_train_fit, validation01, type = "prob")
-  cubist_validation_table <- table(cubist_validation_pred, y_validation)
+  cubist_validation_pred <- stats::predict(cubist_train_fit, validation01, type = "numeric")
+  cubist_validation_predictions <- plogis(cubist_validation_pred)
+  cubist_validation_predictions_binomial <- rbinom(n = length(cubist_validation_predictions), size = 1, prob = cubist_validation_predictions)
+  cubist_validation_table <- table(cubist_validation_predictions_binomial, y_validation)
   cubist_validation_true_positive_rate[i] <- cubist_validation_table[2, 2] / sum(cubist_validation_table[2, 2] + cubist_validation_table[1, 2])
   cubist_validation_true_positive_rate_mean <- mean(cubist_validation_true_positive_rate)
   cubist_validation_true_negative_rate[i] <- cubist_validation_table[1, 1] / sum(cubist_validation_table[1, 1] + cubist_validation_table[2, 1])
@@ -2028,19 +1299,21 @@ for (i in 1:numresamples) {
   cubist_duration_sd <- sd(cubist_duration)
 
 
-  #### Flexible discriminant analysis ####
+  #### Flexible Discriminant Analysis ####
+
   fda_start <- Sys.time()
 
   if(set_seed == "Y"){
     set.seed(seed = seed)
-    fda_train_fit <- mda::fda(as.factor(y_train) ~ ., data = train)
+    fda_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = train01, model = "FDAModel")
   }
   if(set_seed == "N"){
-    fda_train_fit <- mda::fda(as.factor(y_train) ~ ., data = train)
+    fda_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = train01, model = "FDAModel")
   }
-  fda_train_pred <- stats::predict(fda_train_fit, train01, type = "posterior")
-  fda_train_predictions <- ifelse(fda_train_pred[, 2] > 0.5, 1, 0)
-  fda_train_table <- table(fda_train_predictions, y_train)
+  fda_train_pred <- stats::predict(fda_train_fit, train01, type = "response")
+  fda_train_predictions <- plogis(as.numeric(fda_train_pred))
+  fda_train_predictions_binomial <- rbinom(n = length(fda_train_predictions), size = 1, prob = fda_train_predictions)
+  fda_train_table <- table(fda_train_predictions_binomial, y_train)
   fda_train_true_positive_rate[i] <- fda_train_table[2, 2] / sum(fda_train_table[2, 2] + fda_train_table[1, 2])
   fda_train_true_positive_rate_mean <- mean(fda_train_true_positive_rate)
   fda_train_true_negative_rate[i] <- fda_train_table[1, 1] / sum(fda_train_table[1, 1] + fda_train_table[2, 1])
@@ -2058,9 +1331,10 @@ for (i in 1:numresamples) {
   fda_train_negative_predictive_value[i] <- fda_train_table[1, 1] / sum(fda_train_table[1, 1] + fda_train_table[1, 2])
   fda_train_negative_predictive_value_mean <- mean(fda_train_negative_predictive_value)
 
-  fda_test_pred <- stats::predict(fda_train_fit, test01, type = "posterior")
-  fda_test_predictions <- ifelse(fda_test_pred[, 2] > 0.5, 1, 0)
-  fda_test_table <- table(fda_test_predictions, y_test)
+  fda_test_pred <- stats::predict(fda_train_fit, test01, type = "response")
+  fda_test_predictions <- plogis(as.numeric(fda_test_pred))
+  fda_test_predictions_binomial <- rbinom(n = length(fda_test_predictions), size = 1, prob = fda_test_predictions)
+  fda_test_table <- table(fda_test_predictions_binomial, y_test)
   fda_test_true_positive_rate[i] <- fda_test_table[2, 2] / sum(fda_test_table[2, 2] + fda_test_table[1, 2])
   fda_test_true_positive_rate_mean <- mean(fda_test_true_positive_rate)
   fda_test_true_negative_rate[i] <- fda_test_table[1, 1] / sum(fda_test_table[1, 1] + fda_test_table[2, 1])
@@ -2078,9 +1352,10 @@ for (i in 1:numresamples) {
   fda_test_negative_predictive_value[i] <- fda_test_table[1, 1] / sum(fda_test_table[1, 1] + fda_test_table[1, 2])
   fda_test_negative_predictive_value_mean <- mean(fda_test_negative_predictive_value)
 
-  fda_validation_pred <- stats::predict(fda_train_fit, validation01, type = "posterior")
-  fda_validation_predictions <- ifelse(fda_validation_pred[, 2] > 0.5, 1, 0)
-  fda_validation_table <- table(fda_validation_predictions, y_validation)
+  fda_validation_pred <- stats::predict(fda_train_fit, validation01, type = "response")
+  fda_validation_predictions <- plogis(as.numeric(fda_validation_pred))
+  fda_validation_predictions_binomial <- rbinom(n = length(fda_validation_predictions), size = 1, prob = fda_validation_predictions)
+  fda_validation_table <- table(fda_validation_predictions_binomial, y_validation)
   fda_validation_true_positive_rate[i] <- fda_validation_table[2, 2] / sum(fda_validation_table[2, 2] + fda_validation_table[1, 2])
   fda_validation_true_positive_rate_mean <- mean(fda_validation_true_positive_rate)
   fda_validation_true_negative_rate[i] <- fda_validation_table[1, 1] / sum(fda_validation_table[1, 1] + fda_validation_table[2, 1])
@@ -2128,6 +1403,7 @@ for (i in 1:numresamples) {
   fda_duration_mean <- mean(fda_duration)
   fda_duration_sd <- sd(fda_duration)
 
+
   #### Generalized Additive Models ####
   gam_start <- Sys.time()
 
@@ -2139,8 +1415,9 @@ for (i in 1:numresamples) {
     gam_train_fit <- gam::gam(y ~ ., data = train)
   }
   gam_train_pred <- stats::predict(gam_train_fit, train01, type = "response")
-  gam_train_predictions <- ifelse(gam_train_pred > 0.5, 1, 0)
-  gam_train_table <- table(gam_train_predictions, y_train)
+  gam_train_predictions <- as.numeric(plogis(gam_train_pred))
+  gam_train_predictions_binomial <- rbinom(n = length(gam_train_predictions), size = 1, prob = gam_train_predictions)
+  gam_train_table <- table(gam_train_predictions_binomial, y_train)
   gam_train_true_positive_rate[i] <- gam_train_table[2, 2] / sum(gam_train_table[2, 2] + gam_train_table[1, 2])
   gam_train_true_positive_rate_mean <- mean(gam_train_true_positive_rate)
   gam_train_true_negative_rate[i] <- gam_train_table[1, 1] / sum(gam_train_table[1, 1] + gam_train_table[2, 1])
@@ -2159,8 +1436,9 @@ for (i in 1:numresamples) {
   gam_train_negative_predictive_value_mean <- mean(gam_train_negative_predictive_value)
 
   gam_test_pred <- stats::predict(gam_train_fit, test01, type = "response")
-  gam_test_predictions <- ifelse(gam_test_pred > 0.5, 1, 0)
-  gam_test_table <- table(gam_test_predictions, y_test)
+  gam_test_predictions <- as.numeric(plogis(gam_test_pred))
+  gam_test_predictions_binomial <- rbinom(n = length(gam_test_predictions), size = 1, prob = gam_test_predictions)
+  gam_test_table <- table(gam_test_predictions_binomial, y_test)
   gam_test_true_positive_rate[i] <- gam_test_table[2, 2] / sum(gam_test_table[2, 2] + gam_test_table[1, 2])
   gam_test_true_positive_rate_mean <- mean(gam_test_true_positive_rate)
   gam_test_true_negative_rate[i] <- gam_test_table[1, 1] / sum(gam_test_table[1, 1] + gam_test_table[2, 1])
@@ -2179,8 +1457,9 @@ for (i in 1:numresamples) {
   gam_test_negative_predictive_value_mean <- mean(gam_test_negative_predictive_value)
 
   gam_validation_pred <- stats::predict(gam_train_fit, validation01, type = "response")
-  gam_validation_predictions <- ifelse(gam_validation_pred > 0.5, 1, 0)
-  gam_validation_table <- table(gam_validation_predictions, y_validation)
+  gam_validation_predictions <- as.numeric(plogis(gam_validation_pred))
+  gam_validation_predictions_binomial <- rbinom(n = length(gam_validation_predictions), size = 1, prob = gam_validation_predictions)
+  gam_validation_table <- table(gam_validation_predictions_binomial, y_validation)
   gam_validation_true_positive_rate[i] <- gam_validation_table[2, 2] / sum(gam_validation_table[2, 2] + gam_validation_table[1, 2])
   gam_validation_true_positive_rate_mean <- mean(gam_validation_true_positive_rate)
   gam_validation_true_negative_rate[i] <- gam_validation_table[1, 1] / sum(gam_validation_table[1, 1] + gam_validation_table[2, 1])
@@ -2229,120 +1508,20 @@ for (i in 1:numresamples) {
   gam_duration_sd <- sd(gam_duration)
 
 
-  #### Gradient Boosted ####
-  gb_start <- Sys.time()
-
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    gb_train_fit <- gbm::gbm(train$y ~ ., data = train, distribution = "gaussian", n.trees = 100, shrinkage = 0.1, interaction.depth = 10)
-  }
-  if(set_seed == "N"){
-    gb_train_fit <- gbm::gbm(train$y ~ ., data = train, distribution = "gaussian", n.trees = 100, shrinkage = 0.1, interaction.depth = 10)
-  }
-  gb_train_pred <- stats::predict(gb_train_fit, train01, type = "response")
-  gb_train_predictions <- ifelse(gb_train_pred > 0.5, 1, 0)
-  gb_train_table <- table(gb_train_predictions, y_train)
-  gb_train_true_positive_rate[i] <- gb_train_table[2, 2] / sum(gb_train_table[2, 2] + gb_train_table[1, 2])
-  gb_train_true_positive_rate_mean <- mean(gb_train_true_positive_rate)
-  gb_train_true_negative_rate[i] <- gb_train_table[1, 1] / sum(gb_train_table[1, 1] + gb_train_table[2, 1])
-  gb_train_true_negative_rate_mean <- mean(gb_train_true_negative_rate)
-  gb_train_false_positive_rate[i] <- gb_train_table[2, 1] / sum(gb_train_table[2, 1] + gb_train_table[1, 1])
-  gb_train_false_positive_rate_mean <- mean(gb_train_false_positive_rate)
-  gb_train_false_negative_rate[i] <- gb_train_table[1, 2] / sum(gb_train_table[1, 2] + gb_train_table[2, 2])
-  gb_train_false_negative_rate_mean <- mean(gb_train_false_negative_rate)
-  gb_train_accuracy[i] <- (gb_train_table[1, 1] + gb_train_table[2, 2]) / sum(gb_train_table)
-  gb_train_accuracy_mean <- mean(gb_train_accuracy)
-  gb_train_F1_score[i] <- 2 * (gb_train_table[2, 2]) / sum(2 * gb_train_table[2, 2] + gb_train_table[1, 2] + gb_train_table[2, 1])
-  gb_train_F1_score_mean <- mean(gb_train_F1_score)
-  gb_train_positive_predictive_value[i] <- gb_train_table[2, 2] / sum(gb_train_table[2, 2] + gb_train_table[2, 1])
-  gb_train_positive_predictive_value_mean <- mean(gb_train_positive_predictive_value)
-  gb_train_negative_predictive_value[i] <- gb_train_table[1, 1] / sum(gb_train_table[1, 1] + gb_train_table[1, 2])
-  gb_train_negative_predictive_value_mean <- mean(gb_train_negative_predictive_value)
-
-  gb_test_pred <- stats::predict(gb_train_fit, test01, type = "response")
-  gb_test_predictions <- ifelse(gb_test_pred > 0.5, 1, 0)
-  gb_test_table <- table(gb_test_predictions, y_test)
-  gb_test_true_positive_rate[i] <- gb_test_table[2, 2] / sum(gb_test_table[2, 2] + gb_test_table[1, 2])
-  gb_test_true_positive_rate_mean <- mean(gb_test_true_positive_rate)
-  gb_test_true_negative_rate[i] <- gb_test_table[1, 1] / sum(gb_test_table[1, 1] + gb_test_table[2, 1])
-  gb_test_true_negative_rate_mean <- mean(gb_test_true_negative_rate)
-  gb_test_false_positive_rate[i] <- gb_test_table[2, 1] / sum(gb_test_table[2, 1] + gb_test_table[1, 1])
-  gb_test_false_positive_rate_mean <- mean(gb_test_false_positive_rate)
-  gb_test_false_negative_rate[i] <- gb_test_table[1, 2] / sum(gb_test_table[1, 2] + gb_test_table[2, 2])
-  gb_test_false_negative_rate_mean <- mean(gb_test_false_negative_rate)
-  gb_test_accuracy[i] <- (gb_test_table[1, 1] + gb_test_table[2, 2]) / sum(gb_test_table)
-  gb_test_accuracy_mean <- mean(gb_test_accuracy)
-  gb_test_F1_score[i] <- 2 * (gb_test_table[2, 2]) / sum(2 * gb_test_table[2, 2] + gb_test_table[1, 2] + gb_test_table[2, 1])
-  gb_test_F1_score_mean <- mean(gb_test_F1_score)
-  gb_test_positive_predictive_value[i] <- gb_test_table[2, 2] / sum(gb_test_table[2, 2] + gb_test_table[2, 1])
-  gb_test_positive_predictive_value_mean <- mean(gb_test_positive_predictive_value)
-  gb_test_negative_predictive_value[i] <- gb_test_table[1, 1] / sum(gb_test_table[1, 1] + gb_test_table[1, 2])
-  gb_test_negative_predictive_value_mean <- mean(gb_test_negative_predictive_value)
-
-  gb_validation_pred <- stats::predict(gb_train_fit, validation01, type = "response")
-  gb_validation_predictions <- ifelse(gb_validation_pred > 0.5, 1, 0)
-  gb_validation_table <- table(gb_validation_predictions, y_validation)
-  gb_validation_true_positive_rate[i] <- gb_validation_table[2, 2] / sum(gb_validation_table[2, 2] + gb_validation_table[1, 2])
-  gb_validation_true_positive_rate_mean <- mean(gb_validation_true_positive_rate)
-  gb_validation_true_negative_rate[i] <- gb_validation_table[1, 1] / sum(gb_validation_table[1, 1] + gb_validation_table[2, 1])
-  gb_validation_true_negative_rate_mean <- mean(gb_validation_true_negative_rate)
-  gb_validation_false_positive_rate[i] <- gb_validation_table[2, 1] / sum(gb_validation_table[2, 1] + gb_validation_table[1, 1])
-  gb_validation_false_positive_rate_mean <- mean(gb_validation_false_positive_rate)
-  gb_validation_false_negative_rate[i] <- gb_validation_table[1, 2] / sum(gb_validation_table[1, 2] + gb_validation_table[2, 2])
-  gb_validation_false_negative_rate_mean <- mean(gb_validation_false_negative_rate)
-  gb_validation_accuracy[i] <- (gb_validation_table[1, 1] + gb_validation_table[2, 2]) / sum(gb_validation_table)
-  gb_validation_accuracy_mean <- mean(gb_validation_accuracy)
-  gb_validation_F1_score[i] <- 2 * (gb_validation_table[2, 2]) / sum(2 * gb_validation_table[2, 2] + gb_validation_table[1, 2] + gb_validation_table[2, 1])
-  gb_validation_F1_score_mean <- mean(gb_validation_F1_score)
-  gb_validation_positive_predictive_value[i] <- gb_validation_table[2, 2] / sum(gb_validation_table[2, 2] + gb_validation_table[2, 1])
-  gb_validation_positive_predictive_value_mean <- mean(gb_validation_positive_predictive_value)
-  gb_validation_negative_predictive_value[i] <- gb_validation_table[1, 1] / sum(gb_validation_table[1, 1] + gb_validation_table[1, 2])
-  gb_validation_negative_predictive_value_mean <- mean(gb_validation_negative_predictive_value)
-
-  gb_holdout_true_positive_rate[i] <- (gb_test_true_positive_rate[i] + gb_validation_true_positive_rate[i]) / 2
-  gb_holdout_true_positive_rate_mean <- mean(gb_holdout_true_positive_rate)
-  gb_holdout_true_negative_rate[i] <- (gb_test_true_negative_rate[i] + gb_validation_true_negative_rate[i]) / 2
-  gb_holdout_true_negative_rate_mean <- mean(gb_holdout_true_negative_rate)
-  gb_holdout_false_positive_rate[i] <- (gb_test_false_positive_rate[i] + gb_validation_false_positive_rate[i]) / 2
-  gb_holdout_false_positive_rate_mean <- mean(gb_holdout_false_positive_rate)
-  gb_holdout_false_negative_rate[i] <- (gb_test_false_negative_rate[i] + gb_validation_false_negative_rate[i]) / 2
-  gb_holdout_false_negative_rate_mean <- mean(gb_holdout_false_negative_rate)
-  gb_holdout_accuracy[i] <- (gb_test_accuracy[i] + gb_validation_accuracy[i]) / 2
-  gb_holdout_accuracy_mean <- mean(gb_holdout_accuracy)
-  gb_holdout_accuracy_sd <- sd(gb_holdout_accuracy)
-  gb_holdout_F1_score[i] <- (gb_test_F1_score[i] + gb_validation_F1_score[i]) / 2
-  gb_holdout_F1_score_mean <- mean(gb_holdout_F1_score)
-  gb_holdout_positive_predictive_value[i] <- (gb_test_positive_predictive_value[i] + gb_validation_positive_predictive_value[i]) / 2
-  gb_holdout_positive_predictive_value_mean <- mean(gb_holdout_positive_predictive_value)
-  gb_holdout_negative_predictive_value[i] <- (gb_test_negative_predictive_value[i] + gb_validation_negative_predictive_value[i]) / 2
-  gb_holdout_negative_predictive_value_mean <- mean(gb_holdout_negative_predictive_value)
-  gb_holdout_overfitting[i] <- gb_holdout_accuracy[i] / gb_train_accuracy[i]
-  gb_holdout_overfitting_mean <- mean(gb_holdout_overfitting)
-  gb_holdout_overfitting_range <- range(gb_holdout_overfitting)
-  gb_holdout_overfitting_sd <- sd(gb_holdout_overfitting)
-
-  gb_table <- gb_test_table + gb_validation_table
-  gb_table_total <-  gb_table_total + gb_table
-
-  gb_end <- Sys.time()
-  gb_duration[i] <- gb_end - gb_start
-  gb_duration_mean <- mean(gb_duration)
-  gb_duration_sd <- sd(gb_duration)
-
-
   #### Generalized Linear Models ####
   glm_start <- Sys.time()
 
   if(set_seed == "Y"){
     set.seed(seed = seed)
-    glm_train_fit <- stats::glm(y ~ ., data = train, family = binomial(link = "logit"))
+    glm_train_fit <- stats::glm(y ~ ., data = train, family = binomial)
   }
   if(set_seed == "N"){
-    glm_train_fit <- stats::glm(y ~ ., data = train, family = binomial(link = "logit"))
+    glm_train_fit <- stats::glm(y ~ ., data = train, family = binomial)
   }
   glm_train_pred <- stats::predict(glm_train_fit, train01, type = "response")
-  glm_train_predictions <- ifelse(glm_train_pred > 0.5, 1, 0)
-  glm_train_table <- table(glm_train_predictions, y_train)
+  glm_train_predictions <- plogis(glm_train_pred)
+  glm_train_predictions_binomial <- rbinom(n = length(glm_train_predictions), size = 1, prob = glm_train_predictions)
+  glm_train_table <- table(glm_train_predictions_binomial, y_train)
   glm_train_true_positive_rate[i] <- glm_train_table[2, 2] / sum(glm_train_table[2, 2] + glm_train_table[1, 2])
   glm_train_true_positive_rate_mean <- mean(glm_train_true_positive_rate)
   glm_train_true_negative_rate[i] <- glm_train_table[1, 1] / sum(glm_train_table[1, 1] + glm_train_table[2, 1])
@@ -2361,8 +1540,9 @@ for (i in 1:numresamples) {
   glm_train_negative_predictive_value_mean <- mean(glm_train_negative_predictive_value)
 
   glm_test_pred <- stats::predict(glm_train_fit, test01, type = "response")
-  glm_test_predictions <- ifelse(glm_test_pred > 0.5, 1, 0)
-  glm_test_table <- table(glm_test_predictions, y_test)
+  glm_test_predictions <- plogis(glm_test_pred)
+  glm_test_predictions_binomial <- rbinom(n = length(glm_test_predictions), size = 1, prob = glm_test_predictions)
+  glm_test_table <- table(glm_test_predictions_binomial, y_test)
   glm_test_true_positive_rate[i] <- glm_test_table[2, 2] / sum(glm_test_table[2, 2] + glm_test_table[1, 2])
   glm_test_true_positive_rate_mean <- mean(glm_test_true_positive_rate)
   glm_test_true_negative_rate[i] <- glm_test_table[1, 1] / sum(glm_test_table[1, 1] + glm_test_table[2, 1])
@@ -2381,8 +1561,9 @@ for (i in 1:numresamples) {
   glm_test_negative_predictive_value_mean <- mean(glm_test_negative_predictive_value)
 
   glm_validation_pred <- stats::predict(glm_train_fit, validation01, type = "response")
-  glm_validation_predictions <- ifelse(glm_validation_pred > 0.5, 1, 0)
-  glm_validation_table <- table(glm_validation_predictions, y_validation)
+  glm_validation_predictions <- plogis(glm_validation_pred)
+  glm_validation_predictions_binomial <- rbinom(n = length(glm_validation_predictions), size = 1, prob = glm_validation_predictions)
+  glm_validation_table <- table(glm_validation_predictions_binomial, y_validation)
   glm_validation_true_positive_rate[i] <- glm_validation_table[2, 2] / sum(glm_validation_table[2, 2] + glm_validation_table[1, 2])
   glm_validation_true_positive_rate_mean <- mean(glm_validation_true_positive_rate)
   glm_validation_true_negative_rate[i] <- glm_validation_table[1, 1] / sum(glm_validation_table[1, 1] + glm_validation_table[2, 1])
@@ -2430,6 +1611,114 @@ for (i in 1:numresamples) {
   glm_duration_mean <- mean(glm_duration)
   glm_duration_sd <- sd(glm_duration)
 
+  #### Lasso ####
+
+  lasso_start <- Sys.time()
+
+  if(set_seed == "Y"){
+    set.seed(seed = seed)
+    x = model.matrix(y ~ ., data = train)[, -1]
+    y = train$y
+    lasso_train_fit <- glmnet::glmnet(x, y, alpha = 1)
+  }
+  if(set_seed == "N"){
+    x = model.matrix(y ~ ., data = train)[, -1]
+    y = train$y
+    lasso_train_fit <- glmnet::glmnet(x, y, alpha = 1)
+  }
+  lasso_train_pred <- stats::predict(lasso_train_fit, as.matrix(train[, 1:ncol(train) -1]), family = "binomial")
+  lasso_train_predictions <- plogis(lasso_train_pred[, 1])
+  lasso_train_predictions_binomial <- rbinom(n = length(lasso_train_predictions), size = 1, prob = lasso_train_predictions)
+  lasso_train_table <- table(lasso_train_predictions_binomial, as.matrix(train$y))
+  lasso_train_true_positive_rate[i] <- lasso_train_table[2, 2] / sum(lasso_train_table[2, 2] + lasso_train_table[1, 2])
+  lasso_train_true_positive_rate_mean <- mean(lasso_train_true_positive_rate)
+  lasso_train_true_negative_rate[i] <- lasso_train_table[1, 1] / sum(lasso_train_table[1, 1] + lasso_train_table[2, 1])
+  lasso_train_true_negative_rate_mean <- mean(lasso_train_true_negative_rate)
+  lasso_train_false_positive_rate[i] <- lasso_train_table[2, 1] / sum(lasso_train_table[2, 1] + lasso_train_table[1, 1])
+  lasso_train_false_positive_rate_mean <- mean(lasso_train_false_positive_rate)
+  lasso_train_false_negative_rate[i] <- lasso_train_table[1, 2] / sum(lasso_train_table[1, 2] + lasso_train_table[2, 2])
+  lasso_train_false_negative_rate_mean <- mean(lasso_train_false_negative_rate)
+  lasso_train_accuracy[i] <- (lasso_train_table[1, 1] + lasso_train_table[2, 2]) / sum(lasso_train_table)
+  lasso_train_accuracy_mean <- mean(lasso_train_accuracy)
+  lasso_train_F1_score[i] <- 2 * (lasso_train_table[2, 2]) / sum(2 * lasso_train_table[2, 2] + lasso_train_table[1, 2] + lasso_train_table[2, 1])
+  lasso_train_F1_score_mean <- mean(lasso_train_F1_score)
+  lasso_train_positive_predictive_value[i] <- lasso_train_table[2, 2] / sum(lasso_train_table[2, 2] + lasso_train_table[2, 1])
+  lasso_train_positive_predictive_value_mean <- mean(lasso_train_positive_predictive_value)
+  lasso_train_negative_predictive_value[i] <- lasso_train_table[1, 1] / sum(lasso_train_table[1, 1] + lasso_train_table[1, 2])
+  lasso_train_negative_predictive_value_mean <- mean(lasso_train_negative_predictive_value)
+
+  lasso_test_pred <- stats::predict(lasso_train_fit, as.matrix(test[, 1:ncol(test) -1]), family = "binomial")
+  lasso_test_predictions <- plogis(lasso_test_pred[, 1])
+  lasso_test_predictions_binomial <- rbinom(n = length(lasso_test_predictions), size = 1, prob = lasso_test_predictions)
+  lasso_test_table <- table(lasso_test_predictions_binomial, as.matrix(test$y))
+  lasso_test_true_positive_rate[i] <- lasso_test_table[2, 2] / sum(lasso_test_table[2, 2] + lasso_test_table[1, 2])
+  lasso_test_true_positive_rate_mean <- mean(lasso_test_true_positive_rate)
+  lasso_test_true_negative_rate[i] <- lasso_test_table[1, 1] / sum(lasso_test_table[1, 1] + lasso_test_table[2, 1])
+  lasso_test_true_negative_rate_mean <- mean(lasso_test_true_negative_rate)
+  lasso_test_false_positive_rate[i] <- lasso_test_table[2, 1] / sum(lasso_test_table[2, 1] + lasso_test_table[1, 1])
+  lasso_test_false_positive_rate_mean <- mean(lasso_test_false_positive_rate)
+  lasso_test_false_negative_rate[i] <- lasso_test_table[1, 2] / sum(lasso_test_table[1, 2] + lasso_test_table[2, 2])
+  lasso_test_false_negative_rate_mean <- mean(lasso_test_false_negative_rate)
+  lasso_test_accuracy[i] <- (lasso_test_table[1, 1] + lasso_test_table[2, 2]) / sum(lasso_test_table)
+  lasso_test_accuracy_mean <- mean(lasso_test_accuracy)
+  lasso_test_F1_score[i] <- 2 * (lasso_test_table[2, 2]) / sum(2 * lasso_test_table[2, 2] + lasso_test_table[1, 2] + lasso_test_table[2, 1])
+  lasso_test_F1_score_mean <- mean(lasso_test_F1_score)
+  lasso_test_positive_predictive_value[i] <- lasso_test_table[2, 2] / sum(lasso_test_table[2, 2] + lasso_test_table[2, 1])
+  lasso_test_positive_predictive_value_mean <- mean(lasso_test_positive_predictive_value)
+  lasso_test_negative_predictive_value[i] <- lasso_test_table[1, 1] / sum(lasso_test_table[1, 1] + lasso_test_table[1, 2])
+  lasso_test_negative_predictive_value_mean <- mean(lasso_test_negative_predictive_value)
+
+  lasso_validation_pred <- stats::predict(lasso_train_fit, as.matrix(validation[, 1:ncol(validation) -1]), family = "binomial")
+  lasso_validation_predictions <- plogis(lasso_validation_pred[, 1])
+  lasso_validation_predictions_binomial <- rbinom(n = length(lasso_validation_predictions), size = 1, prob = lasso_validation_predictions)
+  lasso_validation_table <- table(lasso_validation_predictions_binomial, as.matrix(validation$y))
+  lasso_validation_true_positive_rate[i] <- lasso_validation_table[2, 2] / sum(lasso_validation_table[2, 2] + lasso_validation_table[1, 2])
+  lasso_validation_true_positive_rate_mean <- mean(lasso_validation_true_positive_rate)
+  lasso_validation_true_negative_rate[i] <- lasso_validation_table[1, 1] / sum(lasso_validation_table[1, 1] + lasso_validation_table[2, 1])
+  lasso_validation_true_negative_rate_mean <- mean(lasso_validation_true_negative_rate)
+  lasso_validation_false_positive_rate[i] <- lasso_validation_table[2, 1] / sum(lasso_validation_table[2, 1] + lasso_validation_table[1, 1])
+  lasso_validation_false_positive_rate_mean <- mean(lasso_validation_false_positive_rate)
+  lasso_validation_false_negative_rate[i] <- lasso_validation_table[1, 2] / sum(lasso_validation_table[1, 2] + lasso_validation_table[2, 2])
+  lasso_validation_false_negative_rate_mean <- mean(lasso_validation_false_negative_rate)
+  lasso_validation_accuracy[i] <- (lasso_validation_table[1, 1] + lasso_validation_table[2, 2]) / sum(lasso_validation_table)
+  lasso_validation_accuracy_mean <- mean(lasso_validation_accuracy)
+  lasso_validation_F1_score[i] <- 2 * (lasso_validation_table[2, 2]) / sum(2 * lasso_validation_table[2, 2] + lasso_validation_table[1, 2] + lasso_validation_table[2, 1])
+  lasso_validation_F1_score_mean <- mean(lasso_validation_F1_score)
+  lasso_validation_positive_predictive_value[i] <- lasso_validation_table[2, 2] / sum(lasso_validation_table[2, 2] + lasso_validation_table[2, 1])
+  lasso_validation_positive_predictive_value_mean <- mean(lasso_validation_positive_predictive_value)
+  lasso_validation_negative_predictive_value[i] <- lasso_validation_table[1, 1] / sum(lasso_validation_table[1, 1] + lasso_validation_table[1, 2])
+  lasso_validation_negative_predictive_value_mean <- mean(lasso_validation_negative_predictive_value)
+
+  lasso_holdout_true_positive_rate[i] <- (lasso_test_true_positive_rate[i] + lasso_validation_true_positive_rate[i]) / 2
+  lasso_holdout_true_positive_rate_mean <- mean(lasso_holdout_true_positive_rate)
+  lasso_holdout_true_negative_rate[i] <- (lasso_test_true_negative_rate[i] + lasso_validation_true_negative_rate[i]) / 2
+  lasso_holdout_true_negative_rate_mean <- mean(lasso_holdout_true_negative_rate)
+  lasso_holdout_false_positive_rate[i] <- (lasso_test_false_positive_rate[i] + lasso_validation_false_positive_rate[i]) / 2
+  lasso_holdout_false_positive_rate_mean <- mean(lasso_holdout_false_positive_rate)
+  lasso_holdout_false_negative_rate[i] <- (lasso_test_false_negative_rate[i] + lasso_validation_false_negative_rate[i]) / 2
+  lasso_holdout_false_negative_rate_mean <- mean(lasso_holdout_false_negative_rate)
+  lasso_holdout_accuracy[i] <- (lasso_test_accuracy[i] + lasso_validation_accuracy[i]) / 2
+  lasso_holdout_accuracy_mean <- mean(lasso_holdout_accuracy)
+  lasso_holdout_accuracy_sd <- sd(lasso_holdout_accuracy)
+  lasso_holdout_F1_score[i] <- (lasso_test_F1_score[i] + lasso_validation_F1_score[i]) / 2
+  lasso_holdout_F1_score_mean <- mean(lasso_holdout_F1_score)
+  lasso_holdout_positive_predictive_value[i] <- (lasso_test_positive_predictive_value[i] + lasso_validation_positive_predictive_value[i]) / 2
+  lasso_holdout_positive_predictive_value_mean <- mean(lasso_holdout_positive_predictive_value)
+  lasso_holdout_negative_predictive_value[i] <- (lasso_test_negative_predictive_value[i] + lasso_validation_negative_predictive_value[i]) / 2
+  lasso_holdout_negative_predictive_value_mean <- mean(lasso_holdout_negative_predictive_value)
+  lasso_holdout_overfitting[i] <- lasso_holdout_accuracy[i] / lasso_train_accuracy[i]
+  lasso_holdout_overfitting_mean <- mean(lasso_holdout_overfitting)
+  lasso_holdout_overfitting_range <- range(lasso_holdout_overfitting)
+  lasso_holdout_overfitting_sd <- sd(lasso_holdout_overfitting)
+
+  lasso_table <- lasso_test_table + lasso_validation_table
+  lasso_table_total <- lasso_table_total + lasso_table
+
+  lasso_end <- Sys.time()
+  lasso_duration[i] <- lasso_end - lasso_start
+  lasso_duration_mean <- mean(lasso_duration)
+  lasso_duration_sd <- sd(lasso_duration)
+
 
   #### Linear ####
   linear_start <- Sys.time()
@@ -2442,7 +1731,9 @@ for (i in 1:numresamples) {
     linear_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = train01, model = "LMModel")
   }
   linear_train_pred <- stats::predict(linear_train_fit, train01, type = "response")
-  linear_train_table <- table(linear_train_pred, y_train)
+  linear_train_predictions <- plogis(as.numeric(linear_train_pred))
+  linear_train_predictions_binomial <- rbinom(n = length(linear_train_predictions), size = 1, prob = linear_train_predictions)
+  linear_train_table <- table(linear_train_predictions_binomial, y_train)
   linear_train_true_positive_rate[i] <- linear_train_table[2, 2] / sum(linear_train_table[2, 2] + linear_train_table[1, 2])
   linear_train_true_positive_rate_mean <- mean(linear_train_true_positive_rate)
   linear_train_true_negative_rate[i] <- linear_train_table[1, 1] / sum(linear_train_table[1, 1] + linear_train_table[2, 1])
@@ -2461,7 +1752,9 @@ for (i in 1:numresamples) {
   linear_train_negative_predictive_value_mean <- mean(linear_train_negative_predictive_value)
 
   linear_test_pred <- stats::predict(linear_train_fit, test01, type = "response")
-  linear_test_table <- table(linear_test_pred, y_test)
+  linear_test_predictions <- plogis(as.numeric(linear_test_pred))
+  linear_test_predictions_binomial <- rbinom(n = length(linear_test_predictions), size = 1, prob = linear_test_predictions)
+  linear_test_table <- table(linear_test_predictions_binomial, y_test)
   linear_test_true_positive_rate[i] <- linear_test_table[2, 2] / sum(linear_test_table[2, 2] + linear_test_table[1, 2])
   linear_test_true_positive_rate_mean <- mean(linear_test_true_positive_rate)
   linear_test_true_negative_rate[i] <- linear_test_table[1, 1] / sum(linear_test_table[1, 1] + linear_test_table[2, 1])
@@ -2480,7 +1773,9 @@ for (i in 1:numresamples) {
   linear_test_negative_predictive_value_mean <- mean(linear_test_negative_predictive_value)
 
   linear_validation_pred <- stats::predict(linear_train_fit, validation01, type = "response")
-  linear_validation_table <- table(linear_validation_pred, y_validation)
+  linear_validation_predictions <- plogis(as.numeric(linear_validation_pred))
+  linear_validation_predictions_binomial <- rbinom(n = length(linear_validation_predictions), size = 1, prob = linear_validation_predictions)
+  linear_validation_table <- table(linear_validation_predictions_binomial, y_validation)
   linear_validation_true_positive_rate[i] <- linear_validation_table[2, 2] / sum(linear_validation_table[2, 2] + linear_validation_table[1, 2])
   linear_validation_true_positive_rate_mean <- mean(linear_validation_true_positive_rate)
   linear_validation_true_negative_rate[i] <- linear_validation_table[1, 1] / sum(linear_validation_table[1, 1] + linear_validation_table[2, 1])
@@ -2542,7 +1837,9 @@ for (i in 1:numresamples) {
     lda_train_fit <- MASS::lda(as.factor(y) ~ ., data = train01, model = "LMModel")
   }
   lda_train_pred <- stats::predict(lda_train_fit, train01, type = "response")
-  lda_train_table <- table(lda_train_pred$class, y_train)
+  lda_train_predictions <- plogis(as.numeric(lda_train_pred$class))
+  lda_train_predictions_binomial <- rbinom(n = length(lda_train_predictions), size = 1, prob = lda_train_predictions)
+  lda_train_table <- table(lda_train_predictions_binomial, y_train)
   lda_train_true_positive_rate[i] <- lda_train_table[2, 2] / sum(lda_train_table[2, 2] + lda_train_table[1, 2])
   lda_train_true_positive_rate_mean <- mean(lda_train_true_positive_rate)
   lda_train_true_negative_rate[i] <- lda_train_table[1, 1] / sum(lda_train_table[1, 1] + lda_train_table[2, 1])
@@ -2561,7 +1858,9 @@ for (i in 1:numresamples) {
   lda_train_negative_predictive_value_mean <- mean(lda_train_negative_predictive_value)
 
   lda_test_pred <- stats::predict(lda_train_fit, test01, type = "response")
-  lda_test_table <- table(lda_test_pred$class, y_test)
+  lda_test_predictions <- plogis(as.numeric(lda_test_pred$class))
+  lda_test_predictions_binomial <- rbinom(n = length(lda_test_predictions), size = 1, prob = lda_test_predictions)
+  lda_test_table <- table(lda_test_predictions_binomial, y_test)
   lda_test_true_positive_rate[i] <- lda_test_table[2, 2] / sum(lda_test_table[2, 2] + lda_test_table[1, 2])
   lda_test_true_positive_rate_mean <- mean(lda_test_true_positive_rate)
   lda_test_true_negative_rate[i] <- lda_test_table[1, 1] / sum(lda_test_table[1, 1] + lda_test_table[2, 1])
@@ -2580,7 +1879,9 @@ for (i in 1:numresamples) {
   lda_test_negative_predictive_value_mean <- mean(lda_test_negative_predictive_value)
 
   lda_validation_pred <- stats::predict(lda_train_fit, validation01, type = "response")
-  lda_validation_table <- table(lda_validation_pred$class, y_validation)
+  lda_validation_predictions <- plogis(as.numeric(lda_validation_pred$class))
+  lda_validation_predictions_binomial <- rbinom(n = length(lda_validation_predictions), size = 1, prob = lda_validation_predictions)
+  lda_validation_table <- table(lda_validation_predictions_binomial, y_validation)
   lda_validation_true_positive_rate[i] <- lda_validation_table[2, 2] / sum(lda_validation_table[2, 2] + lda_validation_table[1, 2])
   lda_validation_true_positive_rate_mean <- mean(lda_validation_true_positive_rate)
   lda_validation_true_negative_rate[i] <- lda_validation_table[1, 1] / sum(lda_validation_table[1, 1] + lda_validation_table[2, 1])
@@ -2629,208 +1930,6 @@ for (i in 1:numresamples) {
   lda_duration_sd <- sd(lda_duration)
 
 
-  #### Mixed Discriminant analysis ####
-  mda_start <- Sys.time()
-
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    mda_train_fit <- mda::mda(formula = as.factor(y) ~ ., data = train01)
-  }
-  if(set_seed == "N"){
-    mda_train_fit <- mda::mda(formula = as.factor(y) ~ ., data = train01)
-  }
-  mda_train_pred <- stats::predict(mda_train_fit, train01, type = "posterior")
-  mda_train_predictions <- ifelse(mda_train_pred > 0.50, 1, 0)[, 2]
-  mda_train_table <- table(mda_train_predictions, y_train)
-  mda_train_true_positive_rate[i] <- mda_train_table[2, 2] / sum(mda_train_table[2, 2] + mda_train_table[1, 2])
-  mda_train_true_positive_rate_mean <- mean(mda_train_true_positive_rate)
-  mda_train_true_negative_rate[i] <- mda_train_table[1, 1] / sum(mda_train_table[1, 1] + mda_train_table[2, 1])
-  mda_train_true_negative_rate_mean <- mean(mda_train_true_negative_rate)
-  mda_train_false_positive_rate[i] <- mda_train_table[2, 1] / sum(mda_train_table[2, 1] + mda_train_table[1, 1])
-  mda_train_false_positive_rate_mean <- mean(mda_train_false_positive_rate)
-  mda_train_false_negative_rate[i] <- mda_train_table[1, 2] / sum(mda_train_table[1, 2] + mda_train_table[2, 2])
-  mda_train_false_negative_rate_mean <- mean(mda_train_false_negative_rate)
-  mda_train_accuracy[i] <- (mda_train_table[1, 1] + mda_train_table[2, 2]) / sum(mda_train_table)
-  mda_train_accuracy_mean <- mean(mda_train_accuracy)
-  mda_train_F1_score[i] <- 2 * (mda_train_table[2, 2]) / sum(2 * mda_train_table[2, 2] + mda_train_table[1, 2] + mda_train_table[2, 1])
-  mda_train_F1_score_mean <- mean(mda_train_F1_score)
-  mda_train_positive_predictive_value[i] <- mda_train_table[2, 2] / sum(mda_train_table[2, 2] + mda_train_table[2, 1])
-  mda_train_positive_predictive_value_mean <- mean(mda_train_positive_predictive_value)
-  mda_train_negative_predictive_value[i] <- mda_train_table[1, 1] / sum(mda_train_table[1, 1] + mda_train_table[1, 2])
-  mda_train_negative_predictive_value_mean <- mean(mda_train_negative_predictive_value)
-
-  mda_test_pred <- stats::predict(mda_train_fit, test01, type = "posterior")
-  mda_test_predictions <- ifelse(mda_test_pred > 0.50, 1, 0)[, 2]
-  mda_test_table <- table(mda_test_predictions, y_test)
-  mda_test_true_positive_rate[i] <- mda_test_table[2, 2] / sum(mda_test_table[2, 2] + mda_test_table[1, 2])
-  mda_test_true_positive_rate_mean <- mean(mda_test_true_positive_rate)
-  mda_test_true_negative_rate[i] <- mda_test_table[1, 1] / sum(mda_test_table[1, 1] + mda_test_table[2, 1])
-  mda_test_true_negative_rate_mean <- mean(mda_test_true_negative_rate)
-  mda_test_false_positive_rate[i] <- mda_test_table[2, 1] / sum(mda_test_table[2, 1] + mda_test_table[1, 1])
-  mda_test_false_positive_rate_mean <- mean(mda_test_false_positive_rate)
-  mda_test_false_negative_rate[i] <- mda_test_table[1, 2] / sum(mda_test_table[1, 2] + mda_test_table[2, 2])
-  mda_test_false_negative_rate_mean <- mean(mda_test_false_negative_rate)
-  mda_test_accuracy[i] <- (mda_test_table[1, 1] + mda_test_table[2, 2]) / sum(mda_test_table)
-  mda_test_accuracy_mean <- mean(mda_test_accuracy)
-  mda_test_F1_score[i] <- 2 * (mda_test_table[2, 2]) / sum(2 * mda_test_table[2, 2] + mda_test_table[1, 2] + mda_test_table[2, 1])
-  mda_test_F1_score_mean <- mean(mda_test_F1_score)
-  mda_test_positive_predictive_value[i] <- mda_test_table[2, 2] / sum(mda_test_table[2, 2] + mda_test_table[2, 1])
-  mda_test_positive_predictive_value_mean <- mean(mda_test_positive_predictive_value)
-  mda_test_negative_predictive_value[i] <- mda_test_table[1, 1] / sum(mda_test_table[1, 1] + mda_test_table[1, 2])
-  mda_test_negative_predictive_value_mean <- mean(mda_test_negative_predictive_value)
-
-  mda_validation_pred <- stats::predict(mda_train_fit, validation01, type = "posterior")
-  mda_validation_predictions <- ifelse(mda_validation_pred > 0.50, 1, 0)[, 2]
-  mda_validation_table <- table(mda_validation_predictions, y_validation)
-  mda_validation_true_positive_rate[i] <- mda_validation_table[2, 2] / sum(mda_validation_table[2, 2] + mda_validation_table[1, 2])
-  mda_validation_true_positive_rate_mean <- mean(mda_validation_true_positive_rate)
-  mda_validation_true_negative_rate[i] <- mda_validation_table[1, 1] / sum(mda_validation_table[1, 1] + mda_validation_table[2, 1])
-  mda_validation_true_negative_rate_mean <- mean(mda_validation_true_negative_rate)
-  mda_validation_false_positive_rate[i] <- mda_validation_table[2, 1] / sum(mda_validation_table[2, 1] + mda_validation_table[1, 1])
-  mda_validation_false_positive_rate_mean <- mean(mda_validation_false_positive_rate)
-  mda_validation_false_negative_rate[i] <- mda_validation_table[1, 2] / sum(mda_validation_table[1, 2] + mda_validation_table[2, 2])
-  mda_validation_false_negative_rate_mean <- mean(mda_validation_false_negative_rate)
-  mda_validation_accuracy[i] <- (mda_validation_table[1, 1] + mda_validation_table[2, 2]) / sum(mda_validation_table)
-  mda_validation_accuracy_mean <- mean(mda_validation_accuracy)
-  mda_validation_F1_score[i] <- 2 * (mda_validation_table[2, 2]) / sum(2 * mda_validation_table[2, 2] + mda_validation_table[1, 2] + mda_validation_table[2, 1])
-  mda_validation_F1_score_mean <- mean(mda_validation_F1_score)
-  mda_validation_positive_predictive_value[i] <- mda_validation_table[2, 2] / sum(mda_validation_table[2, 2] + mda_validation_table[2, 1])
-  mda_validation_positive_predictive_value_mean <- mean(mda_validation_positive_predictive_value)
-  mda_validation_negative_predictive_value[i] <- mda_validation_table[1, 1] / sum(mda_validation_table[1, 1] + mda_validation_table[1, 2])
-  mda_validation_negative_predictive_value_mean <- mean(mda_validation_negative_predictive_value)
-
-  mda_holdout_true_positive_rate[i] <- (mda_test_true_positive_rate[i] + mda_validation_true_positive_rate[i]) / 2
-  mda_holdout_true_positive_rate_mean <- mean(mda_holdout_true_positive_rate)
-  mda_holdout_true_negative_rate[i] <- (mda_test_true_negative_rate[i] + mda_validation_true_negative_rate[i]) / 2
-  mda_holdout_true_negative_rate_mean <- mean(mda_holdout_true_negative_rate)
-  mda_holdout_false_positive_rate[i] <- (mda_test_false_positive_rate[i] + mda_validation_false_positive_rate[i]) / 2
-  mda_holdout_false_positive_rate_mean <- mean(mda_holdout_false_positive_rate)
-  mda_holdout_false_negative_rate[i] <- (mda_test_false_negative_rate[i] + mda_validation_false_negative_rate[i]) / 2
-  mda_holdout_false_negative_rate_mean <- mean(mda_holdout_false_negative_rate)
-  mda_holdout_accuracy[i] <- (mda_test_accuracy[i] + mda_validation_accuracy[i]) / 2
-  mda_holdout_accuracy_mean <- mean(mda_holdout_accuracy)
-  mda_holdout_accuracy_sd <- sd(mda_holdout_accuracy)
-  mda_holdout_F1_score[i] <- (mda_test_F1_score[i] + mda_validation_F1_score[i]) / 2
-  mda_holdout_F1_score_mean <- mean(mda_holdout_F1_score)
-  mda_holdout_positive_predictive_value[i] <- (mda_test_positive_predictive_value[i] + mda_validation_positive_predictive_value[i]) / 2
-  mda_holdout_positive_predictive_value_mean <- mean(mda_holdout_positive_predictive_value)
-  mda_holdout_negative_predictive_value[i] <- (mda_test_negative_predictive_value[i] + mda_validation_negative_predictive_value[i]) / 2
-  mda_holdout_negative_predictive_value_mean <- mean(mda_holdout_negative_predictive_value)
-  mda_holdout_overfitting[i] <- mda_holdout_accuracy[i] / mda_train_accuracy[i]
-  mda_holdout_overfitting_mean <- mean(mda_holdout_overfitting)
-  mda_holdout_overfitting_range <- range(mda_holdout_overfitting)
-  mda_holdout_overfitting_sd <- sd(mda_holdout_overfitting)
-
-  mda_table <- mda_test_table + mda_validation_table
-  mda_table_total <- mda_table_total + mda_table
-
-  mda_end <- Sys.time()
-  mda_duration[i] <- mda_end - mda_start
-  mda_duration_mean <- mean(mda_duration)
-  mda_duration_sd <- sd(mda_duration)
-
-
-  #### Naive Bayes ####
-  n_bayes_start <- Sys.time()
-
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    n_bayes_train_fit <- e1071::naiveBayes(as.factor(y_train) ~ ., data = train)
-  }
-  if(set_seed == "N"){
-    n_bayes_train_fit <- e1071::naiveBayes(as.factor(y_train) ~ ., data = train)
-  }
-  n_bayes_train_pred <- stats::predict(n_bayes_train_fit, train01, type = "raw")
-  n_bayes_train_predictions <- ifelse(n_bayes_train_pred > 0.50, 1, 0)[, 2]
-  n_bayes_train_table <- table(n_bayes_train_predictions, y_train)
-  n_bayes_train_true_positive_rate[i] <- n_bayes_train_table[2, 2] / sum(n_bayes_train_table[2, 2] + n_bayes_train_table[1, 2])
-  n_bayes_train_true_positive_rate_mean <- mean(n_bayes_train_true_positive_rate)
-  n_bayes_train_true_negative_rate[i] <- n_bayes_train_table[1, 1] / sum(n_bayes_train_table[1, 1] + n_bayes_train_table[2, 1])
-  n_bayes_train_true_negative_rate_mean <- mean(n_bayes_train_true_negative_rate)
-  n_bayes_train_false_positive_rate[i] <- n_bayes_train_table[2, 1] / sum(n_bayes_train_table[2, 1] + n_bayes_train_table[1, 1])
-  n_bayes_train_false_positive_rate_mean <- mean(n_bayes_train_false_positive_rate)
-  n_bayes_train_false_negative_rate[i] <- n_bayes_train_table[1, 2] / sum(n_bayes_train_table[1, 2] + n_bayes_train_table[2, 2])
-  n_bayes_train_false_negative_rate_mean <- mean(n_bayes_train_false_negative_rate)
-  n_bayes_train_accuracy[i] <- (n_bayes_train_table[1, 1] + n_bayes_train_table[2, 2]) / sum(n_bayes_train_table)
-  n_bayes_train_accuracy_mean <- mean(n_bayes_train_accuracy)
-  n_bayes_train_F1_score[i] <- 2 * (n_bayes_train_table[2, 2]) / sum(2 * n_bayes_train_table[2, 2] + n_bayes_train_table[1, 2] + n_bayes_train_table[2, 1])
-  n_bayes_train_F1_score_mean <- mean(n_bayes_train_F1_score)
-  n_bayes_train_positive_predictive_value[i] <- n_bayes_train_table[2, 2] / sum(n_bayes_train_table[2, 2] + n_bayes_train_table[2, 1])
-  n_bayes_train_positive_predictive_value_mean <- mean(n_bayes_train_positive_predictive_value)
-  n_bayes_train_negative_predictive_value[i] <- n_bayes_train_table[1, 1] / sum(n_bayes_train_table[1, 1] + n_bayes_train_table[1, 2])
-  n_bayes_train_negative_predictive_value_mean <- mean(n_bayes_train_negative_predictive_value)
-
-  n_bayes_test_pred <- stats::predict(n_bayes_train_fit, test01, type = "raw")
-  n_bayes_test_predictions <- ifelse(n_bayes_test_pred > 0.50, 1, 0)[, 2]
-  n_bayes_test_table <- table(n_bayes_test_predictions, y_test)
-  n_bayes_test_true_positive_rate[i] <- n_bayes_test_table[2, 2] / sum(n_bayes_test_table[2, 2] + n_bayes_test_table[1, 2])
-  n_bayes_test_true_positive_rate_mean <- mean(n_bayes_test_true_positive_rate)
-  n_bayes_test_true_negative_rate[i] <- n_bayes_test_table[1, 1] / sum(n_bayes_test_table[1, 1] + n_bayes_test_table[2, 1])
-  n_bayes_test_true_negative_rate_mean <- mean(n_bayes_test_true_negative_rate)
-  n_bayes_test_false_positive_rate[i] <- n_bayes_test_table[2, 1] / sum(n_bayes_test_table[2, 1] + n_bayes_test_table[1, 1])
-  n_bayes_test_false_positive_rate_mean <- mean(n_bayes_test_false_positive_rate)
-  n_bayes_test_false_negative_rate[i] <- n_bayes_test_table[1, 2] / sum(n_bayes_test_table[1, 2] + n_bayes_test_table[2, 2])
-  n_bayes_test_false_negative_rate_mean <- mean(n_bayes_test_false_negative_rate)
-  n_bayes_test_accuracy[i] <- (n_bayes_test_table[1, 1] + n_bayes_test_table[2, 2]) / sum(n_bayes_test_table)
-  n_bayes_test_accuracy_mean <- mean(n_bayes_test_accuracy)
-  n_bayes_test_F1_score[i] <- 2 * (n_bayes_test_table[2, 2]) / sum(2 * n_bayes_test_table[2, 2] + n_bayes_test_table[1, 2] + n_bayes_test_table[2, 1])
-  n_bayes_test_F1_score_mean <- mean(n_bayes_test_F1_score)
-  n_bayes_test_positive_predictive_value[i] <- n_bayes_test_table[2, 2] / sum(n_bayes_test_table[2, 2] + n_bayes_test_table[2, 1])
-  n_bayes_test_positive_predictive_value_mean <- mean(n_bayes_test_positive_predictive_value)
-  n_bayes_test_negative_predictive_value[i] <- n_bayes_test_table[1, 1] / sum(n_bayes_test_table[1, 1] + n_bayes_test_table[1, 2])
-  n_bayes_test_negative_predictive_value_mean <- mean(n_bayes_test_negative_predictive_value)
-
-  n_bayes_validation_pred <- stats::predict(n_bayes_train_fit, validation01, type = "raw")
-  n_bayes_validation_predictions <- ifelse(n_bayes_validation_pred > 0.50, 1, 0)[, 2]
-  n_bayes_validation_table <- table(n_bayes_validation_predictions, y_validation)
-  n_bayes_validation_true_positive_rate[i] <- n_bayes_validation_table[2, 2] / sum(n_bayes_validation_table[2, 2] + n_bayes_validation_table[1, 2])
-  n_bayes_validation_true_positive_rate_mean <- mean(n_bayes_validation_true_positive_rate)
-  n_bayes_validation_true_negative_rate[i] <- n_bayes_validation_table[1, 1] / sum(n_bayes_validation_table[1, 1] + n_bayes_validation_table[2, 1])
-  n_bayes_validation_true_negative_rate_mean <- mean(n_bayes_validation_true_negative_rate)
-  n_bayes_validation_false_positive_rate[i] <- n_bayes_validation_table[2, 1] / sum(n_bayes_validation_table[2, 1] + n_bayes_validation_table[1, 1])
-  n_bayes_validation_false_positive_rate_mean <- mean(n_bayes_validation_false_positive_rate)
-  n_bayes_validation_false_negative_rate[i] <- n_bayes_validation_table[1, 2] / sum(n_bayes_validation_table[1, 2] + n_bayes_validation_table[2, 2])
-  n_bayes_validation_false_negative_rate_mean <- mean(n_bayes_validation_false_negative_rate)
-  n_bayes_validation_accuracy[i] <- (n_bayes_validation_table[1, 1] + n_bayes_validation_table[2, 2]) / sum(n_bayes_validation_table)
-  n_bayes_validation_accuracy_mean <- mean(n_bayes_validation_accuracy)
-  n_bayes_validation_F1_score[i] <- 2 * (n_bayes_validation_table[2, 2]) / sum(2 * n_bayes_validation_table[2, 2] + n_bayes_validation_table[1, 2] + n_bayes_validation_table[2, 1])
-  n_bayes_validation_F1_score_mean <- mean(n_bayes_validation_F1_score)
-  n_bayes_validation_positive_predictive_value[i] <- n_bayes_validation_table[2, 2] / sum(n_bayes_validation_table[2, 2] + n_bayes_validation_table[2, 1])
-  n_bayes_validation_positive_predictive_value_mean <- mean(n_bayes_validation_positive_predictive_value)
-  n_bayes_validation_negative_predictive_value[i] <- n_bayes_validation_table[1, 1] / sum(n_bayes_validation_table[1, 1] + n_bayes_validation_table[1, 2])
-  n_bayes_validation_negative_predictive_value_mean <- mean(n_bayes_validation_negative_predictive_value)
-
-  n_bayes_holdout_true_positive_rate[i] <- (n_bayes_test_true_positive_rate[i] + n_bayes_validation_true_positive_rate[i]) / 2
-  n_bayes_holdout_true_positive_rate_mean <- mean(n_bayes_holdout_true_positive_rate)
-  n_bayes_holdout_true_negative_rate[i] <- (n_bayes_test_true_negative_rate[i] + n_bayes_validation_true_negative_rate[i]) / 2
-  n_bayes_holdout_true_negative_rate_mean <- mean(n_bayes_holdout_true_negative_rate)
-  n_bayes_holdout_false_positive_rate[i] <- (n_bayes_test_false_positive_rate[i] + n_bayes_validation_false_positive_rate[i]) / 2
-  n_bayes_holdout_false_positive_rate_mean <- mean(n_bayes_holdout_false_positive_rate)
-  n_bayes_holdout_false_negative_rate[i] <- (n_bayes_test_false_negative_rate[i] + n_bayes_validation_false_negative_rate[i]) / 2
-  n_bayes_holdout_false_negative_rate_mean <- mean(n_bayes_holdout_false_negative_rate)
-  n_bayes_holdout_accuracy[i] <- (n_bayes_test_accuracy[i] + n_bayes_validation_accuracy[i]) / 2
-  n_bayes_holdout_accuracy_mean <- mean(n_bayes_holdout_accuracy)
-  n_bayes_holdout_accuracy_sd <- sd(n_bayes_holdout_accuracy)
-  n_bayes_holdout_F1_score[i] <- (n_bayes_test_F1_score[i] + n_bayes_validation_F1_score[i]) / 2
-  n_bayes_holdout_F1_score_mean <- mean(n_bayes_holdout_F1_score)
-  n_bayes_holdout_positive_predictive_value[i] <- (n_bayes_test_positive_predictive_value[i] + n_bayes_validation_positive_predictive_value[i]) / 2
-  n_bayes_holdout_positive_predictive_value_mean <- mean(n_bayes_holdout_positive_predictive_value)
-  n_bayes_holdout_negative_predictive_value[i] <- (n_bayes_test_negative_predictive_value[i] + n_bayes_validation_negative_predictive_value[i]) / 2
-  n_bayes_holdout_negative_predictive_value_mean <- mean(n_bayes_holdout_negative_predictive_value)
-  n_bayes_holdout_overfitting[i] <- n_bayes_holdout_accuracy[i] / n_bayes_train_accuracy[i]
-  n_bayes_holdout_overfitting_mean <- mean(n_bayes_holdout_overfitting)
-  n_bayes_holdout_overfitting_range <- range(n_bayes_holdout_overfitting)
-  n_bayes_holdout_overfitting_sd <- sd(n_bayes_holdout_overfitting)
-
-  n_bayes_table <- n_bayes_test_table + n_bayes_validation_table
-  n_bayes_table_total <- n_bayes_table_total + n_bayes_table
-
-  n_bayes_end <- Sys.time()
-  n_bayes_duration[i] <- n_bayes_end - n_bayes_start
-  n_bayes_duration_mean <- mean(n_bayes_duration)
-  n_bayes_duration_sd <- sd(n_bayes_duration)
-
-
   #### Penalized Discriminant Analysis ####
   pda_start <- Sys.time()
 
@@ -2842,7 +1941,9 @@ for (i in 1:numresamples) {
     pda_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = train01, model = "PDAModel")
   }
   pda_train_pred <- stats::predict(pda_train_fit, train01, type = "response")
-  pda_train_table <- table(pda_train_pred, y_train)
+  pda_train_predictions <- plogis(as.numeric(pda_train_pred))
+  pda_train_predictions_binomial <- rbinom(n = length(pda_train_predictions), size = 1, prob = pda_train_predictions)
+  pda_train_table <- table(pda_train_predictions_binomial, y_train)
   pda_train_true_positive_rate[i] <- pda_train_table[2, 2] / sum(pda_train_table[2, 2] + pda_train_table[1, 2])
   pda_train_true_positive_rate_mean <- mean(pda_train_true_positive_rate)
   pda_train_true_negative_rate[i] <- pda_train_table[1, 1] / sum(pda_train_table[1, 1] + pda_train_table[2, 1])
@@ -2861,7 +1962,9 @@ for (i in 1:numresamples) {
   pda_train_negative_predictive_value_mean <- mean(pda_train_negative_predictive_value)
 
   pda_test_pred <- stats::predict(pda_train_fit, test01, type = "response")
-  pda_test_table <- table(pda_test_pred, y_test)
+  pda_test_predictions <- plogis(as.numeric(pda_test_pred))
+  pda_test_predictions_binomial <- rbinom(n = length(pda_test_predictions), size = 1, prob = pda_test_predictions)
+  pda_test_table <- table(pda_test_predictions_binomial, y_test)
   pda_test_true_positive_rate[i] <- pda_test_table[2, 2] / sum(pda_test_table[2, 2] + pda_test_table[1, 2])
   pda_test_true_positive_rate_mean <- mean(pda_test_true_positive_rate)
   pda_test_true_negative_rate[i] <- pda_test_table[1, 1] / sum(pda_test_table[1, 1] + pda_test_table[2, 1])
@@ -2880,7 +1983,9 @@ for (i in 1:numresamples) {
   pda_test_negative_predictive_value_mean <- mean(pda_test_negative_predictive_value)
 
   pda_validation_pred <- stats::predict(pda_train_fit, validation01, type = "response")
-  pda_validation_table <- table(pda_validation_pred, y_validation)
+  pda_validation_predictions <- plogis(as.numeric(pda_validation_pred))
+  pda_validation_predictions_binomial <- rbinom(n = length(pda_validation_predictions), size = 1, prob = pda_validation_predictions)
+  pda_validation_table <- table(pda_validation_predictions_binomial, y_validation)
   pda_validation_true_positive_rate[i] <- pda_validation_table[2, 2] / sum(pda_validation_table[2, 2] + pda_validation_table[1, 2])
   pda_validation_true_positive_rate_mean <- mean(pda_validation_true_positive_rate)
   pda_validation_true_negative_rate[i] <- pda_validation_table[1, 1] / sum(pda_validation_table[1, 1] + pda_validation_table[2, 1])
@@ -2940,7 +2045,9 @@ for (i in 1:numresamples) {
     qda_train_fit <- MASS::qda(as.factor(y) ~ ., data = train01)
   }
   qda_train_pred <- stats::predict(qda_train_fit, train01, type = "response")
-  qda_train_table <- table(qda_train_pred$class, y_train)
+  qda_train_predictions <- plogis(as.numeric(qda_train_pred$class))
+  qda_train_predictions_binomial <- rbinom(n = length(qda_train_predictions), size = 1, prob = qda_train_predictions)
+  qda_train_table <- table(qda_train_predictions_binomial, y_train)
   qda_train_true_positive_rate[i] <- qda_train_table[2, 2] / sum(qda_train_table[2, 2] + qda_train_table[1, 2])
   qda_train_true_positive_rate_mean <- mean(qda_train_true_positive_rate)
   qda_train_true_negative_rate[i] <- qda_train_table[1, 1] / sum(qda_train_table[1, 1] + qda_train_table[2, 1])
@@ -2959,7 +2066,9 @@ for (i in 1:numresamples) {
   qda_train_negative_predictive_value_mean <- mean(qda_train_negative_predictive_value)
 
   qda_test_pred <- stats::predict(qda_train_fit, test01, type = "response")
-  qda_test_table <- table(qda_test_pred$class, y_test)
+  qda_test_predictions <- plogis(as.numeric(qda_test_pred$class))
+  qda_test_predictions_binomial <- rbinom(n = length(qda_test_predictions), size = 1, prob = qda_test_predictions)
+  qda_test_table <- table(qda_test_predictions_binomial, y_test)
   qda_test_true_positive_rate[i] <- qda_test_table[2, 2] / sum(qda_test_table[2, 2] + qda_test_table[1, 2])
   qda_test_true_positive_rate_mean <- mean(qda_test_true_positive_rate)
   qda_test_true_negative_rate[i] <- qda_test_table[1, 1] / sum(qda_test_table[1, 1] + qda_test_table[2, 1])
@@ -2978,7 +2087,9 @@ for (i in 1:numresamples) {
   qda_test_negative_predictive_value_mean <- mean(qda_test_negative_predictive_value)
 
   qda_validation_pred <- stats::predict(qda_train_fit, validation01, type = "response")
-  qda_validation_table <- table(qda_validation_pred$class, y_validation)
+  qda_validation_predictions <- plogis(as.numeric(qda_validation_pred$class))
+  qda_validation_predictions_binomial <- rbinom(n = length(qda_validation_predictions), size = 1, prob = qda_validation_predictions)
+  qda_validation_table <- table(qda_validation_predictions_binomial, y_validation)
   qda_validation_true_positive_rate[i] <- qda_validation_table[2, 2] / sum(qda_validation_table[2, 2] + qda_validation_table[1, 2])
   qda_validation_true_positive_rate_mean <- mean(qda_validation_true_positive_rate)
   qda_validation_true_negative_rate[i] <- qda_validation_table[1, 1] / sum(qda_validation_table[1, 1] + qda_validation_table[2, 1])
@@ -3027,19 +2138,21 @@ for (i in 1:numresamples) {
   qda_duration_sd <- sd(qda_duration)
 
 
+
   #### Random Forest ####
   rf_start <- Sys.time()
 
   if(set_seed == "Y"){
     set.seed(seed = seed)
-    rf_train_fit <- randomForest(x = train, y = as.factor(y_train), data = df)
+    rf_train_fit <- randomForest(x = train, y = as.factor(y_train), data = df, family = binomial(link = "logit"))
   }
   if(set_seed == "N"){
-    rf_train_fit <- randomForest(x = train, y = as.factor(y_train), data = df)
+    rf_train_fit <- randomForest(x = train, y = as.factor(y_train), data = df, family = binomial(link = "logit"))
   }
-  rf_train_pred <- stats::predict(rf_train_fit, train01, type = "prob")
-  rf_train_probabilities <- ifelse(rf_train_pred > 0.50, 1, 0)[, 2]
-  rf_train_table <- table(rf_train_probabilities, y_train)
+  rf_train_pred <- stats::predict(rf_train_fit, train01, type = "response")
+  rf_train_predictions <- plogis(as.numeric(rf_train_pred))
+  rf_train_predictions_binomial <- rbinom(n = length(rf_train_predictions), size = 1, prob = rf_train_predictions)
+  rf_train_table <- table(rf_train_predictions_binomial, y_train)
   rf_train_true_positive_rate[i] <- rf_train_table[2, 2] / sum(rf_train_table[2, 2] + rf_train_table[1, 2])
   rf_train_true_positive_rate_mean <- mean(rf_train_true_positive_rate)
   rf_train_true_negative_rate[i] <- rf_train_table[1, 1] / sum(rf_train_table[1, 1] + rf_train_table[2, 1])
@@ -3057,9 +2170,10 @@ for (i in 1:numresamples) {
   rf_train_negative_predictive_value[i] <- rf_train_table[1, 1] / sum(rf_train_table[1, 1] + rf_train_table[1, 2])
   rf_train_negative_predictive_value_mean <- mean(rf_train_negative_predictive_value)
 
-  rf_test_pred <- stats::predict(rf_train_fit, test01, type = "prob")
-  rf_test_probabilities <- ifelse(rf_test_pred > 0.50, 1, 0)[, 2]
-  rf_test_table <- table(rf_test_probabilities, y_test)
+  rf_test_pred <- stats::predict(rf_train_fit, test01, type = "response")
+  rf_test_predictions <- plogis(as.numeric(rf_test_pred))
+  rf_test_predictions_binomial <- rbinom(n = length(rf_test_predictions), size = 1, prob = rf_test_predictions)
+  rf_test_table <- table(rf_test_predictions_binomial, y_test)
   rf_test_true_positive_rate[i] <- rf_test_table[2, 2] / sum(rf_test_table[2, 2] + rf_test_table[1, 2])
   rf_test_true_positive_rate_mean <- mean(rf_test_true_positive_rate)
   rf_test_true_negative_rate[i] <- rf_test_table[1, 1] / sum(rf_test_table[1, 1] + rf_test_table[2, 1])
@@ -3077,9 +2191,10 @@ for (i in 1:numresamples) {
   rf_test_negative_predictive_value[i] <- rf_test_table[1, 1] / sum(rf_test_table[1, 1] + rf_test_table[1, 2])
   rf_test_negative_predictive_value_mean <- mean(rf_test_negative_predictive_value)
 
-  rf_validation_pred <- stats::predict(rf_train_fit, validation01, type = "prob")
-  rf_validation_probabilities <- ifelse(rf_validation_pred > 0.50, 1, 0)[, 2]
-  rf_validation_table <- table(rf_validation_probabilities, y_validation)
+  rf_validation_pred <- stats::predict(rf_train_fit, validation01, type = "response")
+  rf_validation_predictions <- plogis(as.numeric(rf_validation_pred))
+  rf_validation_predictions_binomial <- rbinom(n = length(rf_validation_predictions), size = 1, prob = rf_validation_predictions)
+  rf_validation_table <- table(rf_validation_predictions_binomial, y_validation)
   rf_validation_true_positive_rate[i] <- rf_validation_table[2, 2] / sum(rf_validation_table[2, 2] + rf_validation_table[1, 2])
   rf_validation_true_positive_rate_mean <- mean(rf_validation_true_positive_rate)
   rf_validation_true_negative_rate[i] <- rf_validation_table[1, 1] / sum(rf_validation_table[1, 1] + rf_validation_table[2, 1])
@@ -3127,206 +2242,113 @@ for (i in 1:numresamples) {
   rf_duration_mean <- mean(rf_duration)
   rf_duration_sd <- sd(rf_duration)
 
+  #### Ridge Regression ####
 
-  #### Ranger ####
-  ranger_start <- Sys.time()
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    ranger_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = train01, model = "RangerModel")
-  }
-  if(set_seed == "N"){
-    ranger_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = train01, model = "RangerModel")
-  }
-  ranger_train_pred <- stats::predict(ranger_train_fit, train01, type = "prob")
-  ranger_train_probabilities <- ifelse(ranger_train_pred > 0.5, 1, 0)
-  ranger_train_table <- table(ranger_train_probabilities, y_train)
-  ranger_train_true_positive_rate[i] <- ranger_train_table[2, 2] / sum(ranger_train_table[2, 2] + ranger_train_table[1, 2])
-  ranger_train_true_positive_rate_mean <- mean(ranger_train_true_positive_rate)
-  ranger_train_true_negative_rate[i] <- ranger_train_table[1, 1] / sum(ranger_train_table[1, 1] + ranger_train_table[2, 1])
-  ranger_train_true_negative_rate_mean <- mean(ranger_train_true_negative_rate)
-  ranger_train_false_positive_rate[i] <- ranger_train_table[2, 1] / sum(ranger_train_table[2, 1] + ranger_train_table[1, 1])
-  ranger_train_false_positive_rate_mean <- mean(ranger_train_false_positive_rate)
-  ranger_train_false_negative_rate[i] <- ranger_train_table[1, 2] / sum(ranger_train_table[1, 2] + ranger_train_table[2, 2])
-  ranger_train_false_negative_rate_mean <- mean(ranger_train_false_negative_rate)
-  ranger_train_accuracy[i] <- (ranger_train_table[1, 1] + ranger_train_table[2, 2]) / sum(ranger_train_table)
-  ranger_train_accuracy_mean <- mean(ranger_train_accuracy)
-  ranger_train_F1_score[i] <- 2 * (ranger_train_table[2, 2]) / sum(2 * ranger_train_table[2, 2] + ranger_train_table[1, 2] + ranger_train_table[2, 1])
-  ranger_train_F1_score_mean <- mean(ranger_train_F1_score)
-  ranger_train_positive_predictive_value[i] <- ranger_train_table[2, 2] / sum(ranger_train_table[2, 2] + ranger_train_table[2, 1])
-  ranger_train_positive_predictive_value_mean <- mean(ranger_train_positive_predictive_value)
-  ranger_train_negative_predictive_value[i] <- ranger_train_table[1, 1] / sum(ranger_train_table[1, 1] + ranger_train_table[1, 2])
-  ranger_train_negative_predictive_value_mean <- mean(ranger_train_negative_predictive_value)
-
-  ranger_test_pred <- stats::predict(ranger_train_fit, test01, type = "prob")
-  ranger_test_probabilities <- ifelse(ranger_test_pred > 0.5, 1, 0)
-  ranger_test_table <- table(ranger_test_probabilities, y_test)
-  ranger_test_true_positive_rate[i] <- ranger_test_table[2, 2] / sum(ranger_test_table[2, 2] + ranger_test_table[1, 2])
-  ranger_test_true_positive_rate_mean <- mean(ranger_test_true_positive_rate)
-  ranger_test_true_negative_rate[i] <- ranger_test_table[1, 1] / sum(ranger_test_table[1, 1] + ranger_test_table[2, 1])
-  ranger_test_true_negative_rate_mean <- mean(ranger_test_true_negative_rate)
-  ranger_test_false_positive_rate[i] <- ranger_test_table[2, 1] / sum(ranger_test_table[2, 1] + ranger_test_table[1, 1])
-  ranger_test_false_positive_rate_mean <- mean(ranger_test_false_positive_rate)
-  ranger_test_false_negative_rate[i] <- ranger_test_table[1, 2] / sum(ranger_test_table[1, 2] + ranger_test_table[2, 2])
-  ranger_test_false_negative_rate_mean <- mean(ranger_test_false_negative_rate)
-  ranger_test_accuracy[i] <- (ranger_test_table[1, 1] + ranger_test_table[2, 2]) / sum(ranger_test_table)
-  ranger_test_accuracy_mean <- mean(ranger_test_accuracy)
-  ranger_test_F1_score[i] <- 2 * (ranger_test_table[2, 2]) / sum(2 * ranger_test_table[2, 2] + ranger_test_table[1, 2] + ranger_test_table[2, 1])
-  ranger_test_F1_score_mean <- mean(ranger_test_F1_score)
-  ranger_test_positive_predictive_value[i] <- ranger_test_table[2, 2] / sum(ranger_test_table[2, 2] + ranger_test_table[2, 1])
-  ranger_test_positive_predictive_value_mean <- mean(ranger_test_positive_predictive_value)
-  ranger_test_negative_predictive_value[i] <- ranger_test_table[1, 1] / sum(ranger_test_table[1, 1] + ranger_test_table[1, 2])
-  ranger_test_negative_predictive_value_mean <- mean(ranger_test_negative_predictive_value)
-
-  ranger_validation_pred <- stats::predict(ranger_train_fit, validation01, type = "prob")
-  ranger_validation_probabilities <- ifelse(ranger_validation_pred > 0.5, 1, 0)
-  ranger_validation_table <- table(ranger_validation_probabilities, y_validation)
-  ranger_validation_true_positive_rate[i] <- ranger_validation_table[2, 2] / sum(ranger_validation_table[2, 2] + ranger_validation_table[1, 2])
-  ranger_validation_true_positive_rate_mean <- mean(ranger_validation_true_positive_rate)
-  ranger_validation_true_negative_rate[i] <- ranger_validation_table[1, 1] / sum(ranger_validation_table[1, 1] + ranger_validation_table[2, 1])
-  ranger_validation_true_negative_rate_mean <- mean(ranger_validation_true_negative_rate)
-  ranger_validation_false_positive_rate[i] <- ranger_validation_table[2, 1] / sum(ranger_validation_table[2, 1] + ranger_validation_table[1, 1])
-  ranger_validation_false_positive_rate_mean <- mean(ranger_validation_false_positive_rate)
-  ranger_validation_false_negative_rate[i] <- ranger_validation_table[1, 2] / sum(ranger_validation_table[1, 2] + ranger_validation_table[2, 2])
-  ranger_validation_false_negative_rate_mean <- mean(ranger_validation_false_negative_rate)
-  ranger_validation_accuracy[i] <- (ranger_validation_table[1, 1] + ranger_validation_table[2, 2]) / sum(ranger_validation_table)
-  ranger_validation_accuracy_mean <- mean(ranger_validation_accuracy)
-  ranger_validation_F1_score[i] <- 2 * (ranger_validation_table[2, 2]) / sum(2 * ranger_validation_table[2, 2] + ranger_validation_table[1, 2] + ranger_validation_table[2, 1])
-  ranger_validation_F1_score_mean <- mean(ranger_validation_F1_score)
-  ranger_validation_positive_predictive_value[i] <- ranger_validation_table[2, 2] / sum(ranger_validation_table[2, 2] + ranger_validation_table[2, 1])
-  ranger_validation_positive_predictive_value_mean <- mean(ranger_validation_positive_predictive_value)
-  ranger_validation_negative_predictive_value[i] <- ranger_validation_table[1, 1] / sum(ranger_validation_table[1, 1] + ranger_validation_table[1, 2])
-  ranger_validation_negative_predictive_value_mean <- mean(ranger_validation_negative_predictive_value)
-
-  ranger_holdout_true_positive_rate[i] <- (ranger_test_true_positive_rate[i] + ranger_validation_true_positive_rate[i]) / 2
-  ranger_holdout_true_positive_rate_mean <- mean(ranger_holdout_true_positive_rate)
-  ranger_holdout_true_negative_rate[i] <- (ranger_test_true_negative_rate[i] + ranger_validation_true_negative_rate[i]) / 2
-  ranger_holdout_true_negative_rate_mean <- mean(ranger_holdout_true_negative_rate)
-  ranger_holdout_false_positive_rate[i] <- (ranger_test_false_positive_rate[i] + ranger_validation_false_positive_rate[i]) / 2
-  ranger_holdout_false_positive_rate_mean <- mean(ranger_holdout_false_positive_rate)
-  ranger_holdout_false_negative_rate[i] <- (ranger_test_false_negative_rate[i] + ranger_validation_false_negative_rate[i]) / 2
-  ranger_holdout_false_negative_rate_mean <- mean(ranger_holdout_false_negative_rate)
-  ranger_holdout_accuracy[i] <- (ranger_test_accuracy[i] + ranger_validation_accuracy[i]) / 2
-  ranger_holdout_accuracy_mean <- mean(ranger_holdout_accuracy)
-  ranger_holdout_accuracy_sd <- sd(ranger_holdout_accuracy)
-  ranger_holdout_F1_score[i] <- (ranger_test_F1_score[i] + ranger_validation_F1_score[i]) / 2
-  ranger_holdout_F1_score_mean <- mean(ranger_holdout_F1_score)
-  ranger_holdout_positive_predictive_value[i] <- (ranger_test_positive_predictive_value[i] + ranger_validation_positive_predictive_value[i]) / 2
-  ranger_holdout_positive_predictive_value_mean <- mean(ranger_holdout_positive_predictive_value)
-  ranger_holdout_negative_predictive_value[i] <- (ranger_test_negative_predictive_value[i] + ranger_validation_negative_predictive_value[i]) / 2
-  ranger_holdout_negative_predictive_value_mean <- mean(ranger_holdout_negative_predictive_value)
-  ranger_holdout_overfitting[i] <- ranger_holdout_accuracy[i] / ranger_train_accuracy[i]
-  ranger_holdout_overfitting_mean <- mean(ranger_holdout_overfitting)
-  ranger_holdout_overfitting_range <- range(ranger_holdout_overfitting)
-  ranger_holdout_overfitting_sd <- sd(ranger_holdout_overfitting)
-
-  ranger_table <- ranger_test_table + ranger_validation_table
-  ranger_table_total <- ranger_table_total + ranger_table
-
-  ranger_end <- Sys.time()
-  ranger_duration[i] <- ranger_end - ranger_start
-  ranger_duration_mean <- mean(ranger_duration)
-  ranger_duration_sd <- sd(ranger_duration)
-
-
-  #### Rpart ####
-  rpart_start <- Sys.time()
+  ridge_start <- Sys.time()
 
   if(set_seed == "Y"){
     set.seed(seed = seed)
-    rpart_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = train01, model = "RPartModel")
+    x = model.matrix(y ~ ., data = train)[, -1]
+    y = train$y
+    ridge_train_fit <- glmnet::glmnet(x, y, alpha = 0)
   }
   if(set_seed == "N"){
-    rpart_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = train01, model = "RPartModel")
+    x = model.matrix(y ~ ., data = train)[, -1]
+    y = train$y
+    ridge_train_fit <- glmnet::glmnet(x, y, alpha = 0)
   }
-  rpart_train_pred <- stats::predict(rpart_train_fit, train01, type = "prob")
-  rpart_train_probabilities <- ifelse(rpart_train_pred > 0.5, 1, 0)
-  rpart_train_table <- table(rpart_train_probabilities, y_train)
-  rpart_train_true_positive_rate[i] <- rpart_train_table[2, 2] / sum(rpart_train_table[2, 2] + rpart_train_table[1, 2])
-  rpart_train_true_positive_rate_mean <- mean(rpart_train_true_positive_rate)
-  rpart_train_true_negative_rate[i] <- rpart_train_table[1, 1] / sum(rpart_train_table[1, 1] + rpart_train_table[2, 1])
-  rpart_train_true_negative_rate_mean <- mean(rpart_train_true_negative_rate)
-  rpart_train_false_positive_rate[i] <- rpart_train_table[2, 1] / sum(rpart_train_table[2, 1] + rpart_train_table[1, 1])
-  rpart_train_false_positive_rate_mean <- mean(rpart_train_false_positive_rate)
-  rpart_train_false_negative_rate[i] <- rpart_train_table[1, 2] / sum(rpart_train_table[1, 2] + rpart_train_table[2, 2])
-  rpart_train_false_negative_rate_mean <- mean(rpart_train_false_negative_rate)
-  rpart_train_accuracy[i] <- (rpart_train_table[1, 1] + rpart_train_table[2, 2]) / sum(rpart_train_table)
-  rpart_train_accuracy_mean <- mean(rpart_train_accuracy)
-  rpart_train_F1_score[i] <- 2 * (rpart_train_table[2, 2]) / sum(2 * rpart_train_table[2, 2] + rpart_train_table[1, 2] + rpart_train_table[2, 1])
-  rpart_train_F1_score_mean <- mean(rpart_train_F1_score)
-  rpart_train_positive_predictive_value[i] <- rpart_train_table[2, 2] / sum(rpart_train_table[2, 2] + rpart_train_table[2, 1])
-  rpart_train_positive_predictive_value_mean <- mean(rpart_train_positive_predictive_value)
-  rpart_train_negative_predictive_value[i] <- rpart_train_table[1, 1] / sum(rpart_train_table[1, 1] + rpart_train_table[1, 2])
-  rpart_train_negative_predictive_value_mean <- mean(rpart_train_negative_predictive_value)
+  ridge_train_pred <- stats::predict(ridge_train_fit, as.matrix(train[, 1:ncol(train) -1]), family = "binomial")
+  ridge_train_predictions <- plogis(ridge_train_pred[, 1])
+  ridge_train_predictions_binomial <- rbinom(n = length(ridge_train_predictions), size = 1, prob = ridge_train_predictions)
+  ridge_train_table <- table(ridge_train_predictions_binomial, as.matrix(train$y))
+  ridge_train_true_positive_rate[i] <- ridge_train_table[2, 2] / sum(ridge_train_table[2, 2] + ridge_train_table[1, 2])
+  ridge_train_true_positive_rate_mean <- mean(ridge_train_true_positive_rate)
+  ridge_train_true_negative_rate[i] <- ridge_train_table[1, 1] / sum(ridge_train_table[1, 1] + ridge_train_table[2, 1])
+  ridge_train_true_negative_rate_mean <- mean(ridge_train_true_negative_rate)
+  ridge_train_false_positive_rate[i] <- ridge_train_table[2, 1] / sum(ridge_train_table[2, 1] + ridge_train_table[1, 1])
+  ridge_train_false_positive_rate_mean <- mean(ridge_train_false_positive_rate)
+  ridge_train_false_negative_rate[i] <- ridge_train_table[1, 2] / sum(ridge_train_table[1, 2] + ridge_train_table[2, 2])
+  ridge_train_false_negative_rate_mean <- mean(ridge_train_false_negative_rate)
+  ridge_train_accuracy[i] <- (ridge_train_table[1, 1] + ridge_train_table[2, 2]) / sum(ridge_train_table)
+  ridge_train_accuracy_mean <- mean(ridge_train_accuracy)
+  ridge_train_F1_score[i] <- 2 * (ridge_train_table[2, 2]) / sum(2 * ridge_train_table[2, 2] + ridge_train_table[1, 2] + ridge_train_table[2, 1])
+  ridge_train_F1_score_mean <- mean(ridge_train_F1_score)
+  ridge_train_positive_predictive_value[i] <- ridge_train_table[2, 2] / sum(ridge_train_table[2, 2] + ridge_train_table[2, 1])
+  ridge_train_positive_predictive_value_mean <- mean(ridge_train_positive_predictive_value)
+  ridge_train_negative_predictive_value[i] <- ridge_train_table[1, 1] / sum(ridge_train_table[1, 1] + ridge_train_table[1, 2])
+  ridge_train_negative_predictive_value_mean <- mean(ridge_train_negative_predictive_value)
 
-  rpart_test_pred <- stats::predict(rpart_train_fit, test01, type = "prob")
-  rpart_test_probabilities <- ifelse(rpart_test_pred > 0.5, 1, 0)
-  rpart_test_table <- table(rpart_test_probabilities, y_test)
-  rpart_test_true_positive_rate[i] <- rpart_test_table[2, 2] / sum(rpart_test_table[2, 2] + rpart_test_table[1, 2])
-  rpart_test_true_positive_rate_mean <- mean(rpart_test_true_positive_rate)
-  rpart_test_true_negative_rate[i] <- rpart_test_table[1, 1] / sum(rpart_test_table[1, 1] + rpart_test_table[2, 1])
-  rpart_test_true_negative_rate_mean <- mean(rpart_test_true_negative_rate)
-  rpart_test_false_positive_rate[i] <- rpart_test_table[2, 1] / sum(rpart_test_table[2, 1] + rpart_test_table[1, 1])
-  rpart_test_false_positive_rate_mean <- mean(rpart_test_false_positive_rate)
-  rpart_test_false_negative_rate[i] <- rpart_test_table[1, 2] / sum(rpart_test_table[1, 2] + rpart_test_table[2, 2])
-  rpart_test_false_negative_rate_mean <- mean(rpart_test_false_negative_rate)
-  rpart_test_accuracy[i] <- (rpart_test_table[1, 1] + rpart_test_table[2, 2]) / sum(rpart_test_table)
-  rpart_test_accuracy_mean <- mean(rpart_test_accuracy)
-  rpart_test_F1_score[i] <- 2 * (rpart_test_table[2, 2]) / sum(2 * rpart_test_table[2, 2] + rpart_test_table[1, 2] + rpart_test_table[2, 1])
-  rpart_test_F1_score_mean <- mean(rpart_test_F1_score)
-  rpart_test_positive_predictive_value[i] <- rpart_test_table[2, 2] / sum(rpart_test_table[2, 2] + rpart_test_table[2, 1])
-  rpart_test_positive_predictive_value_mean <- mean(rpart_test_positive_predictive_value)
-  rpart_test_negative_predictive_value[i] <- rpart_test_table[1, 1] / sum(rpart_test_table[1, 1] + rpart_test_table[1, 2])
-  rpart_test_negative_predictive_value_mean <- mean(rpart_test_negative_predictive_value)
+  ridge_test_pred <- stats::predict(ridge_train_fit, as.matrix(test[, 1:ncol(test) -1]), family = "binomial")
+  ridge_test_predictions <- plogis(ridge_test_pred[, 1])
+  ridge_test_predictions_binomial <- rbinom(n = length(ridge_test_predictions), size = 1, prob = ridge_test_predictions)
+  ridge_test_table <- table(ridge_test_predictions_binomial, as.matrix(test$y))
+  ridge_test_true_positive_rate[i] <- ridge_test_table[2, 2] / sum(ridge_test_table[2, 2] + ridge_test_table[1, 2])
+  ridge_test_true_positive_rate_mean <- mean(ridge_test_true_positive_rate)
+  ridge_test_true_negative_rate[i] <- ridge_test_table[1, 1] / sum(ridge_test_table[1, 1] + ridge_test_table[2, 1])
+  ridge_test_true_negative_rate_mean <- mean(ridge_test_true_negative_rate)
+  ridge_test_false_positive_rate[i] <- ridge_test_table[2, 1] / sum(ridge_test_table[2, 1] + ridge_test_table[1, 1])
+  ridge_test_false_positive_rate_mean <- mean(ridge_test_false_positive_rate)
+  ridge_test_false_negative_rate[i] <- ridge_test_table[1, 2] / sum(ridge_test_table[1, 2] + ridge_test_table[2, 2])
+  ridge_test_false_negative_rate_mean <- mean(ridge_test_false_negative_rate)
+  ridge_test_accuracy[i] <- (ridge_test_table[1, 1] + ridge_test_table[2, 2]) / sum(ridge_test_table)
+  ridge_test_accuracy_mean <- mean(ridge_test_accuracy)
+  ridge_test_F1_score[i] <- 2 * (ridge_test_table[2, 2]) / sum(2 * ridge_test_table[2, 2] + ridge_test_table[1, 2] + ridge_test_table[2, 1])
+  ridge_test_F1_score_mean <- mean(ridge_test_F1_score)
+  ridge_test_positive_predictive_value[i] <- ridge_test_table[2, 2] / sum(ridge_test_table[2, 2] + ridge_test_table[2, 1])
+  ridge_test_positive_predictive_value_mean <- mean(ridge_test_positive_predictive_value)
+  ridge_test_negative_predictive_value[i] <- ridge_test_table[1, 1] / sum(ridge_test_table[1, 1] + ridge_test_table[1, 2])
+  ridge_test_negative_predictive_value_mean <- mean(ridge_test_negative_predictive_value)
 
-  rpart_validation_pred <- stats::predict(rpart_train_fit, validation01, type = "prob")
-  rpart_validation_probabilities <- ifelse(rpart_validation_pred > 0.5, 1, 0)
-  rpart_validation_table <- table(rpart_validation_probabilities, y_validation)
-  rpart_validation_true_positive_rate[i] <- rpart_validation_table[2, 2] / sum(rpart_validation_table[2, 2] + rpart_validation_table[1, 2])
-  rpart_validation_true_positive_rate_mean <- mean(rpart_validation_true_positive_rate)
-  rpart_validation_true_negative_rate[i] <- rpart_validation_table[1, 1] / sum(rpart_validation_table[1, 1] + rpart_validation_table[2, 1])
-  rpart_validation_true_negative_rate_mean <- mean(rpart_validation_true_negative_rate)
-  rpart_validation_false_positive_rate[i] <- rpart_validation_table[2, 1] / sum(rpart_validation_table[2, 1] + rpart_validation_table[1, 1])
-  rpart_validation_false_positive_rate_mean <- mean(rpart_validation_false_positive_rate)
-  rpart_validation_false_negative_rate[i] <- rpart_validation_table[1, 2] / sum(rpart_validation_table[1, 2] + rpart_validation_table[2, 2])
-  rpart_validation_false_negative_rate_mean <- mean(rpart_validation_false_negative_rate)
-  rpart_validation_accuracy[i] <- (rpart_validation_table[1, 1] + rpart_validation_table[2, 2]) / sum(rpart_validation_table)
-  rpart_validation_accuracy_mean <- mean(rpart_validation_accuracy)
-  rpart_validation_F1_score[i] <- 2 * (rpart_validation_table[2, 2]) / sum(2 * rpart_validation_table[2, 2] + rpart_validation_table[1, 2] + rpart_validation_table[2, 1])
-  rpart_validation_F1_score_mean <- mean(rpart_validation_F1_score)
-  rpart_validation_positive_predictive_value[i] <- rpart_validation_table[2, 2] / sum(rpart_validation_table[2, 2] + rpart_validation_table[2, 1])
-  rpart_validation_positive_predictive_value_mean <- mean(rpart_validation_positive_predictive_value)
-  rpart_validation_negative_predictive_value[i] <- rpart_validation_table[1, 1] / sum(rpart_validation_table[1, 1] + rpart_validation_table[1, 2])
-  rpart_validation_negative_predictive_value_mean <- mean(rpart_validation_negative_predictive_value)
+  ridge_validation_pred <- stats::predict(ridge_train_fit, as.matrix(validation[, 1:ncol(validation) -1]), family = "binomial")
+  ridge_validation_predictions <- plogis(ridge_validation_pred[, 1])
+  ridge_validation_predictions_binomial <- rbinom(n = length(ridge_validation_predictions), size = 1, prob = ridge_validation_predictions)
+  ridge_validation_table <- table(ridge_validation_predictions_binomial, as.matrix(validation$y))
+  ridge_validation_true_positive_rate[i] <- ridge_validation_table[2, 2] / sum(ridge_validation_table[2, 2] + ridge_validation_table[1, 2])
+  ridge_validation_true_positive_rate_mean <- mean(ridge_validation_true_positive_rate)
+  ridge_validation_true_negative_rate[i] <- ridge_validation_table[1, 1] / sum(ridge_validation_table[1, 1] + ridge_validation_table[2, 1])
+  ridge_validation_true_negative_rate_mean <- mean(ridge_validation_true_negative_rate)
+  ridge_validation_false_positive_rate[i] <- ridge_validation_table[2, 1] / sum(ridge_validation_table[2, 1] + ridge_validation_table[1, 1])
+  ridge_validation_false_positive_rate_mean <- mean(ridge_validation_false_positive_rate)
+  ridge_validation_false_negative_rate[i] <- ridge_validation_table[1, 2] / sum(ridge_validation_table[1, 2] + ridge_validation_table[2, 2])
+  ridge_validation_false_negative_rate_mean <- mean(ridge_validation_false_negative_rate)
+  ridge_validation_accuracy[i] <- (ridge_validation_table[1, 1] + ridge_validation_table[2, 2]) / sum(ridge_validation_table)
+  ridge_validation_accuracy_mean <- mean(ridge_validation_accuracy)
+  ridge_validation_F1_score[i] <- 2 * (ridge_validation_table[2, 2]) / sum(2 * ridge_validation_table[2, 2] + ridge_validation_table[1, 2] + ridge_validation_table[2, 1])
+  ridge_validation_F1_score_mean <- mean(ridge_validation_F1_score)
+  ridge_validation_positive_predictive_value[i] <- ridge_validation_table[2, 2] / sum(ridge_validation_table[2, 2] + ridge_validation_table[2, 1])
+  ridge_validation_positive_predictive_value_mean <- mean(ridge_validation_positive_predictive_value)
+  ridge_validation_negative_predictive_value[i] <- ridge_validation_table[1, 1] / sum(ridge_validation_table[1, 1] + ridge_validation_table[1, 2])
+  ridge_validation_negative_predictive_value_mean <- mean(ridge_validation_negative_predictive_value)
 
-  rpart_holdout_true_positive_rate[i] <- (rpart_test_true_positive_rate[i] + rpart_validation_true_positive_rate[i]) / 2
-  rpart_holdout_true_positive_rate_mean <- mean(rpart_holdout_true_positive_rate)
-  rpart_holdout_true_negative_rate[i] <- (rpart_test_true_negative_rate[i] + rpart_validation_true_negative_rate[i]) / 2
-  rpart_holdout_true_negative_rate_mean <- mean(rpart_holdout_true_negative_rate)
-  rpart_holdout_false_positive_rate[i] <- (rpart_test_false_positive_rate[i] + rpart_validation_false_positive_rate[i]) / 2
-  rpart_holdout_false_positive_rate_mean <- mean(rpart_holdout_false_positive_rate)
-  rpart_holdout_false_negative_rate[i] <- (rpart_test_false_negative_rate[i] + rpart_validation_false_negative_rate[i]) / 2
-  rpart_holdout_false_negative_rate_mean <- mean(rpart_holdout_false_negative_rate)
-  rpart_holdout_accuracy[i] <- (rpart_test_accuracy[i] + rpart_validation_accuracy[i]) / 2
-  rpart_holdout_accuracy_mean <- mean(rpart_holdout_accuracy)
-  rpart_holdout_accuracy_sd <- sd(rpart_holdout_accuracy)
-  rpart_holdout_F1_score[i] <- (rpart_test_F1_score[i] + rpart_validation_F1_score[i]) / 2
-  rpart_holdout_F1_score_mean <- mean(rpart_holdout_F1_score)
-  rpart_holdout_positive_predictive_value[i] <- (rpart_test_positive_predictive_value[i] + rpart_validation_positive_predictive_value[i]) / 2
-  rpart_holdout_positive_predictive_value_mean <- mean(rpart_holdout_positive_predictive_value)
-  rpart_holdout_negative_predictive_value[i] <- (rpart_test_negative_predictive_value[i] + rpart_validation_negative_predictive_value[i]) / 2
-  rpart_holdout_negative_predictive_value_mean <- mean(rpart_holdout_negative_predictive_value)
-  rpart_holdout_overfitting[i] <- rpart_holdout_accuracy[i] / rpart_train_accuracy[i]
-  rpart_holdout_overfitting_mean <- mean(rpart_holdout_overfitting)
-  rpart_holdout_overfitting_range <- range(rpart_holdout_overfitting)
-  rpart_holdout_overfitting_sd <- sd(rpart_holdout_overfitting)
+  ridge_holdout_true_positive_rate[i] <- (ridge_test_true_positive_rate[i] + ridge_validation_true_positive_rate[i]) / 2
+  ridge_holdout_true_positive_rate_mean <- mean(ridge_holdout_true_positive_rate)
+  ridge_holdout_true_negative_rate[i] <- (ridge_test_true_negative_rate[i] + ridge_validation_true_negative_rate[i]) / 2
+  ridge_holdout_true_negative_rate_mean <- mean(ridge_holdout_true_negative_rate)
+  ridge_holdout_false_positive_rate[i] <- (ridge_test_false_positive_rate[i] + ridge_validation_false_positive_rate[i]) / 2
+  ridge_holdout_false_positive_rate_mean <- mean(ridge_holdout_false_positive_rate)
+  ridge_holdout_false_negative_rate[i] <- (ridge_test_false_negative_rate[i] + ridge_validation_false_negative_rate[i]) / 2
+  ridge_holdout_false_negative_rate_mean <- mean(ridge_holdout_false_negative_rate)
+  ridge_holdout_accuracy[i] <- (ridge_test_accuracy[i] + ridge_validation_accuracy[i]) / 2
+  ridge_holdout_accuracy_mean <- mean(ridge_holdout_accuracy)
+  ridge_holdout_accuracy_sd <- sd(ridge_holdout_accuracy)
+  ridge_holdout_F1_score[i] <- (ridge_test_F1_score[i] + ridge_validation_F1_score[i]) / 2
+  ridge_holdout_F1_score_mean <- mean(ridge_holdout_F1_score)
+  ridge_holdout_positive_predictive_value[i] <- (ridge_test_positive_predictive_value[i] + ridge_validation_positive_predictive_value[i]) / 2
+  ridge_holdout_positive_predictive_value_mean <- mean(ridge_holdout_positive_predictive_value)
+  ridge_holdout_negative_predictive_value[i] <- (ridge_test_negative_predictive_value[i] + ridge_validation_negative_predictive_value[i]) / 2
+  ridge_holdout_negative_predictive_value_mean <- mean(ridge_holdout_negative_predictive_value)
+  ridge_holdout_overfitting[i] <- ridge_holdout_accuracy[i] / ridge_train_accuracy[i]
+  ridge_holdout_overfitting_mean <- mean(ridge_holdout_overfitting)
+  ridge_holdout_overfitting_range <- range(ridge_holdout_overfitting)
+  ridge_holdout_overfitting_sd <- sd(ridge_holdout_overfitting)
 
-  rpart_table <- rpart_test_table + rpart_validation_table
-  rpart_table_total <- rpart_table_total + rpart_table
+  ridge_table <- ridge_test_table + ridge_validation_table
+  ridge_table_total <- ridge_table_total + ridge_table
 
-  rpart_end <- Sys.time()
-  rpart_duration[i] <- rpart_end - rpart_start
-  rpart_duration_mean <- mean(rpart_duration)
-  rpart_duration_sd <- sd(rpart_duration)
+  ridge_end <- Sys.time()
+  ridge_duration[i] <- ridge_end - ridge_start
+  ridge_duration_mean <- mean(ridge_duration)
+  ridge_duration_sd <- sd(ridge_duration)
 
 
   #### Support Vector Machines (SVM) ####
@@ -3339,8 +2361,10 @@ for (i in 1:numresamples) {
   if(set_seed == "N"){
     svm_train_fit <- e1071::svm(as.factor(y) ~ ., data = train01)
   }
-  svm_train_pred <- stats::predict(svm_train_fit, train01, type = "prob")
-  svm_train_table <- table(svm_train_pred, y_train)
+  svm_train_pred <- stats::predict(svm_train_fit, train01, type = "response")
+  svm_train_predictions <- plogis(as.numeric(svm_train_pred))
+  svm_train_predictions_binomial <- rbinom(n = length(svm_train_predictions), size = 1, prob = svm_train_predictions)
+  svm_train_table <- table(svm_train_predictions_binomial, y_train)
   svm_train_true_positive_rate[i] <- svm_train_table[2, 2] / sum(svm_train_table[2, 2] + svm_train_table[1, 2])
   svm_train_true_positive_rate_mean <- mean(svm_train_true_positive_rate)
   svm_train_true_negative_rate[i] <- svm_train_table[1, 1] / sum(svm_train_table[1, 1] + svm_train_table[2, 1])
@@ -3358,8 +2382,10 @@ for (i in 1:numresamples) {
   svm_train_negative_predictive_value[i] <- svm_train_table[1, 1] / sum(svm_train_table[1, 1] + svm_train_table[1, 2])
   svm_train_negative_predictive_value_mean <- mean(svm_train_negative_predictive_value)
 
-  svm_test_pred <- stats::predict(svm_train_fit, test01, type = "prob")
-  svm_test_table <- table(svm_test_pred, y_test)
+  svm_test_pred <- stats::predict(svm_train_fit, test01, type = "response")
+  svm_test_predictions <- plogis(as.numeric(svm_test_pred))
+  svm_test_predictions_binomial <- rbinom(n = length(svm_test_predictions), size = 1, prob = svm_test_predictions)
+  svm_test_table <- table(svm_test_predictions_binomial, y_test)
   svm_test_true_positive_rate[i] <- svm_test_table[2, 2] / sum(svm_test_table[2, 2] + svm_test_table[1, 2])
   svm_test_true_positive_rate_mean <- mean(svm_test_true_positive_rate)
   svm_test_true_negative_rate[i] <- svm_test_table[1, 1] / sum(svm_test_table[1, 1] + svm_test_table[2, 1])
@@ -3377,8 +2403,10 @@ for (i in 1:numresamples) {
   svm_test_negative_predictive_value[i] <- svm_test_table[1, 1] / sum(svm_test_table[1, 1] + svm_test_table[1, 2])
   svm_test_negative_predictive_value_mean <- mean(svm_test_negative_predictive_value)
 
-  svm_validation_pred <- stats::predict(svm_train_fit, validation01, type = "prob")
-  svm_validation_table <- table(svm_validation_pred, y_validation)
+  svm_validation_pred <- stats::predict(svm_train_fit, validation01, type = "response")
+  svm_validation_predictions <- plogis(as.numeric(svm_validation_pred))
+  svm_validation_predictions_binomial <- rbinom(n = length(svm_validation_predictions), size = 1, prob = svm_validation_predictions)
+  svm_validation_table <- table(svm_validation_predictions_binomial, y_validation)
   svm_validation_true_positive_rate[i] <- svm_validation_table[2, 2] / sum(svm_validation_table[2, 2] + svm_validation_table[1, 2])
   svm_validation_true_positive_rate_mean <- mean(svm_validation_true_positive_rate)
   svm_validation_true_negative_rate[i] <- svm_validation_table[1, 1] / sum(svm_validation_table[1, 1] + svm_validation_table[2, 1])
@@ -3438,8 +2466,9 @@ for (i in 1:numresamples) {
     tree_train_fit <- tree::tree(y ~ ., data = train)
   }
   tree_train_pred <- stats::predict(tree_train_fit, train01, type = "vector")
-  tree_train_predictions <- ifelse(tree_train_pred > 0.5, 1, 0)
-  tree_train_table <- table(tree_train_predictions, y_train)
+  tree_train_predictions <- plogis(as.numeric(tree_train_pred))
+  tree_train_predictions_binomial <- rbinom(n = length(tree_train_predictions), size = 1, prob = tree_train_predictions)
+  tree_train_table <- table(tree_train_predictions_binomial, y_train)
   tree_train_true_positive_rate[i] <- tree_train_table[2, 2] / sum(tree_train_table[2, 2] + tree_train_table[1, 2])
   tree_train_true_positive_rate_mean <- mean(tree_train_true_positive_rate)
   tree_train_true_negative_rate[i] <- tree_train_table[1, 1] / sum(tree_train_table[1, 1] + tree_train_table[2, 1])
@@ -3458,8 +2487,9 @@ for (i in 1:numresamples) {
   tree_train_negative_predictive_value_mean <- mean(tree_train_negative_predictive_value)
 
   tree_test_pred <- stats::predict(tree_train_fit, test01, type = "vector")
-  tree_test_predictions <- ifelse(tree_test_pred > 0.5, 1, 0)
-  tree_test_table <- table(tree_test_predictions, y_test)
+  tree_test_predictions <- plogis(as.numeric(tree_test_pred))
+  tree_test_predictions_binomial <- rbinom(n = length(tree_test_predictions), size = 1, prob = tree_test_predictions)
+  tree_test_table <- table(tree_test_predictions_binomial, y_test)
   tree_test_true_positive_rate[i] <- tree_test_table[2, 2] / sum(tree_test_table[2, 2] + tree_test_table[1, 2])
   tree_test_true_positive_rate_mean <- mean(tree_test_true_positive_rate)
   tree_test_true_negative_rate[i] <- tree_test_table[1, 1] / sum(tree_test_table[1, 1] + tree_test_table[2, 1])
@@ -3478,8 +2508,9 @@ for (i in 1:numresamples) {
   tree_test_negative_predictive_value_mean <- mean(tree_test_negative_predictive_value)
 
   tree_validation_pred <- stats::predict(tree_train_fit, validation01, type = "vector")
-  tree_validation_predictions <- ifelse(tree_validation_pred > 0.5, 1, 0)
-  tree_validation_table <- table(tree_validation_predictions, y_validation)
+  tree_validation_predictions <- plogis(as.numeric(tree_validation_pred))
+  tree_validation_predictions_binomial <- rbinom(n = length(tree_validation_predictions), size = 1, prob = tree_validation_predictions)
+  tree_validation_table <- table(tree_validation_predictions_binomial, y_validation)
   tree_validation_true_positive_rate[i] <- tree_validation_table[2, 2] / sum(tree_validation_table[2, 2] + tree_validation_table[1, 2])
   tree_validation_true_positive_rate_mean <- mean(tree_validation_true_positive_rate)
   tree_validation_true_negative_rate[i] <- tree_validation_table[1, 1] / sum(tree_validation_table[1, 1] + tree_validation_table[2, 1])
@@ -3528,131 +2559,6 @@ for (i in 1:numresamples) {
   tree_duration_sd <- sd(tree_duration)
 
 
-  #### XGBoost ####
-  xgb_start <- Sys.time()
-
-  xgb_start <- Sys.time()
-  train_x <- data.matrix(train[, -ncol(train)])
-  train_y <- train[, ncol(train)]
-
-  # define predictor and response variables in test set
-  test_x <- data.matrix(test[, -ncol(test)])
-  test_y <- test[, ncol(test)]
-
-  # define predictor and response variables in validation set
-  validation_x <- data.matrix(validation[, -ncol(validation)])
-  validation_y <- validation[, ncol(validation)]
-
-  # define final train, test and validation sets
-  xgb_train <- xgboost::xgb.DMatrix(data = train_x, label = train_y)
-  xgb_test <- xgboost::xgb.DMatrix(data = test_x, label = test_y)
-  xgb_validation <- xgboost::xgb.DMatrix(data = validation_x, label = validation_y)
-
-  # define watchlist
-  watchlist <- list(train = xgb_train, validation = xgb_validation)
-  watchlist_test <- list(train = xgb_train, test = xgb_test)
-  watchlist_validation <- list(train = xgb_train, validation = xgb_validation)
-
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    xgb_model <- xgboost::xgb.train(data = xgb_train, max.depth = 3, watchlist = watchlist_test, nrounds = 70)
-    xgb_min <- which.min(xgb_model$evaluation_log$validation_rmse)
-  }
-  if(set_seed == "N"){
-    xgb_model <- xgboost::xgb.train(data = xgb_train, max.depth = 3, watchlist = watchlist_test, nrounds = 70)
-    xgb_min <- which.min(xgb_model$evaluation_log$validation_rmse)
-  }
-  xgb_train_pred <- stats::predict(object = xgb_model, newdata = train_x, type = "prob")
-  xgb_train_predictions <- ifelse(xgb_train_pred > 0.5, 1, 0)
-  xgb_train_table <- table(xgb_train_predictions, y_train)
-  xgb_train_true_positive_rate[i] <- xgb_train_table[2, 2] / sum(xgb_train_table[2, 2] + xgb_train_table[1, 2])
-  xgb_train_true_positive_rate_mean <- mean(xgb_train_true_positive_rate)
-  xgb_train_true_negative_rate[i] <- xgb_train_table[1, 1] / sum(xgb_train_table[1, 1] + xgb_train_table[2, 1])
-  xgb_train_true_negative_rate_mean <- mean(xgb_train_true_negative_rate)
-  xgb_train_false_positive_rate[i] <- xgb_train_table[2, 1] / sum(xgb_train_table[2, 1] + xgb_train_table[1, 1])
-  xgb_train_false_positive_rate_mean <- mean(xgb_train_false_positive_rate)
-  xgb_train_false_negative_rate[i] <- xgb_train_table[1, 2] / sum(xgb_train_table[1, 2] + xgb_train_table[2, 2])
-  xgb_train_false_negative_rate_mean <- mean(xgb_train_false_negative_rate)
-  xgb_train_accuracy[i] <- (xgb_train_table[1, 1] + xgb_train_table[2, 2]) / sum(xgb_train_table)
-  xgb_train_accuracy_mean <- mean(xgb_train_accuracy)
-  xgb_train_F1_score[i] <- 2 * (xgb_train_table[2, 2]) / sum(2 * xgb_train_table[2, 2] + xgb_train_table[1, 2] + xgb_train_table[2, 1])
-  xgb_train_F1_score_mean <- mean(xgb_train_F1_score)
-  xgb_train_positive_predictive_value[i] <- xgb_train_table[2, 2] / sum(xgb_train_table[2, 2] + xgb_train_table[2, 1])
-  xgb_train_positive_predictive_value_mean <- mean(xgb_train_positive_predictive_value)
-  xgb_train_negative_predictive_value[i] <- xgb_train_table[1, 1] / sum(xgb_train_table[1, 1] + xgb_train_table[1, 2])
-  xgb_train_negative_predictive_value_mean <- mean(xgb_train_negative_predictive_value)
-
-  xgb_test_pred <- stats::predict(object = xgb_model, newdata = test_x, type = "prob")
-  xgb_test_predictions <- ifelse(xgb_test_pred > 0.5, 1, 0)
-  xgb_test_table <- table(xgb_test_predictions, y_test)
-  xgb_test_true_positive_rate[i] <- xgb_test_table[2, 2] / sum(xgb_test_table[2, 2] + xgb_test_table[1, 2])
-  xgb_test_true_positive_rate_mean <- mean(xgb_test_true_positive_rate)
-  xgb_test_true_negative_rate[i] <- xgb_test_table[1, 1] / sum(xgb_test_table[1, 1] + xgb_test_table[2, 1])
-  xgb_test_true_negative_rate_mean <- mean(xgb_test_true_negative_rate)
-  xgb_test_false_positive_rate[i] <- xgb_test_table[2, 1] / sum(xgb_test_table[2, 1] + xgb_test_table[1, 1])
-  xgb_test_false_positive_rate_mean <- mean(xgb_test_false_positive_rate)
-  xgb_test_false_negative_rate[i] <- xgb_test_table[1, 2] / sum(xgb_test_table[1, 2] + xgb_test_table[2, 2])
-  xgb_test_false_negative_rate_mean <- mean(xgb_test_false_negative_rate)
-  xgb_test_accuracy[i] <- (xgb_test_table[1, 1] + xgb_test_table[2, 2]) / sum(xgb_test_table)
-  xgb_test_accuracy_mean <- mean(xgb_test_accuracy)
-  xgb_test_F1_score[i] <- 2 * (xgb_test_table[2, 2]) / sum(2 * xgb_test_table[2, 2] + xgb_test_table[1, 2] + xgb_test_table[2, 1])
-  xgb_test_F1_score_mean <- mean(xgb_test_F1_score)
-  xgb_test_positive_predictive_value[i] <- xgb_test_table[2, 2] / sum(xgb_test_table[2, 2] + xgb_test_table[2, 1])
-  xgb_test_positive_predictive_value_mean <- mean(xgb_test_positive_predictive_value)
-  xgb_test_negative_predictive_value[i] <- xgb_test_table[1, 1] / sum(xgb_test_table[1, 1] + xgb_test_table[1, 2])
-  xgb_test_negative_predictive_value_mean <- mean(xgb_test_negative_predictive_value)
-
-  xgb_validation_pred <- stats::predict(object = xgb_model, newdata = validation_x, type = "prob")
-  xgb_validation_predictions <- ifelse(xgb_validation_pred > 0.5, 1, 0)
-  xgb_validation_table <- table(xgb_validation_predictions, y_validation)
-  xgb_validation_true_positive_rate[i] <- xgb_validation_table[2, 2] / sum(xgb_validation_table[2, 2] + xgb_validation_table[1, 2])
-  xgb_validation_true_positive_rate_mean <- mean(xgb_validation_true_positive_rate)
-  xgb_validation_true_negative_rate[i] <- xgb_validation_table[1, 1] / sum(xgb_validation_table[1, 1] + xgb_validation_table[2, 1])
-  xgb_validation_true_negative_rate_mean <- mean(xgb_validation_true_negative_rate)
-  xgb_validation_false_positive_rate[i] <- xgb_validation_table[2, 1] / sum(xgb_validation_table[2, 1] + xgb_validation_table[1, 1])
-  xgb_validation_false_positive_rate_mean <- mean(xgb_validation_false_positive_rate)
-  xgb_validation_false_negative_rate[i] <- xgb_validation_table[1, 2] / sum(xgb_validation_table[1, 2] + xgb_validation_table[2, 2])
-  xgb_validation_false_negative_rate_mean <- mean(xgb_validation_false_negative_rate)
-  xgb_validation_accuracy[i] <- (xgb_validation_table[1, 1] + xgb_validation_table[2, 2]) / sum(xgb_validation_table)
-  xgb_validation_accuracy_mean <- mean(xgb_validation_accuracy)
-  xgb_validation_F1_score[i] <- 2 * (xgb_validation_table[2, 2]) / sum(2 * xgb_validation_table[2, 2] + xgb_validation_table[1, 2] + xgb_validation_table[2, 1])
-  xgb_validation_F1_score_mean <- mean(xgb_validation_F1_score)
-  xgb_validation_positive_predictive_value[i] <- xgb_validation_table[2, 2] / sum(xgb_validation_table[2, 2] + xgb_validation_table[2, 1])
-  xgb_validation_positive_predictive_value_mean <- mean(xgb_validation_positive_predictive_value)
-  xgb_validation_negative_predictive_value[i] <- xgb_validation_table[1, 1] / sum(xgb_validation_table[1, 1] + xgb_validation_table[1, 2])
-  xgb_validation_negative_predictive_value_mean <- mean(xgb_validation_negative_predictive_value)
-
-  xgb_holdout_true_positive_rate[i] <- (xgb_test_true_positive_rate[i] + xgb_validation_true_positive_rate[i]) / 2
-  xgb_holdout_true_positive_rate_mean <- mean(xgb_holdout_true_positive_rate)
-  xgb_holdout_true_negative_rate[i] <- (xgb_test_true_negative_rate[i] + xgb_validation_true_negative_rate[i]) / 2
-  xgb_holdout_true_negative_rate_mean <- mean(xgb_holdout_true_negative_rate)
-  xgb_holdout_false_positive_rate[i] <- (xgb_test_false_positive_rate[i] + xgb_validation_false_positive_rate[i]) / 2
-  xgb_holdout_false_positive_rate_mean <- mean(xgb_holdout_false_positive_rate)
-  xgb_holdout_false_negative_rate[i] <- (xgb_test_false_negative_rate[i] + xgb_validation_false_negative_rate[i]) / 2
-  xgb_holdout_false_negative_rate_mean <- mean(xgb_holdout_false_negative_rate)
-  xgb_holdout_accuracy[i] <- (xgb_test_accuracy[i] + xgb_validation_accuracy[i]) / 2
-  xgb_holdout_accuracy_mean <- mean(xgb_holdout_accuracy)
-  xgb_holdout_accuracy_sd <- sd(xgb_holdout_accuracy)
-  xgb_holdout_F1_score[i] <- (xgb_test_F1_score[i] + xgb_validation_F1_score[i]) / 2
-  xgb_holdout_F1_score_mean <- mean(xgb_holdout_F1_score)
-  xgb_holdout_positive_predictive_value[i] <- (xgb_test_positive_predictive_value[i] + xgb_validation_positive_predictive_value[i]) / 2
-  xgb_holdout_positive_predictive_value_mean <- mean(xgb_holdout_positive_predictive_value)
-  xgb_holdout_negative_predictive_value[i] <- (xgb_test_negative_predictive_value[i] + xgb_validation_negative_predictive_value[i]) / 2
-  xgb_holdout_negative_predictive_value_mean <- mean(xgb_holdout_negative_predictive_value)
-  xgb_holdout_overfitting[i] <- xgb_holdout_accuracy[i] / xgb_train_accuracy[i]
-  xgb_holdout_overfitting_mean <- mean(xgb_holdout_overfitting)
-  xgb_holdout_overfitting_range <- range(xgb_holdout_overfitting)
-  xgb_holdout_overfitting_sd <- sd(xgb_holdout_overfitting)
-
-  xgb_table <- xgb_test_table + xgb_validation_table
-  xgb_table_total <- xgb_table_total + xgb_table
-
-  xgb_end <- Sys.time()
-  xgb_duration[i] <- xgb_end - xgb_start
-  xgb_duration_mean <- mean(xgb_duration)
-  xgb_duration_sd <- sd(xgb_duration)
-
-
 
   ##################################################################################################################
 
@@ -3661,25 +2567,17 @@ for (i in 1:numresamples) {
   ##################################################################################################################
 
   ensemble1 <- data.frame(
-    "Bagged_RF" = c(bag_rf_test_pred[, 2], bag_rf_validation_pred[, 2]),
-    "Bagging" = c(bagging_test_pred[, 2], bagging_validation_pred[, 2]),
-    "BayesGLM" = c(bayesglm_test_predictions, bayesglm_validation_predictions),
-    "C50" = c(C50_test_predictions, C50_validation_predictions),
-    "Cubist" = c(cubist_test_pred, cubist_validation_pred),
-    "Flexible_Discriminant_Analysis" = c(fda_test_predictions, fda_validation_predictions),
-    "Gradient_Boosted" = c(gb_test_predictions, gb_validation_predictions),
-    "Generalized_Linear_Models" = c(glm_test_pred, glm_validation_pred),
-    "Linear" = as.numeric(c(linear_test_pred, linear_validation_pred)) - 1,
-    "Mixture_Discrmininant_Analysis" = c(mda_test_pred[, 2], mda_validation_pred[, 2]),
-    "Naive_Bayes" = c(n_bayes_test_predictions, n_bayes_validation_predictions),
-    "Penalized_Discriminant_Analysis" = as.numeric(c(pda_test_pred, pda_validation_pred)) - 1,
-    "Quadratic_Discriminant_Analysis" = as.numeric(c(qda_test_pred$class, qda_validation_pred$class)) - 1,
-    "Random_Forest" = c(rf_test_probabilities, rf_validation_probabilities),
-    "Ranger" = c(ranger_test_pred, ranger_validation_pred),
-    "RPart" = c(rpart_test_pred, rpart_validation_pred),
-    "Support_Vector_Machines" = as.numeric(c(svm_test_pred, svm_validation_pred)) - 1,
-    "Trees" = c(tree_test_predictions, tree_validation_predictions),
-    "XGBoost" = c(xgb_test_predictions, xgb_validation_predictions)
+    "Cubist" = c(cubist_test_predictions_binomial, cubist_validation_predictions_binomial),
+    "Flexible_Discriminant_Analysis" = c(fda_test_predictions_binomial, fda_validation_predictions_binomial),
+    "Generalized_Linear_Models" = c(glm_test_predictions_binomial, glm_validation_predictions_binomial),
+    "Lasso" = c(lasso_test_predictions_binomial, lasso_validation_predictions_binomial),
+    "Linear" = as.numeric(c(linear_test_predictions_binomial, linear_validation_predictions_binomial)),
+    "Penalized_Discriminant_Analysis" = as.numeric(c(pda_test_predictions_binomial, pda_validation_predictions_binomial)),
+    "Quadratic_Discriminant_Analysis" = as.numeric(c(qda_test_pred$class, qda_validation_pred$class)),
+    "Random_Forest" = as.numeric(c(rf_test_predictions_binomial, rf_validation_predictions_binomial)),
+    "Ridge" = c(ridge_test_predictions_binomial, ridge_validation_predictions_binomial),
+    "Support_Vector_Machines" = as.numeric(c(svm_test_predictions_binomial, svm_validation_predictions_binomial)),
+    "Trees" = c(tree_test_predictions_binomial, tree_validation_predictions_binomial)
   )
 
   ensemble_row_numbers <- as.numeric(c(row.names(test), row.names(validation)))
@@ -3744,9 +2642,10 @@ for (i in 1:numresamples) {
   if(set_seed == "N"){
     ensemble_bagging_train_fit <- ipred::bagging(as.factor(y) ~ ., data = ensemble_train, coob = TRUE)
   }
-  ensemble_bagging_train_pred <- stats::predict(ensemble_bagging_train_fit, ensemble_train, type = "prob")
-  ensemble_bagging_train_probabilities <- ifelse(ensemble_bagging_train_pred[, 2] > 0.5, 1, 0)
-  ensemble_bagging_train_table <- table(ensemble_bagging_train_probabilities, ensemble_y_train)
+  ensemble_bagging_train_pred <- stats::predict(ensemble_bagging_train_fit, ensemble_train, type = "class")
+  ensemble_bagging_train_predictions <- plogis(as.numeric(ensemble_bagging_train_pred))
+  ensemble_bagging_train_predictions_binomial <- rbinom(n = length(ensemble_bagging_train_predictions), size = 1, prob = ensemble_bagging_train_predictions)
+  ensemble_bagging_train_table <- table(ensemble_bagging_train_predictions_binomial, ensemble_y_train)
   ensemble_bagging_train_true_positive_rate[i] <- ensemble_bagging_train_table[2, 2] / sum(ensemble_bagging_train_table[2, 2] + ensemble_bagging_train_table[1, 2])
   ensemble_bagging_train_true_positive_rate_mean <- mean(ensemble_bagging_train_true_positive_rate)
   ensemble_bagging_train_true_negative_rate[i] <- ensemble_bagging_train_table[1, 1] / sum(ensemble_bagging_train_table[1, 1] + ensemble_bagging_train_table[2, 1])
@@ -3764,9 +2663,10 @@ for (i in 1:numresamples) {
   ensemble_bagging_train_negative_predictive_value[i] <- ensemble_bagging_train_table[1, 1] / sum(ensemble_bagging_train_table[1, 1] + ensemble_bagging_train_table[1, 2])
   ensemble_bagging_train_negative_predictive_value_mean <- mean(ensemble_bagging_train_negative_predictive_value)
 
-  ensemble_bagging_test_pred <- stats::predict(ensemble_bagging_train_fit, ensemble_test, type = "prob")
-  ensemble_bagging_test_probabilities <- ifelse(ensemble_bagging_test_pred[, 2] > 0.5, 1, 0)
-  ensemble_bagging_test_table <- table(ensemble_bagging_test_probabilities, ensemble_y_test)
+  ensemble_bagging_test_pred <- stats::predict(ensemble_bagging_train_fit, ensemble_test, type = "class")
+  ensemble_bagging_test_predictions <- plogis(as.numeric(ensemble_bagging_test_pred))
+  ensemble_bagging_test_predictions_binomial <- rbinom(n = length(ensemble_bagging_test_predictions), size = 1, prob = ensemble_bagging_test_predictions)
+  ensemble_bagging_test_table <- table(ensemble_bagging_test_predictions_binomial, ensemble_y_test)
   ensemble_bagging_test_true_positive_rate[i] <- ensemble_bagging_test_table[2, 2] / sum(ensemble_bagging_test_table[2, 2] + ensemble_bagging_test_table[1, 2])
   ensemble_bagging_test_true_positive_rate_mean <- mean(ensemble_bagging_test_true_positive_rate)
   ensemble_bagging_test_true_negative_rate[i] <- ensemble_bagging_test_table[1, 1] / sum(ensemble_bagging_test_table[1, 1] + ensemble_bagging_test_table[2, 1])
@@ -3784,9 +2684,10 @@ for (i in 1:numresamples) {
   ensemble_bagging_test_negative_predictive_value[i] <- ensemble_bagging_test_table[1, 1] / sum(ensemble_bagging_test_table[1, 1] + ensemble_bagging_test_table[1, 2])
   ensemble_bagging_test_negative_predictive_value_mean <- mean(ensemble_bagging_test_negative_predictive_value)
 
-  ensemble_bagging_validation_pred <- stats::predict(ensemble_bagging_train_fit, ensemble_validation, type = "prob")
-  ensemble_bagging_validation_probabilities <- ifelse(ensemble_bagging_validation_pred[, 2] > 0.5, 1, 0)
-  ensemble_bagging_validation_table <- table(ensemble_bagging_validation_probabilities, ensemble_y_validation)
+  ensemble_bagging_validation_pred <- stats::predict(ensemble_bagging_train_fit, ensemble_validation, type = "class")
+  ensemble_bagging_validation_predictions <- plogis(as.numeric(ensemble_bagging_validation_pred))
+  ensemble_bagging_validation_predictions_binomial <- rbinom(n = length(ensemble_bagging_validation_predictions), size = 1, prob = ensemble_bagging_validation_predictions)
+  ensemble_bagging_validation_table <- table(ensemble_bagging_validation_predictions_binomial, ensemble_y_validation)
   ensemble_bagging_validation_true_positive_rate[i] <- ensemble_bagging_validation_table[2, 2] / sum(ensemble_bagging_validation_table[2, 2] + ensemble_bagging_validation_table[1, 2])
   ensemble_bagging_validation_true_positive_rate_mean <- mean(ensemble_bagging_validation_true_positive_rate)
   ensemble_bagging_validation_true_negative_rate[i] <- ensemble_bagging_validation_table[1, 1] / sum(ensemble_bagging_validation_table[1, 1] + ensemble_bagging_validation_table[2, 1])
@@ -3845,9 +2746,10 @@ for (i in 1:numresamples) {
   if(set_seed == "N"){
     ensemble_C50_train_fit <- C50::C5.0(as.factor(ensemble_y_train) ~ ., data = ensemble_train)
   }
-  ensemble_C50_train_pred <- stats::predict(ensemble_C50_train_fit, ensemble_train, type = "prob")
-  ensemble_C50_train_probabilities <- ifelse(ensemble_C50_train_pred[, 2] > 0.5, 1, 0)
-  ensemble_C50_train_table <- table(ensemble_C50_train_probabilities, ensemble_y_train)
+  ensemble_C50_train_pred <- stats::predict(ensemble_C50_train_fit, ensemble_train, type = "class")
+  ensemble_C50_train_predictions <- plogis(as.numeric(ensemble_C50_train_pred))
+  ensemble_C50_train_predictions_binomial <- rbinom(n = length(ensemble_C50_train_predictions), size = 1, prob = ensemble_C50_train_predictions)
+  ensemble_C50_train_table <- table(ensemble_C50_train_predictions_binomial, ensemble_y_train)
   ensemble_C50_train_true_positive_rate[i] <- ensemble_C50_train_table[2, 2] / sum(ensemble_C50_train_table[2, 2] + ensemble_C50_train_table[1, 2])
   ensemble_C50_train_true_positive_rate_mean <- mean(ensemble_C50_train_true_positive_rate)
   ensemble_C50_train_true_negative_rate[i] <- ensemble_C50_train_table[1, 1] / sum(ensemble_C50_train_table[1, 1] + ensemble_C50_train_table[2, 1])
@@ -3865,9 +2767,10 @@ for (i in 1:numresamples) {
   ensemble_C50_train_negative_predictive_value[i] <- ensemble_C50_train_table[1, 1] / sum(ensemble_C50_train_table[1, 1] + ensemble_C50_train_table[1, 2])
   ensemble_C50_train_negative_predictive_value_mean <- mean(ensemble_C50_train_negative_predictive_value)
 
-  ensemble_C50_test_pred <- stats::predict(ensemble_C50_train_fit, ensemble_test, type = "prob")
-  ensemble_C50_test_probabilities <- ifelse(ensemble_C50_test_pred[, 2] > 0.5, 1, 0)
-  ensemble_C50_test_table <- table(ensemble_C50_test_probabilities, ensemble_y_test)
+  ensemble_C50_test_pred <- stats::predict(ensemble_C50_train_fit, ensemble_test, type = "class")
+  ensemble_C50_test_predictions <- plogis(as.numeric(ensemble_C50_test_pred))
+  ensemble_C50_test_predictions_binomial <- rbinom(n = length(ensemble_C50_test_predictions), size = 1, prob = ensemble_C50_test_predictions)
+  ensemble_C50_test_table <- table(ensemble_C50_test_predictions_binomial, ensemble_y_test)
   ensemble_C50_test_true_positive_rate[i] <- ensemble_C50_test_table[2, 2] / sum(ensemble_C50_test_table[2, 2] + ensemble_C50_test_table[1, 2])
   ensemble_C50_test_true_positive_rate_mean <- mean(ensemble_C50_test_true_positive_rate)
   ensemble_C50_test_true_negative_rate[i] <- ensemble_C50_test_table[1, 1] / sum(ensemble_C50_test_table[1, 1] + ensemble_C50_test_table[2, 1])
@@ -3885,9 +2788,10 @@ for (i in 1:numresamples) {
   ensemble_C50_test_negative_predictive_value[i] <- ensemble_C50_test_table[1, 1] / sum(ensemble_C50_test_table[1, 1] + ensemble_C50_test_table[1, 2])
   ensemble_C50_test_negative_predictive_value_mean <- mean(ensemble_C50_test_negative_predictive_value)
 
-  ensemble_C50_validation_pred <- stats::predict(ensemble_C50_train_fit, ensemble_validation, type = "prob")
-  ensemble_C50_validation_probabilities <- ifelse(ensemble_C50_validation_pred[, 2] > 0.5, 1, 0)
-  ensemble_C50_validation_table <- table(ensemble_C50_validation_probabilities, ensemble_y_validation)
+  ensemble_C50_validation_pred <- stats::predict(ensemble_C50_train_fit, ensemble_validation, type = "class")
+  ensemble_C50_validation_predictions <- plogis(as.numeric(ensemble_C50_validation_pred))
+  ensemble_C50_validation_predictions_binomial <- rbinom(n = length(ensemble_C50_validation_predictions), size = 1, prob = ensemble_C50_validation_predictions)
+  ensemble_C50_validation_table <- table(ensemble_C50_validation_predictions_binomial, ensemble_y_validation)
   ensemble_C50_validation_true_positive_rate[i] <- ensemble_C50_validation_table[2, 2] / sum(ensemble_C50_validation_table[2, 2] + ensemble_C50_validation_table[1, 2])
   ensemble_C50_validation_true_positive_rate_mean <- mean(ensemble_C50_validation_true_positive_rate)
   ensemble_C50_validation_true_negative_rate[i] <- ensemble_C50_validation_table[1, 1] / sum(ensemble_C50_validation_table[1, 1] + ensemble_C50_validation_table[2, 1])
@@ -3947,8 +2851,9 @@ for (i in 1:numresamples) {
     ensemble_gb_train_fit <- gbm::gbm(ensemble_train$y ~ ., data = ensemble_train, distribution = "gaussian", n.trees = 100, shrinkage = 0.1, interaction.depth = 10)
   }
   ensemble_gb_train_pred <- stats::predict(ensemble_gb_train_fit, ensemble_train, type = "response")
-  ensemble_gb_train_probabilities <- ifelse(ensemble_gb_train_pred > 0.5, 1, 0)
-  ensemble_gb_train_table <- table(ensemble_gb_train_probabilities, ensemble_y_train)
+  ensemble_gb_train_predictions <- plogis(as.numeric(ensemble_gb_train_pred))
+  ensemble_gb_train_predictions_binomial <- rbinom(n = length(ensemble_gb_train_predictions), size = 1, prob = ensemble_gb_train_predictions)
+  ensemble_gb_train_table <- table(ensemble_gb_train_predictions_binomial, ensemble_y_train)
   ensemble_gb_train_true_positive_rate[i] <- ensemble_gb_train_table[2, 2] / sum(ensemble_gb_train_table[2, 2] + ensemble_gb_train_table[1, 2])
   ensemble_gb_train_true_positive_rate_mean <- mean(ensemble_gb_train_true_positive_rate)
   ensemble_gb_train_true_negative_rate[i] <- ensemble_gb_train_table[1, 1] / sum(ensemble_gb_train_table[1, 1] + ensemble_gb_train_table[2, 1])
@@ -3967,8 +2872,9 @@ for (i in 1:numresamples) {
   ensemble_gb_train_negative_predictive_value_mean <- mean(ensemble_gb_train_negative_predictive_value)
 
   ensemble_gb_test_pred <- stats::predict(ensemble_gb_train_fit, ensemble_test, type = "response")
-  ensemble_gb_test_probabilities <- ifelse(ensemble_gb_test_pred > 0.5, 1, 0)
-  ensemble_gb_test_table <- table(ensemble_gb_test_probabilities, ensemble_y_test)
+  ensemble_gb_test_predictions <- plogis(as.numeric(ensemble_gb_test_pred))
+  ensemble_gb_test_predictions_binomial <- rbinom(n = length(ensemble_gb_test_predictions), size = 1, prob = ensemble_gb_test_predictions)
+  ensemble_gb_test_table <- table(ensemble_gb_test_predictions_binomial, ensemble_y_test)
   ensemble_gb_test_true_positive_rate[i] <- ensemble_gb_test_table[2, 2] / sum(ensemble_gb_test_table[2, 2] + ensemble_gb_test_table[1, 2])
   ensemble_gb_test_true_positive_rate_mean <- mean(ensemble_gb_test_true_positive_rate)
   ensemble_gb_test_true_negative_rate[i] <- ensemble_gb_test_table[1, 1] / sum(ensemble_gb_test_table[1, 1] + ensemble_gb_test_table[2, 1])
@@ -3987,8 +2893,9 @@ for (i in 1:numresamples) {
   ensemble_gb_test_negative_predictive_value_mean <- mean(ensemble_gb_test_negative_predictive_value)
 
   ensemble_gb_validation_pred <- stats::predict(ensemble_gb_train_fit, ensemble_validation, type = "response")
-  ensemble_gb_validation_probabilities <- ifelse(ensemble_gb_validation_pred > 0.5, 1, 0)
-  ensemble_gb_validation_table <- table(ensemble_gb_validation_probabilities, ensemble_y_validation)
+  ensemble_gb_validation_predictions <- plogis(as.numeric(ensemble_gb_validation_pred))
+  ensemble_gb_validation_predictions_binomial <- rbinom(n = length(ensemble_gb_validation_predictions), size = 1, prob = ensemble_gb_validation_predictions)
+  ensemble_gb_validation_table <- table(ensemble_gb_validation_predictions_binomial, ensemble_y_validation)
   ensemble_gb_validation_true_positive_rate[i] <- ensemble_gb_validation_table[2, 2] / sum(ensemble_gb_validation_table[2, 2] + ensemble_gb_validation_table[1, 2])
   ensemble_gb_validation_true_positive_rate_mean <- mean(ensemble_gb_validation_true_positive_rate)
   ensemble_gb_validation_true_negative_rate[i] <- ensemble_gb_validation_table[1, 1] / sum(ensemble_gb_validation_table[1, 1] + ensemble_gb_validation_table[2, 1])
@@ -4037,7 +2944,116 @@ for (i in 1:numresamples) {
   ensemble_gb_duration_sd <- sd(ensemble_gb_duration)
 
 
-  #### Ensemble Using ensemble_pls ####
+  #### Ensemble Lasso ####
+
+  ensemble_lasso_start <- Sys.time()
+
+  if(set_seed == "Y"){
+    set.seed(seed = seed)
+    x = model.matrix(y ~ ., data = ensemble_train)[, -1]
+    y = ensemble_train$y
+    ensemble_lasso_train_fit <- glmnet::glmnet(x, y, alpha = 1)
+  }
+  if(set_seed == "N"){
+    x = model.matrix(y ~ ., data = ensemble_train)[, -1]
+    y = ensemble_train$y
+    ensemble_lasso_train_fit <- glmnet::glmnet(x, y, alpha = 1)
+  }
+  ensemble_lasso_train_pred <- stats::predict(ensemble_lasso_train_fit, as.matrix(ensemble_train[, 1:ncol(ensemble_train) -1]), family = "binomial")
+  ensemble_lasso_train_predictions <- plogis(ensemble_lasso_train_pred[, 1])
+  ensemble_lasso_train_predictions_binomial <- rbinom(n = length(ensemble_lasso_train_predictions), size = 1, prob = ensemble_lasso_train_predictions)
+  ensemble_lasso_train_table <- table(ensemble_lasso_train_predictions_binomial, as.matrix(ensemble_train$y))
+  ensemble_lasso_train_true_positive_rate[i] <- ensemble_lasso_train_table[2, 2] / sum(ensemble_lasso_train_table[2, 2] + ensemble_lasso_train_table[1, 2])
+  ensemble_lasso_train_true_positive_rate_mean <- mean(ensemble_lasso_train_true_positive_rate)
+  ensemble_lasso_train_true_negative_rate[i] <- ensemble_lasso_train_table[1, 1] / sum(ensemble_lasso_train_table[1, 1] + ensemble_lasso_train_table[2, 1])
+  ensemble_lasso_train_true_negative_rate_mean <- mean(ensemble_lasso_train_true_negative_rate)
+  ensemble_lasso_train_false_positive_rate[i] <- ensemble_lasso_train_table[2, 1] / sum(ensemble_lasso_train_table[2, 1] + ensemble_lasso_train_table[1, 1])
+  ensemble_lasso_train_false_positive_rate_mean <- mean(ensemble_lasso_train_false_positive_rate)
+  ensemble_lasso_train_false_negative_rate[i] <- ensemble_lasso_train_table[1, 2] / sum(ensemble_lasso_train_table[1, 2] + ensemble_lasso_train_table[2, 2])
+  ensemble_lasso_train_false_negative_rate_mean <- mean(ensemble_lasso_train_false_negative_rate)
+  ensemble_lasso_train_accuracy[i] <- (ensemble_lasso_train_table[1, 1] + ensemble_lasso_train_table[2, 2]) / sum(ensemble_lasso_train_table)
+  ensemble_lasso_train_accuracy_mean <- mean(ensemble_lasso_train_accuracy)
+  ensemble_lasso_train_F1_score[i] <- 2 * (ensemble_lasso_train_table[2, 2]) / sum(2 * ensemble_lasso_train_table[2, 2] + ensemble_lasso_train_table[1, 2] + ensemble_lasso_train_table[2, 1])
+  ensemble_lasso_train_F1_score_mean <- mean(ensemble_lasso_train_F1_score)
+  ensemble_lasso_train_positive_predictive_value[i] <- ensemble_lasso_train_table[2, 2] / sum(ensemble_lasso_train_table[2, 2] + ensemble_lasso_train_table[2, 1])
+  ensemble_lasso_train_positive_predictive_value_mean <- mean(ensemble_lasso_train_positive_predictive_value)
+  ensemble_lasso_train_negative_predictive_value[i] <- ensemble_lasso_train_table[1, 1] / sum(ensemble_lasso_train_table[1, 1] + ensemble_lasso_train_table[1, 2])
+  ensemble_lasso_train_negative_predictive_value_mean <- mean(ensemble_lasso_train_negative_predictive_value)
+
+  ensemble_lasso_test_pred <- stats::predict(ensemble_lasso_train_fit, as.matrix(ensemble_test[, 1:ncol(ensemble_test) -1]), family = "binomial")
+  ensemble_lasso_test_predictions <- plogis(ensemble_lasso_test_pred[, 1])
+  ensemble_lasso_test_predictions_binomial <- rbinom(n = length(ensemble_lasso_test_predictions), size = 1, prob = ensemble_lasso_test_predictions)
+  ensemble_lasso_test_table <- table(ensemble_lasso_test_predictions_binomial, as.matrix(ensemble_test$y))
+  ensemble_lasso_test_true_positive_rate[i] <- ensemble_lasso_test_table[2, 2] / sum(ensemble_lasso_test_table[2, 2] + ensemble_lasso_test_table[1, 2])
+  ensemble_lasso_test_true_positive_rate_mean <- mean(ensemble_lasso_test_true_positive_rate)
+  ensemble_lasso_test_true_negative_rate[i] <- ensemble_lasso_test_table[1, 1] / sum(ensemble_lasso_test_table[1, 1] + ensemble_lasso_test_table[2, 1])
+  ensemble_lasso_test_true_negative_rate_mean <- mean(ensemble_lasso_test_true_negative_rate)
+  ensemble_lasso_test_false_positive_rate[i] <- ensemble_lasso_test_table[2, 1] / sum(ensemble_lasso_test_table[2, 1] + ensemble_lasso_test_table[1, 1])
+  ensemble_lasso_test_false_positive_rate_mean <- mean(ensemble_lasso_test_false_positive_rate)
+  ensemble_lasso_test_false_negative_rate[i] <- ensemble_lasso_test_table[1, 2] / sum(ensemble_lasso_test_table[1, 2] + ensemble_lasso_test_table[2, 2])
+  ensemble_lasso_test_false_negative_rate_mean <- mean(ensemble_lasso_test_false_negative_rate)
+  ensemble_lasso_test_accuracy[i] <- (ensemble_lasso_test_table[1, 1] + ensemble_lasso_test_table[2, 2]) / sum(ensemble_lasso_test_table)
+  ensemble_lasso_test_accuracy_mean <- mean(ensemble_lasso_test_accuracy)
+  ensemble_lasso_test_F1_score[i] <- 2 * (ensemble_lasso_test_table[2, 2]) / sum(2 * ensemble_lasso_test_table[2, 2] + ensemble_lasso_test_table[1, 2] + ensemble_lasso_test_table[2, 1])
+  ensemble_lasso_test_F1_score_mean <- mean(ensemble_lasso_test_F1_score)
+  ensemble_lasso_test_positive_predictive_value[i] <- ensemble_lasso_test_table[2, 2] / sum(ensemble_lasso_test_table[2, 2] + ensemble_lasso_test_table[2, 1])
+  ensemble_lasso_test_positive_predictive_value_mean <- mean(ensemble_lasso_test_positive_predictive_value)
+  ensemble_lasso_test_negative_predictive_value[i] <- ensemble_lasso_test_table[1, 1] / sum(ensemble_lasso_test_table[1, 1] + ensemble_lasso_test_table[1, 2])
+  ensemble_lasso_test_negative_predictive_value_mean <- mean(ensemble_lasso_test_negative_predictive_value)
+
+  ensemble_lasso_validation_pred <- stats::predict(ensemble_lasso_train_fit, as.matrix(ensemble_validation[, 1:ncol(ensemble_validation) -1]), family = "binomial")
+  ensemble_lasso_validation_predictions <- plogis(ensemble_lasso_validation_pred[, 1])
+  ensemble_lasso_validation_predictions_binomial <- rbinom(n = length(ensemble_lasso_validation_predictions), size = 1, prob = ensemble_lasso_validation_predictions)
+  ensemble_lasso_validation_table <- table(ensemble_lasso_validation_predictions_binomial, as.matrix(ensemble_validation$y))
+  ensemble_lasso_validation_true_positive_rate[i] <- ensemble_lasso_validation_table[2, 2] / sum(ensemble_lasso_validation_table[2, 2] + ensemble_lasso_validation_table[1, 2])
+  ensemble_lasso_validation_true_positive_rate_mean <- mean(ensemble_lasso_validation_true_positive_rate)
+  ensemble_lasso_validation_true_negative_rate[i] <- ensemble_lasso_validation_table[1, 1] / sum(ensemble_lasso_validation_table[1, 1] + ensemble_lasso_validation_table[2, 1])
+  ensemble_lasso_validation_true_negative_rate_mean <- mean(ensemble_lasso_validation_true_negative_rate)
+  ensemble_lasso_validation_false_positive_rate[i] <- ensemble_lasso_validation_table[2, 1] / sum(ensemble_lasso_validation_table[2, 1] + ensemble_lasso_validation_table[1, 1])
+  ensemble_lasso_validation_false_positive_rate_mean <- mean(ensemble_lasso_validation_false_positive_rate)
+  ensemble_lasso_validation_false_negative_rate[i] <- ensemble_lasso_validation_table[1, 2] / sum(ensemble_lasso_validation_table[1, 2] + ensemble_lasso_validation_table[2, 2])
+  ensemble_lasso_validation_false_negative_rate_mean <- mean(ensemble_lasso_validation_false_negative_rate)
+  ensemble_lasso_validation_accuracy[i] <- (ensemble_lasso_validation_table[1, 1] + ensemble_lasso_validation_table[2, 2]) / sum(ensemble_lasso_validation_table)
+  ensemble_lasso_validation_accuracy_mean <- mean(ensemble_lasso_validation_accuracy)
+  ensemble_lasso_validation_F1_score[i] <- 2 * (ensemble_lasso_validation_table[2, 2]) / sum(2 * ensemble_lasso_validation_table[2, 2] + ensemble_lasso_validation_table[1, 2] + ensemble_lasso_validation_table[2, 1])
+  ensemble_lasso_validation_F1_score_mean <- mean(ensemble_lasso_validation_F1_score)
+  ensemble_lasso_validation_positive_predictive_value[i] <- ensemble_lasso_validation_table[2, 2] / sum(ensemble_lasso_validation_table[2, 2] + ensemble_lasso_validation_table[2, 1])
+  ensemble_lasso_validation_positive_predictive_value_mean <- mean(ensemble_lasso_validation_positive_predictive_value)
+  ensemble_lasso_validation_negative_predictive_value[i] <- ensemble_lasso_validation_table[1, 1] / sum(ensemble_lasso_validation_table[1, 1] + ensemble_lasso_validation_table[1, 2])
+  ensemble_lasso_validation_negative_predictive_value_mean <- mean(ensemble_lasso_validation_negative_predictive_value)
+
+  ensemble_lasso_holdout_true_positive_rate[i] <- (ensemble_lasso_test_true_positive_rate[i] + ensemble_lasso_validation_true_positive_rate[i]) / 2
+  ensemble_lasso_holdout_true_positive_rate_mean <- mean(ensemble_lasso_holdout_true_positive_rate)
+  ensemble_lasso_holdout_true_negative_rate[i] <- (ensemble_lasso_test_true_negative_rate[i] + ensemble_lasso_validation_true_negative_rate[i]) / 2
+  ensemble_lasso_holdout_true_negative_rate_mean <- mean(ensemble_lasso_holdout_true_negative_rate)
+  ensemble_lasso_holdout_false_positive_rate[i] <- (ensemble_lasso_test_false_positive_rate[i] + ensemble_lasso_validation_false_positive_rate[i]) / 2
+  ensemble_lasso_holdout_false_positive_rate_mean <- mean(ensemble_lasso_holdout_false_positive_rate)
+  ensemble_lasso_holdout_false_negative_rate[i] <- (ensemble_lasso_test_false_negative_rate[i] + ensemble_lasso_validation_false_negative_rate[i]) / 2
+  ensemble_lasso_holdout_false_negative_rate_mean <- mean(ensemble_lasso_holdout_false_negative_rate)
+  ensemble_lasso_holdout_accuracy[i] <- (ensemble_lasso_test_accuracy[i] + ensemble_lasso_validation_accuracy[i]) / 2
+  ensemble_lasso_holdout_accuracy_mean <- mean(ensemble_lasso_holdout_accuracy)
+  ensemble_lasso_holdout_accuracy_sd <- sd(ensemble_lasso_holdout_accuracy)
+  ensemble_lasso_holdout_F1_score[i] <- (ensemble_lasso_test_F1_score[i] + ensemble_lasso_validation_F1_score[i]) / 2
+  ensemble_lasso_holdout_F1_score_mean <- mean(ensemble_lasso_holdout_F1_score)
+  ensemble_lasso_holdout_positive_predictive_value[i] <- (ensemble_lasso_test_positive_predictive_value[i] + ensemble_lasso_validation_positive_predictive_value[i]) / 2
+  ensemble_lasso_holdout_positive_predictive_value_mean <- mean(ensemble_lasso_holdout_positive_predictive_value)
+  ensemble_lasso_holdout_negative_predictive_value[i] <- (ensemble_lasso_test_negative_predictive_value[i] + ensemble_lasso_validation_negative_predictive_value[i]) / 2
+  ensemble_lasso_holdout_negative_predictive_value_mean <- mean(ensemble_lasso_holdout_negative_predictive_value)
+  ensemble_lasso_holdout_overfitting[i] <- ensemble_lasso_holdout_accuracy[i] / ensemble_lasso_train_accuracy[i]
+  ensemble_lasso_holdout_overfitting_mean <- mean(ensemble_lasso_holdout_overfitting)
+  ensemble_lasso_holdout_overfitting_range <- range(ensemble_lasso_holdout_overfitting)
+  ensemble_lasso_holdout_overfitting_sd <- sd(ensemble_lasso_holdout_overfitting)
+
+  ensemble_lasso_table <- ensemble_lasso_test_table + ensemble_lasso_validation_table
+  ensemble_lasso_table_total <- ensemble_lasso_table_total + ensemble_lasso_table
+
+  ensemble_lasso_end <- Sys.time()
+  ensemble_lasso_duration[i] <- ensemble_lasso_end - ensemble_lasso_start
+  ensemble_lasso_duration_mean <- mean(ensemble_lasso_duration)
+  ensemble_lasso_duration_sd <- sd(ensemble_lasso_duration)
+
+
+  #### Ensemble PLS ####
   ensemble_pls_start <- Sys.time()
 
   if(set_seed == "Y"){
@@ -4048,7 +3064,9 @@ for (i in 1:numresamples) {
     ensemble_pls_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = ensemble_train, model = "PLSModel")
   }
   ensemble_pls_train_pred <- stats::predict(ensemble_pls_train_fit, ensemble_train, type = "response")
-  ensemble_pls_train_table <- table(ensemble_pls_train_pred, ensemble_y_train)
+  ensemble_pls_train_predictions <- plogis(as.numeric(ensemble_pls_train_pred))
+  ensemble_pls_train_predictions_binomial <- rbinom(n = length(ensemble_pls_train_predictions), size = 1, prob = ensemble_pls_train_predictions)
+  ensemble_pls_train_table <- table(ensemble_pls_train_predictions_binomial, ensemble_y_train)
   ensemble_pls_train_true_positive_rate[i] <- ensemble_pls_train_table[2, 2] / sum(ensemble_pls_train_table[2, 2] + ensemble_pls_train_table[1, 2])
   ensemble_pls_train_true_positive_rate_mean <- mean(ensemble_pls_train_true_positive_rate)
   ensemble_pls_train_true_negative_rate[i] <- ensemble_pls_train_table[1, 1] / sum(ensemble_pls_train_table[1, 1] + ensemble_pls_train_table[2, 1])
@@ -4066,8 +3084,10 @@ for (i in 1:numresamples) {
   ensemble_pls_train_negative_predictive_value[i] <- ensemble_pls_train_table[1, 1] / sum(ensemble_pls_train_table[1, 1] + ensemble_pls_train_table[1, 2])
   ensemble_pls_train_negative_predictive_value_mean <- mean(ensemble_pls_train_negative_predictive_value)
 
-  ensemble_pls_test_pred <- predict(ensemble_pls_train_fit, ensemble_test, type = "response")
-  ensemble_pls_test_table <- table(ensemble_pls_test_pred, ensemble_y_test)
+  ensemble_pls_test_pred <- stats::predict(ensemble_pls_train_fit, ensemble_test, type = "response")
+  ensemble_pls_test_predictions <- plogis(as.numeric(ensemble_pls_test_pred))
+  ensemble_pls_test_predictions_binomial <- rbinom(n = length(ensemble_pls_test_predictions), size = 1, prob = ensemble_pls_test_predictions)
+  ensemble_pls_test_table <- table(ensemble_pls_test_predictions_binomial, ensemble_y_test)
   ensemble_pls_test_true_positive_rate[i] <- ensemble_pls_test_table[2, 2] / sum(ensemble_pls_test_table[2, 2] + ensemble_pls_test_table[1, 2])
   ensemble_pls_test_true_positive_rate_mean <- mean(ensemble_pls_test_true_positive_rate)
   ensemble_pls_test_true_negative_rate[i] <- ensemble_pls_test_table[1, 1] / sum(ensemble_pls_test_table[1, 1] + ensemble_pls_test_table[2, 1])
@@ -4086,7 +3106,9 @@ for (i in 1:numresamples) {
   ensemble_pls_test_negative_predictive_value_mean <- mean(ensemble_pls_test_negative_predictive_value)
 
   ensemble_pls_validation_pred <- stats::predict(ensemble_pls_train_fit, ensemble_validation, type = "response")
-  ensemble_pls_validation_table <- table(ensemble_pls_validation_pred, ensemble_y_validation)
+  ensemble_pls_validation_predictions <- plogis(as.numeric(ensemble_pls_validation_pred))
+  ensemble_pls_validation_predictions_binomial <- rbinom(n = length(ensemble_pls_validation_predictions), size = 1, prob = ensemble_pls_validation_predictions)
+  ensemble_pls_validation_table <- table(ensemble_pls_validation_predictions_binomial, ensemble_y_validation)
   ensemble_pls_validation_true_positive_rate[i] <- ensemble_pls_validation_table[2, 2] / sum(ensemble_pls_validation_table[2, 2] + ensemble_pls_validation_table[1, 2])
   ensemble_pls_validation_true_positive_rate_mean <- mean(ensemble_pls_validation_true_positive_rate)
   ensemble_pls_validation_true_negative_rate[i] <- ensemble_pls_validation_table[1, 1] / sum(ensemble_pls_validation_table[1, 1] + ensemble_pls_validation_table[2, 1])
@@ -4134,7 +3156,7 @@ for (i in 1:numresamples) {
   ensemble_pls_duration_mean <- mean(ensemble_pls_duration)
   ensemble_pls_duration_sd <- sd(ensemble_pls_duration)
 
-  #### Ensemble Using ensemble_pda ####
+  #### Ensemble PDA ####
   ensemble_pda_start <- Sys.time()
 
   if(set_seed == "Y"){
@@ -4145,7 +3167,9 @@ for (i in 1:numresamples) {
     ensemble_pda_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = ensemble_train, model = "PDAModel")
   }
   ensemble_pda_train_pred <- stats::predict(ensemble_pda_train_fit, ensemble_train, type = "response")
-  ensemble_pda_train_table <- table(ensemble_pda_train_pred, ensemble_y_train)
+  ensemble_pda_train_predictions <- plogis(as.numeric(ensemble_pda_train_pred))
+  ensemble_pda_train_predictions_binomial <- rbinom(n = length(ensemble_pda_train_predictions), size = 1, prob = ensemble_pda_train_predictions)
+  ensemble_pda_train_table <- table(ensemble_pda_train_predictions_binomial, ensemble_y_train)
   ensemble_pda_train_true_positive_rate[i] <- ensemble_pda_train_table[2, 2] / sum(ensemble_pda_train_table[2, 2] + ensemble_pda_train_table[1, 2])
   ensemble_pda_train_true_positive_rate_mean <- mean(ensemble_pda_train_true_positive_rate)
   ensemble_pda_train_true_negative_rate[i] <- ensemble_pda_train_table[1, 1] / sum(ensemble_pda_train_table[1, 1] + ensemble_pda_train_table[2, 1])
@@ -4163,8 +3187,10 @@ for (i in 1:numresamples) {
   ensemble_pda_train_negative_predictive_value[i] <- ensemble_pda_train_table[1, 1] / sum(ensemble_pda_train_table[1, 1] + ensemble_pda_train_table[1, 2])
   ensemble_pda_train_negative_predictive_value_mean <- mean(ensemble_pda_train_negative_predictive_value)
 
-  ensemble_pda_test_pred <- predict(ensemble_pda_train_fit, ensemble_test, type = "response")
-  ensemble_pda_test_table <- table(ensemble_pda_test_pred, ensemble_y_test)
+  ensemble_pda_test_pred <- stats::predict(ensemble_pda_train_fit, ensemble_test, type = "response")
+  ensemble_pda_test_predictions <- plogis(as.numeric(ensemble_pda_test_pred))
+  ensemble_pda_test_predictions_binomial <- rbinom(n = length(ensemble_pda_test_predictions), size = 1, prob = ensemble_pda_test_predictions)
+  ensemble_pda_test_table <- table(ensemble_pda_test_predictions_binomial, ensemble_y_test)
   ensemble_pda_test_true_positive_rate[i] <- ensemble_pda_test_table[2, 2] / sum(ensemble_pda_test_table[2, 2] + ensemble_pda_test_table[1, 2])
   ensemble_pda_test_true_positive_rate_mean <- mean(ensemble_pda_test_true_positive_rate)
   ensemble_pda_test_true_negative_rate[i] <- ensemble_pda_test_table[1, 1] / sum(ensemble_pda_test_table[1, 1] + ensemble_pda_test_table[2, 1])
@@ -4183,7 +3209,9 @@ for (i in 1:numresamples) {
   ensemble_pda_test_negative_predictive_value_mean <- mean(ensemble_pda_test_negative_predictive_value)
 
   ensemble_pda_validation_pred <- stats::predict(ensemble_pda_train_fit, ensemble_validation, type = "response")
-  ensemble_pda_validation_table <- table(ensemble_pda_validation_pred, ensemble_y_validation)
+  ensemble_pda_validation_predictions <- plogis(as.numeric(ensemble_pda_validation_pred))
+  ensemble_pda_validation_predictions_binomial <- rbinom(n = length(ensemble_pda_validation_predictions), size = 1, prob = ensemble_pda_validation_predictions)
+  ensemble_pda_validation_table <- table(ensemble_pda_validation_predictions_binomial, ensemble_y_validation)
   ensemble_pda_validation_true_positive_rate[i] <- ensemble_pda_validation_table[2, 2] / sum(ensemble_pda_validation_table[2, 2] + ensemble_pda_validation_table[1, 2])
   ensemble_pda_validation_true_positive_rate_mean <- mean(ensemble_pda_validation_true_positive_rate)
   ensemble_pda_validation_true_negative_rate[i] <- ensemble_pda_validation_table[1, 1] / sum(ensemble_pda_validation_table[1, 1] + ensemble_pda_validation_table[2, 1])
@@ -4231,302 +3259,113 @@ for (i in 1:numresamples) {
   ensemble_pda_duration_mean <- mean(ensemble_pda_duration)
   ensemble_pda_duration_sd <- sd(ensemble_pda_duration)
 
+  #### Ensemble Ridge ####
 
-  #### Ensemble Using Random Forest ####
-  ensemble_rf_start <- Sys.time()
-
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    ensemble_rf_train_fit <- randomForest(x = ensemble_train, y = as.factor(ensemble_y_train), data = ensemble1)
-  }
-  if(set_seed == "N"){
-    ensemble_rf_train_fit <- randomForest(x = ensemble_train, y = as.factor(ensemble_y_train), data = ensemble1)
-  }
-  ensemble_rf_train_pred <- stats::predict(ensemble_rf_train_fit, ensemble_train, type = "prob")
-  ensemble_rf_train_predictions <- ifelse(ensemble_rf_train_pred > 0.50, 1, 0)[, 2]
-  ensemble_rf_train_table <- table(ensemble_rf_train_predictions, ensemble_y_train)
-  ensemble_rf_train_true_positive_rate[i] <- ensemble_rf_train_table[2, 2] / sum(ensemble_rf_train_table[2, 2] + ensemble_rf_train_table[1, 2])
-  ensemble_rf_train_true_positive_rate_mean <- mean(ensemble_rf_train_true_positive_rate)
-  ensemble_rf_train_true_negative_rate[i] <- ensemble_rf_train_table[1, 1] / sum(ensemble_rf_train_table[1, 1] + ensemble_rf_train_table[2, 1])
-  ensemble_rf_train_true_negative_rate_mean <- mean(ensemble_rf_train_true_negative_rate)
-  ensemble_rf_train_false_positive_rate[i] <- ensemble_rf_train_table[2, 1] / sum(ensemble_rf_train_table[2, 1] + ensemble_rf_train_table[1, 1])
-  ensemble_rf_train_false_positive_rate_mean <- mean(ensemble_rf_train_false_positive_rate)
-  ensemble_rf_train_false_negative_rate[i] <- ensemble_rf_train_table[1, 2] / sum(ensemble_rf_train_table[1, 2] + ensemble_rf_train_table[2, 2])
-  ensemble_rf_train_false_negative_rate_mean <- mean(ensemble_rf_train_false_negative_rate)
-  ensemble_rf_train_accuracy[i] <- (ensemble_rf_train_table[1, 1] + ensemble_rf_train_table[2, 2]) / sum(ensemble_rf_train_table)
-  ensemble_rf_train_accuracy_mean <- mean(ensemble_rf_train_accuracy)
-  ensemble_rf_train_F1_score[i] <- 2 * (ensemble_rf_train_table[2, 2]) / sum(2 * ensemble_rf_train_table[2, 2] + ensemble_rf_train_table[1, 2] + ensemble_rf_train_table[2, 1])
-  ensemble_rf_train_F1_score_mean <- mean(ensemble_rf_train_F1_score)
-  ensemble_rf_train_positive_predictive_value[i] <- ensemble_rf_train_table[2, 2] / sum(ensemble_rf_train_table[2, 2] + ensemble_rf_train_table[2, 1])
-  ensemble_rf_train_positive_predictive_value_mean <- mean(ensemble_rf_train_positive_predictive_value)
-  ensemble_rf_train_negative_predictive_value[i] <- ensemble_rf_train_table[1, 1] / sum(ensemble_rf_train_table[1, 1] + ensemble_rf_train_table[1, 2])
-  ensemble_rf_train_negative_predictive_value_mean <- mean(ensemble_rf_train_negative_predictive_value)
-
-  ensemble_rf_test_pred <- stats::predict(ensemble_rf_train_fit, ensemble_test, type = "prob")
-  ensemble_rf_test_predictions <- ifelse(ensemble_rf_test_pred > 0.50, 1, 0)[, 2]
-  ensemble_rf_test_table <- table(ensemble_rf_test_predictions, ensemble_y_test)
-  ensemble_rf_test_true_positive_rate[i] <- ensemble_rf_test_table[2, 2] / sum(ensemble_rf_test_table[2, 2] + ensemble_rf_test_table[1, 2])
-  ensemble_rf_test_true_positive_rate_mean <- mean(ensemble_rf_test_true_positive_rate)
-  ensemble_rf_test_true_negative_rate[i] <- ensemble_rf_test_table[1, 1] / sum(ensemble_rf_test_table[1, 1] + ensemble_rf_test_table[2, 1])
-  ensemble_rf_test_true_negative_rate_mean <- mean(ensemble_rf_test_true_negative_rate)
-  ensemble_rf_test_false_positive_rate[i] <- ensemble_rf_test_table[2, 1] / sum(ensemble_rf_test_table[2, 1] + ensemble_rf_test_table[1, 1])
-  ensemble_rf_test_false_positive_rate_mean <- mean(ensemble_rf_test_false_positive_rate)
-  ensemble_rf_test_false_negative_rate[i] <- ensemble_rf_test_table[1, 2] / sum(ensemble_rf_test_table[1, 2] + ensemble_rf_test_table[2, 2])
-  ensemble_rf_test_false_negative_rate_mean <- mean(ensemble_rf_test_false_negative_rate)
-  ensemble_rf_test_accuracy[i] <- (ensemble_rf_test_table[1, 1] + ensemble_rf_test_table[2, 2]) / sum(ensemble_rf_test_table)
-  ensemble_rf_test_accuracy_mean <- mean(ensemble_rf_test_accuracy)
-  ensemble_rf_test_F1_score[i] <- 2 * (ensemble_rf_test_table[2, 2]) / sum(2 * ensemble_rf_test_table[2, 2] + ensemble_rf_test_table[1, 2] + ensemble_rf_test_table[2, 1])
-  ensemble_rf_test_F1_score_mean <- mean(ensemble_rf_test_F1_score)
-  ensemble_rf_test_positive_predictive_value[i] <- ensemble_rf_test_table[2, 2] / sum(ensemble_rf_test_table[2, 2] + ensemble_rf_test_table[2, 1])
-  ensemble_rf_test_positive_predictive_value_mean <- mean(ensemble_rf_test_positive_predictive_value)
-  ensemble_rf_test_negative_predictive_value[i] <- ensemble_rf_test_table[1, 1] / sum(ensemble_rf_test_table[1, 1] + ensemble_rf_test_table[1, 2])
-  ensemble_rf_test_negative_predictive_value_mean <- mean(ensemble_rf_test_negative_predictive_value)
-
-  ensemble_rf_validation_pred <- stats::predict(ensemble_rf_train_fit, ensemble_validation, type = "prob")
-  ensemble_rf_validation_probabilities <- ifelse(ensemble_rf_validation_pred > 0.5, 1, 0)[, 2]
-  ensemble_rf_validation_table <- table(ensemble_rf_validation_probabilities, ensemble_y_validation)
-  ensemble_rf_validation_true_positive_rate[i] <- ensemble_rf_validation_table[2, 2] / sum(ensemble_rf_validation_table[2, 2] + ensemble_rf_validation_table[1, 2])
-  ensemble_rf_validation_true_positive_rate_mean <- mean(ensemble_rf_validation_true_positive_rate)
-  ensemble_rf_validation_true_negative_rate[i] <- ensemble_rf_validation_table[1, 1] / sum(ensemble_rf_validation_table[1, 1] + ensemble_rf_validation_table[2, 1])
-  ensemble_rf_validation_true_negative_rate_mean <- mean(ensemble_rf_validation_true_negative_rate)
-  ensemble_rf_validation_false_positive_rate[i] <- ensemble_rf_validation_table[2, 1] / sum(ensemble_rf_validation_table[2, 1] + ensemble_rf_validation_table[1, 1])
-  ensemble_rf_validation_false_positive_rate_mean <- mean(ensemble_rf_validation_false_positive_rate)
-  ensemble_rf_validation_false_negative_rate[i] <- ensemble_rf_validation_table[1, 2] / sum(ensemble_rf_validation_table[1, 2] + ensemble_rf_validation_table[2, 2])
-  ensemble_rf_validation_false_negative_rate_mean <- mean(ensemble_rf_validation_false_negative_rate)
-  ensemble_rf_validation_accuracy[i] <- (ensemble_rf_validation_table[1, 1] + ensemble_rf_validation_table[2, 2]) / sum(ensemble_rf_validation_table)
-  ensemble_rf_validation_accuracy_mean <- mean(ensemble_rf_validation_accuracy)
-  ensemble_rf_validation_F1_score[i] <- 2 * (ensemble_rf_validation_table[2, 2]) / sum(2 * ensemble_rf_validation_table[2, 2] + ensemble_rf_validation_table[1, 2] + ensemble_rf_validation_table[2, 1])
-  ensemble_rf_validation_F1_score_mean <- mean(ensemble_rf_validation_F1_score)
-  ensemble_rf_validation_positive_predictive_value[i] <- ensemble_rf_validation_table[2, 2] / sum(ensemble_rf_validation_table[2, 2] + ensemble_rf_validation_table[2, 1])
-  ensemble_rf_validation_positive_predictive_value_mean <- mean(ensemble_rf_validation_positive_predictive_value)
-  ensemble_rf_validation_negative_predictive_value[i] <- ensemble_rf_validation_table[1, 1] / sum(ensemble_rf_validation_table[1, 1] + ensemble_rf_validation_table[1, 2])
-  ensemble_rf_validation_negative_predictive_value_mean <- mean(ensemble_rf_validation_negative_predictive_value)
-
-  ensemble_rf_holdout_true_positive_rate[i] <- (ensemble_rf_test_true_positive_rate[i] + ensemble_rf_validation_true_positive_rate[i]) / 2
-  ensemble_rf_holdout_true_positive_rate_mean <- mean(ensemble_rf_holdout_true_positive_rate)
-  ensemble_rf_holdout_true_negative_rate[i] <- (ensemble_rf_test_true_negative_rate[i] + ensemble_rf_validation_true_negative_rate[i]) / 2
-  ensemble_rf_holdout_true_negative_rate_mean <- mean(ensemble_rf_holdout_true_negative_rate)
-  ensemble_rf_holdout_false_positive_rate[i] <- (ensemble_rf_test_false_positive_rate[i] + ensemble_rf_validation_false_positive_rate[i]) / 2
-  ensemble_rf_holdout_false_positive_rate_mean <- mean(ensemble_rf_holdout_false_positive_rate)
-  ensemble_rf_holdout_false_negative_rate[i] <- (ensemble_rf_test_false_negative_rate[i] + ensemble_rf_validation_false_negative_rate[i]) / 2
-  ensemble_rf_holdout_false_negative_rate_mean <- mean(ensemble_rf_holdout_false_negative_rate)
-  ensemble_rf_holdout_accuracy[i] <- (ensemble_rf_test_accuracy[i] + ensemble_rf_validation_accuracy[i]) / 2
-  ensemble_rf_holdout_accuracy_mean <- mean(ensemble_rf_holdout_accuracy)
-  ensemble_rf_holdout_accuracy_sd <- sd(ensemble_rf_holdout_accuracy)
-  ensemble_rf_holdout_F1_score[i] <- (ensemble_rf_test_F1_score[i] + ensemble_rf_validation_F1_score[i]) / 2
-  ensemble_rf_holdout_F1_score_mean <- mean(ensemble_rf_holdout_F1_score)
-  ensemble_rf_holdout_positive_predictive_value[i] <- (ensemble_rf_test_positive_predictive_value[i] + ensemble_rf_validation_positive_predictive_value[i]) / 2
-  ensemble_rf_holdout_positive_predictive_value_mean <- mean(ensemble_rf_holdout_positive_predictive_value)
-  ensemble_rf_holdout_negative_predictive_value[i] <- (ensemble_rf_test_negative_predictive_value[i] + ensemble_rf_validation_negative_predictive_value[i]) / 2
-  ensemble_rf_holdout_negative_predictive_value_mean <- mean(ensemble_rf_holdout_negative_predictive_value)
-  ensemble_rf_holdout_overfitting[i] <- ensemble_rf_holdout_accuracy[i] / ensemble_rf_train_accuracy[i]
-  ensemble_rf_holdout_overfitting_mean <- mean(ensemble_rf_holdout_overfitting)
-  ensemble_rf_holdout_overfitting_range <- range(ensemble_rf_holdout_overfitting)
-  ensemble_rf_holdout_overfitting_sd <- sd(ensemble_rf_holdout_overfitting)
-
-  ensemble_rf_table <- ensemble_rf_test_table + ensemble_rf_validation_table
-  ensemble_rf_table_total <- ensemble_rf_table_total + ensemble_rf_table
-
-  ensemble_rf_end <- Sys.time()
-  ensemble_rf_duration[i] <- ensemble_rf_end - ensemble_rf_start
-  ensemble_rf_duration_mean <- mean(ensemble_rf_duration)
-  ensemble_rf_duration_sd <- sd(ensemble_rf_duration)
-
-
-  #### Ensemble Using Ranger ####
-  ensemble_ranger_start <- Sys.time()
+  ensemble_ridge_start <- Sys.time()
 
   if(set_seed == "Y"){
     set.seed(seed = seed)
-    ensemble_ranger_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = ensemble_train, model = "RangerModel")
+    x = model.matrix(y ~ ., data = ensemble_train)[, -1]
+    y = ensemble_train$y
+    ensemble_ridge_train_fit <- glmnet::glmnet(x, y, alpha = 0)
   }
   if(set_seed == "N"){
-    ensemble_ranger_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = ensemble_train, model = "RangerModel")
+    x = model.matrix(y ~ ., data = ensemble_train)[, -1]
+    y = ensemble_train$y
+    ensemble_ridge_train_fit <- glmnet::glmnet(x, y, alpha = 0)
   }
-  ensemble_ranger_train_pred <- stats::predict(ensemble_ranger_train_fit, ensemble_train, type = "response")
-  ensemble_ranger_train_table <- table(ensemble_ranger_train_pred, ensemble_y_train)
-  ensemble_ranger_train_true_positive_rate[i] <- ensemble_ranger_train_table[2, 2] / sum(ensemble_ranger_train_table[2, 2] + ensemble_ranger_train_table[1, 2])
-  ensemble_ranger_train_true_positive_rate_mean <- mean(ensemble_ranger_train_true_positive_rate)
-  ensemble_ranger_train_true_negative_rate[i] <- ensemble_ranger_train_table[1, 1] / sum(ensemble_ranger_train_table[1, 1] + ensemble_ranger_train_table[2, 1])
-  ensemble_ranger_train_true_negative_rate_mean <- mean(ensemble_ranger_train_true_negative_rate)
-  ensemble_ranger_train_false_positive_rate[i] <- ensemble_ranger_train_table[2, 1] / sum(ensemble_ranger_train_table[2, 1] + ensemble_ranger_train_table[1, 1])
-  ensemble_ranger_train_false_positive_rate_mean <- mean(ensemble_ranger_train_false_positive_rate)
-  ensemble_ranger_train_false_negative_rate[i] <- ensemble_ranger_train_table[1, 2] / sum(ensemble_ranger_train_table[1, 2] + ensemble_ranger_train_table[2, 2])
-  ensemble_ranger_train_false_negative_rate_mean <- mean(ensemble_ranger_train_false_negative_rate)
-  ensemble_ranger_train_accuracy[i] <- (ensemble_ranger_train_table[1, 1] + ensemble_ranger_train_table[2, 2]) / sum(ensemble_ranger_train_table)
-  ensemble_ranger_train_accuracy_mean <- mean(ensemble_ranger_train_accuracy)
-  ensemble_ranger_train_F1_score[i] <- 2 * (ensemble_ranger_train_table[2, 2]) / sum(2 * ensemble_ranger_train_table[2, 2] + ensemble_ranger_train_table[1, 2] + ensemble_ranger_train_table[2, 1])
-  ensemble_ranger_train_F1_score_mean <- mean(ensemble_ranger_train_F1_score)
-  ensemble_ranger_train_positive_predictive_value[i] <- ensemble_ranger_train_table[2, 2] / sum(ensemble_ranger_train_table[2, 2] + ensemble_ranger_train_table[2, 1])
-  ensemble_ranger_train_positive_predictive_value_mean <- mean(ensemble_ranger_train_positive_predictive_value)
-  ensemble_ranger_train_negative_predictive_value[i] <- ensemble_ranger_train_table[1, 1] / sum(ensemble_ranger_train_table[1, 1] + ensemble_ranger_train_table[1, 2])
-  ensemble_ranger_train_negative_predictive_value_mean <- mean(ensemble_ranger_train_negative_predictive_value)
+  ensemble_ridge_train_pred <- stats::predict(ensemble_ridge_train_fit, as.matrix(ensemble_train[, 1:ncol(ensemble_train) -1]), family = "binomial")
+  ensemble_ridge_train_predictions <- plogis(ensemble_ridge_train_pred[, 1])
+  ensemble_ridge_train_predictions_binomial <- rbinom(n = length(ensemble_ridge_train_predictions), size = 1, prob = ensemble_ridge_train_predictions)
+  ensemble_ridge_train_table <- table(ensemble_ridge_train_predictions_binomial, as.matrix(ensemble_train$y))
+  ensemble_ridge_train_true_positive_rate[i] <- ensemble_ridge_train_table[2, 2] / sum(ensemble_ridge_train_table[2, 2] + ensemble_ridge_train_table[1, 2])
+  ensemble_ridge_train_true_positive_rate_mean <- mean(ensemble_ridge_train_true_positive_rate)
+  ensemble_ridge_train_true_negative_rate[i] <- ensemble_ridge_train_table[1, 1] / sum(ensemble_ridge_train_table[1, 1] + ensemble_ridge_train_table[2, 1])
+  ensemble_ridge_train_true_negative_rate_mean <- mean(ensemble_ridge_train_true_negative_rate)
+  ensemble_ridge_train_false_positive_rate[i] <- ensemble_ridge_train_table[2, 1] / sum(ensemble_ridge_train_table[2, 1] + ensemble_ridge_train_table[1, 1])
+  ensemble_ridge_train_false_positive_rate_mean <- mean(ensemble_ridge_train_false_positive_rate)
+  ensemble_ridge_train_false_negative_rate[i] <- ensemble_ridge_train_table[1, 2] / sum(ensemble_ridge_train_table[1, 2] + ensemble_ridge_train_table[2, 2])
+  ensemble_ridge_train_false_negative_rate_mean <- mean(ensemble_ridge_train_false_negative_rate)
+  ensemble_ridge_train_accuracy[i] <- (ensemble_ridge_train_table[1, 1] + ensemble_ridge_train_table[2, 2]) / sum(ensemble_ridge_train_table)
+  ensemble_ridge_train_accuracy_mean <- mean(ensemble_ridge_train_accuracy)
+  ensemble_ridge_train_F1_score[i] <- 2 * (ensemble_ridge_train_table[2, 2]) / sum(2 * ensemble_ridge_train_table[2, 2] + ensemble_ridge_train_table[1, 2] + ensemble_ridge_train_table[2, 1])
+  ensemble_ridge_train_F1_score_mean <- mean(ensemble_ridge_train_F1_score)
+  ensemble_ridge_train_positive_predictive_value[i] <- ensemble_ridge_train_table[2, 2] / sum(ensemble_ridge_train_table[2, 2] + ensemble_ridge_train_table[2, 1])
+  ensemble_ridge_train_positive_predictive_value_mean <- mean(ensemble_ridge_train_positive_predictive_value)
+  ensemble_ridge_train_negative_predictive_value[i] <- ensemble_ridge_train_table[1, 1] / sum(ensemble_ridge_train_table[1, 1] + ensemble_ridge_train_table[1, 2])
+  ensemble_ridge_train_negative_predictive_value_mean <- mean(ensemble_ridge_train_negative_predictive_value)
 
-  ensemble_ranger_test_pred <- stats::predict(ensemble_ranger_train_fit, ensemble_test, type = "response")
-  ensemble_ranger_test_table <- table(ensemble_ranger_test_pred, ensemble_y_test)
-  ensemble_ranger_test_true_positive_rate[i] <- ensemble_ranger_test_table[2, 2] / sum(ensemble_ranger_test_table[2, 2] + ensemble_ranger_test_table[1, 2])
-  ensemble_ranger_test_true_positive_rate_mean <- mean(ensemble_ranger_test_true_positive_rate)
-  ensemble_ranger_test_true_negative_rate[i] <- ensemble_ranger_test_table[1, 1] / sum(ensemble_ranger_test_table[1, 1] + ensemble_ranger_test_table[2, 1])
-  ensemble_ranger_test_true_negative_rate_mean <- mean(ensemble_ranger_test_true_negative_rate)
-  ensemble_ranger_test_false_positive_rate[i] <- ensemble_ranger_test_table[2, 1] / sum(ensemble_ranger_test_table[2, 1] + ensemble_ranger_test_table[1, 1])
-  ensemble_ranger_test_false_positive_rate_mean <- mean(ensemble_ranger_test_false_positive_rate)
-  ensemble_ranger_test_false_negative_rate[i] <- ensemble_ranger_test_table[1, 2] / sum(ensemble_ranger_test_table[1, 2] + ensemble_ranger_test_table[2, 2])
-  ensemble_ranger_test_false_negative_rate_mean <- mean(ensemble_ranger_test_false_negative_rate)
-  ensemble_ranger_test_accuracy[i] <- (ensemble_ranger_test_table[1, 1] + ensemble_ranger_test_table[2, 2]) / sum(ensemble_ranger_test_table)
-  ensemble_ranger_test_accuracy_mean <- mean(ensemble_ranger_test_accuracy)
-  ensemble_ranger_test_F1_score[i] <- 2 * (ensemble_ranger_test_table[2, 2]) / sum(2 * ensemble_ranger_test_table[2, 2] + ensemble_ranger_test_table[1, 2] + ensemble_ranger_test_table[2, 1])
-  ensemble_ranger_test_F1_score_mean <- mean(ensemble_ranger_test_F1_score)
-  ensemble_ranger_test_positive_predictive_value[i] <- ensemble_ranger_test_table[2, 2] / sum(ensemble_ranger_test_table[2, 2] + ensemble_ranger_test_table[2, 1])
-  ensemble_ranger_test_positive_predictive_value_mean <- mean(ensemble_ranger_test_positive_predictive_value)
-  ensemble_ranger_test_negative_predictive_value[i] <- ensemble_ranger_test_table[1, 1] / sum(ensemble_ranger_test_table[1, 1] + ensemble_ranger_test_table[1, 2])
-  ensemble_ranger_test_negative_predictive_value_mean <- mean(ensemble_ranger_test_negative_predictive_value)
+  ensemble_ridge_test_pred <- stats::predict(ensemble_ridge_train_fit, as.matrix(ensemble_test[, 1:ncol(ensemble_test) -1]), family = "binomial")
+  ensemble_ridge_test_predictions <- plogis(ensemble_ridge_test_pred[, 1])
+  ensemble_ridge_test_predictions_binomial <- rbinom(n = length(ensemble_ridge_test_predictions), size = 1, prob = ensemble_ridge_test_predictions)
+  ensemble_ridge_test_table <- table(ensemble_ridge_test_predictions_binomial, as.matrix(ensemble_test$y))
+  ensemble_ridge_test_true_positive_rate[i] <- ensemble_ridge_test_table[2, 2] / sum(ensemble_ridge_test_table[2, 2] + ensemble_ridge_test_table[1, 2])
+  ensemble_ridge_test_true_positive_rate_mean <- mean(ensemble_ridge_test_true_positive_rate)
+  ensemble_ridge_test_true_negative_rate[i] <- ensemble_ridge_test_table[1, 1] / sum(ensemble_ridge_test_table[1, 1] + ensemble_ridge_test_table[2, 1])
+  ensemble_ridge_test_true_negative_rate_mean <- mean(ensemble_ridge_test_true_negative_rate)
+  ensemble_ridge_test_false_positive_rate[i] <- ensemble_ridge_test_table[2, 1] / sum(ensemble_ridge_test_table[2, 1] + ensemble_ridge_test_table[1, 1])
+  ensemble_ridge_test_false_positive_rate_mean <- mean(ensemble_ridge_test_false_positive_rate)
+  ensemble_ridge_test_false_negative_rate[i] <- ensemble_ridge_test_table[1, 2] / sum(ensemble_ridge_test_table[1, 2] + ensemble_ridge_test_table[2, 2])
+  ensemble_ridge_test_false_negative_rate_mean <- mean(ensemble_ridge_test_false_negative_rate)
+  ensemble_ridge_test_accuracy[i] <- (ensemble_ridge_test_table[1, 1] + ensemble_ridge_test_table[2, 2]) / sum(ensemble_ridge_test_table)
+  ensemble_ridge_test_accuracy_mean <- mean(ensemble_ridge_test_accuracy)
+  ensemble_ridge_test_F1_score[i] <- 2 * (ensemble_ridge_test_table[2, 2]) / sum(2 * ensemble_ridge_test_table[2, 2] + ensemble_ridge_test_table[1, 2] + ensemble_ridge_test_table[2, 1])
+  ensemble_ridge_test_F1_score_mean <- mean(ensemble_ridge_test_F1_score)
+  ensemble_ridge_test_positive_predictive_value[i] <- ensemble_ridge_test_table[2, 2] / sum(ensemble_ridge_test_table[2, 2] + ensemble_ridge_test_table[2, 1])
+  ensemble_ridge_test_positive_predictive_value_mean <- mean(ensemble_ridge_test_positive_predictive_value)
+  ensemble_ridge_test_negative_predictive_value[i] <- ensemble_ridge_test_table[1, 1] / sum(ensemble_ridge_test_table[1, 1] + ensemble_ridge_test_table[1, 2])
+  ensemble_ridge_test_negative_predictive_value_mean <- mean(ensemble_ridge_test_negative_predictive_value)
 
-  ensemble_ranger_validation_pred <- stats::predict(ensemble_ranger_train_fit, ensemble_validation, type = "response")
-  ensemble_ranger_validation_table <- table(ensemble_ranger_validation_pred, ensemble_y_validation)
-  ensemble_ranger_validation_true_positive_rate[i] <- ensemble_ranger_validation_table[2, 2] / sum(ensemble_ranger_validation_table[2, 2] + ensemble_ranger_validation_table[1, 2])
-  ensemble_ranger_validation_true_positive_rate_mean <- mean(ensemble_ranger_validation_true_positive_rate)
-  ensemble_ranger_validation_true_negative_rate[i] <- ensemble_ranger_validation_table[1, 1] / sum(ensemble_ranger_validation_table[1, 1] + ensemble_ranger_validation_table[2, 1])
-  ensemble_ranger_validation_true_negative_rate_mean <- mean(ensemble_ranger_validation_true_negative_rate)
-  ensemble_ranger_validation_false_positive_rate[i] <- ensemble_ranger_validation_table[2, 1] / sum(ensemble_ranger_validation_table[2, 1] + ensemble_ranger_validation_table[1, 1])
-  ensemble_ranger_validation_false_positive_rate_mean <- mean(ensemble_ranger_validation_false_positive_rate)
-  ensemble_ranger_validation_false_negative_rate[i] <- ensemble_ranger_validation_table[1, 2] / sum(ensemble_ranger_validation_table[1, 2] + ensemble_ranger_validation_table[2, 2])
-  ensemble_ranger_validation_false_negative_rate_mean <- mean(ensemble_ranger_validation_false_negative_rate)
-  ensemble_ranger_validation_accuracy[i] <- (ensemble_ranger_validation_table[1, 1] + ensemble_ranger_validation_table[2, 2]) / sum(ensemble_ranger_validation_table)
-  ensemble_ranger_validation_accuracy_mean <- mean(ensemble_ranger_validation_accuracy)
-  ensemble_ranger_validation_F1_score[i] <- 2 * (ensemble_ranger_validation_table[2, 2]) / sum(2 * ensemble_ranger_validation_table[2, 2] + ensemble_ranger_validation_table[1, 2] + ensemble_ranger_validation_table[2, 1])
-  ensemble_ranger_validation_F1_score_mean <- mean(ensemble_ranger_validation_F1_score)
-  ensemble_ranger_validation_positive_predictive_value[i] <- ensemble_ranger_validation_table[2, 2] / sum(ensemble_ranger_validation_table[2, 2] + ensemble_ranger_validation_table[2, 1])
-  ensemble_ranger_validation_positive_predictive_value_mean <- mean(ensemble_ranger_validation_positive_predictive_value)
-  ensemble_ranger_validation_negative_predictive_value[i] <- ensemble_ranger_validation_table[1, 1] / sum(ensemble_ranger_validation_table[1, 1] + ensemble_ranger_validation_table[1, 2])
-  ensemble_ranger_validation_negative_predictive_value_mean <- mean(ensemble_ranger_validation_negative_predictive_value)
+  ensemble_ridge_validation_pred <- stats::predict(ensemble_ridge_train_fit, as.matrix(ensemble_validation[, 1:ncol(ensemble_validation) -1]), family = "binomial")
+  ensemble_ridge_validation_predictions <- plogis(ensemble_ridge_validation_pred[, 1])
+  ensemble_ridge_validation_predictions_binomial <- rbinom(n = length(ensemble_ridge_validation_predictions), size = 1, prob = ensemble_ridge_validation_predictions)
+  ensemble_ridge_validation_table <- table(ensemble_ridge_validation_predictions_binomial, as.matrix(ensemble_validation$y))
+  ensemble_ridge_validation_true_positive_rate[i] <- ensemble_ridge_validation_table[2, 2] / sum(ensemble_ridge_validation_table[2, 2] + ensemble_ridge_validation_table[1, 2])
+  ensemble_ridge_validation_true_positive_rate_mean <- mean(ensemble_ridge_validation_true_positive_rate)
+  ensemble_ridge_validation_true_negative_rate[i] <- ensemble_ridge_validation_table[1, 1] / sum(ensemble_ridge_validation_table[1, 1] + ensemble_ridge_validation_table[2, 1])
+  ensemble_ridge_validation_true_negative_rate_mean <- mean(ensemble_ridge_validation_true_negative_rate)
+  ensemble_ridge_validation_false_positive_rate[i] <- ensemble_ridge_validation_table[2, 1] / sum(ensemble_ridge_validation_table[2, 1] + ensemble_ridge_validation_table[1, 1])
+  ensemble_ridge_validation_false_positive_rate_mean <- mean(ensemble_ridge_validation_false_positive_rate)
+  ensemble_ridge_validation_false_negative_rate[i] <- ensemble_ridge_validation_table[1, 2] / sum(ensemble_ridge_validation_table[1, 2] + ensemble_ridge_validation_table[2, 2])
+  ensemble_ridge_validation_false_negative_rate_mean <- mean(ensemble_ridge_validation_false_negative_rate)
+  ensemble_ridge_validation_accuracy[i] <- (ensemble_ridge_validation_table[1, 1] + ensemble_ridge_validation_table[2, 2]) / sum(ensemble_ridge_validation_table)
+  ensemble_ridge_validation_accuracy_mean <- mean(ensemble_ridge_validation_accuracy)
+  ensemble_ridge_validation_F1_score[i] <- 2 * (ensemble_ridge_validation_table[2, 2]) / sum(2 * ensemble_ridge_validation_table[2, 2] + ensemble_ridge_validation_table[1, 2] + ensemble_ridge_validation_table[2, 1])
+  ensemble_ridge_validation_F1_score_mean <- mean(ensemble_ridge_validation_F1_score)
+  ensemble_ridge_validation_positive_predictive_value[i] <- ensemble_ridge_validation_table[2, 2] / sum(ensemble_ridge_validation_table[2, 2] + ensemble_ridge_validation_table[2, 1])
+  ensemble_ridge_validation_positive_predictive_value_mean <- mean(ensemble_ridge_validation_positive_predictive_value)
+  ensemble_ridge_validation_negative_predictive_value[i] <- ensemble_ridge_validation_table[1, 1] / sum(ensemble_ridge_validation_table[1, 1] + ensemble_ridge_validation_table[1, 2])
+  ensemble_ridge_validation_negative_predictive_value_mean <- mean(ensemble_ridge_validation_negative_predictive_value)
 
-  ensemble_ranger_holdout_true_positive_rate[i] <- (ensemble_ranger_test_true_positive_rate[i] + ensemble_ranger_validation_true_positive_rate[i]) / 2
-  ensemble_ranger_holdout_true_positive_rate_mean <- mean(ensemble_ranger_holdout_true_positive_rate)
-  ensemble_ranger_holdout_true_negative_rate[i] <- (ensemble_ranger_test_true_negative_rate[i] + ensemble_ranger_validation_true_negative_rate[i]) / 2
-  ensemble_ranger_holdout_true_negative_rate_mean <- mean(ensemble_ranger_holdout_true_negative_rate)
-  ensemble_ranger_holdout_false_positive_rate[i] <- (ensemble_ranger_test_false_positive_rate[i] + ensemble_ranger_validation_false_positive_rate[i]) / 2
-  ensemble_ranger_holdout_false_positive_rate_mean <- mean(ensemble_ranger_holdout_false_positive_rate)
-  ensemble_ranger_holdout_false_negative_rate[i] <- (ensemble_ranger_test_false_negative_rate[i] + ensemble_ranger_validation_false_negative_rate[i]) / 2
-  ensemble_ranger_holdout_false_negative_rate_mean <- mean(ensemble_ranger_holdout_false_negative_rate)
-  ensemble_ranger_holdout_accuracy[i] <- (ensemble_ranger_test_accuracy[i] + ensemble_ranger_validation_accuracy[i]) / 2
-  ensemble_ranger_holdout_accuracy_mean <- mean(ensemble_ranger_holdout_accuracy)
-  ensemble_ranger_holdout_accuracy_sd <- sd(ensemble_ranger_holdout_accuracy)
-  ensemble_ranger_holdout_F1_score[i] <- (ensemble_ranger_test_F1_score[i] + ensemble_ranger_validation_F1_score[i]) / 2
-  ensemble_ranger_holdout_F1_score_mean <- mean(ensemble_ranger_holdout_F1_score)
-  ensemble_ranger_holdout_positive_predictive_value[i] <- (ensemble_ranger_test_positive_predictive_value[i] + ensemble_ranger_validation_positive_predictive_value[i]) / 2
-  ensemble_ranger_holdout_positive_predictive_value_mean <- mean(ensemble_ranger_holdout_positive_predictive_value)
-  ensemble_ranger_holdout_negative_predictive_value[i] <- (ensemble_ranger_test_negative_predictive_value[i] + ensemble_ranger_validation_negative_predictive_value[i]) / 2
-  ensemble_ranger_holdout_negative_predictive_value_mean <- mean(ensemble_ranger_holdout_negative_predictive_value)
-  ensemble_ranger_holdout_overfitting[i] <- ensemble_ranger_holdout_accuracy[i] / ensemble_ranger_train_accuracy[i]
-  ensemble_ranger_holdout_overfitting_mean <- mean(ensemble_ranger_holdout_overfitting)
-  ensemble_ranger_holdout_overfitting_range <- range(ensemble_ranger_holdout_overfitting)
-  ensemble_ranger_holdout_overfitting_sd <- sd(ensemble_ranger_holdout_overfitting)
+  ensemble_ridge_holdout_true_positive_rate[i] <- (ensemble_ridge_test_true_positive_rate[i] + ensemble_ridge_validation_true_positive_rate[i]) / 2
+  ensemble_ridge_holdout_true_positive_rate_mean <- mean(ensemble_ridge_holdout_true_positive_rate)
+  ensemble_ridge_holdout_true_negative_rate[i] <- (ensemble_ridge_test_true_negative_rate[i] + ensemble_ridge_validation_true_negative_rate[i]) / 2
+  ensemble_ridge_holdout_true_negative_rate_mean <- mean(ensemble_ridge_holdout_true_negative_rate)
+  ensemble_ridge_holdout_false_positive_rate[i] <- (ensemble_ridge_test_false_positive_rate[i] + ensemble_ridge_validation_false_positive_rate[i]) / 2
+  ensemble_ridge_holdout_false_positive_rate_mean <- mean(ensemble_ridge_holdout_false_positive_rate)
+  ensemble_ridge_holdout_false_negative_rate[i] <- (ensemble_ridge_test_false_negative_rate[i] + ensemble_ridge_validation_false_negative_rate[i]) / 2
+  ensemble_ridge_holdout_false_negative_rate_mean <- mean(ensemble_ridge_holdout_false_negative_rate)
+  ensemble_ridge_holdout_accuracy[i] <- (ensemble_ridge_test_accuracy[i] + ensemble_ridge_validation_accuracy[i]) / 2
+  ensemble_ridge_holdout_accuracy_mean <- mean(ensemble_ridge_holdout_accuracy)
+  ensemble_ridge_holdout_accuracy_sd <- sd(ensemble_ridge_holdout_accuracy)
+  ensemble_ridge_holdout_F1_score[i] <- (ensemble_ridge_test_F1_score[i] + ensemble_ridge_validation_F1_score[i]) / 2
+  ensemble_ridge_holdout_F1_score_mean <- mean(ensemble_ridge_holdout_F1_score)
+  ensemble_ridge_holdout_positive_predictive_value[i] <- (ensemble_ridge_test_positive_predictive_value[i] + ensemble_ridge_validation_positive_predictive_value[i]) / 2
+  ensemble_ridge_holdout_positive_predictive_value_mean <- mean(ensemble_ridge_holdout_positive_predictive_value)
+  ensemble_ridge_holdout_negative_predictive_value[i] <- (ensemble_ridge_test_negative_predictive_value[i] + ensemble_ridge_validation_negative_predictive_value[i]) / 2
+  ensemble_ridge_holdout_negative_predictive_value_mean <- mean(ensemble_ridge_holdout_negative_predictive_value)
+  ensemble_ridge_holdout_overfitting[i] <- ensemble_ridge_holdout_accuracy[i] / ensemble_ridge_train_accuracy[i]
+  ensemble_ridge_holdout_overfitting_mean <- mean(ensemble_ridge_holdout_overfitting)
+  ensemble_ridge_holdout_overfitting_range <- range(ensemble_ridge_holdout_overfitting)
+  ensemble_ridge_holdout_overfitting_sd <- sd(ensemble_ridge_holdout_overfitting)
 
-  ensemble_ranger_table <- ensemble_ranger_test_table + ensemble_ranger_validation_table
-  ensemble_ranger_table_total <- ensemble_ranger_table_total + ensemble_ranger_table
+  ensemble_ridge_table <- ensemble_ridge_test_table + ensemble_ridge_validation_table
+  ensemble_ridge_table_total <- ensemble_ridge_table_total + ensemble_ridge_table
 
-  ensemble_ranger_end <- Sys.time()
-  ensemble_ranger_duration[i] <- ensemble_ranger_end - ensemble_ranger_start
-  ensemble_ranger_duration_mean <- mean(ensemble_ranger_duration)
-  ensemble_ranger_duration_sd <- sd(ensemble_ranger_duration)
-
-
-  #### Ensemble Using Regularized Discriminant Analysis ####
-  ensemble_rda_start <- Sys.time()
-
-  if(set_seed == "Y"){
-    set.seed(seed = seed)
-    ensemble_rda_train_fit <- klaR::rda(as.factor(y) ~ ., data = ensemble_train)
-  }
-  if(set_seed == "N"){
-    ensemble_rda_train_fit <- klaR::rda(as.factor(y) ~ ., data = ensemble_train)
-  }
-  ensemble_rda_train_pred <- stats::predict(ensemble_rda_train_fit, ensemble_train, type = "response")
-  ensemble_rda_train_table <- table(ensemble_rda_train_pred$class, ensemble_y_train)
-  ensemble_rda_train_true_positive_rate[i] <- ensemble_rda_train_table[2, 2] / sum(ensemble_rda_train_table[2, 2] + ensemble_rda_train_table[1, 2])
-  ensemble_rda_train_true_positive_rate_mean <- mean(ensemble_rda_train_true_positive_rate)
-  ensemble_rda_train_true_negative_rate[i] <- ensemble_rda_train_table[1, 1] / sum(ensemble_rda_train_table[1, 1] + ensemble_rda_train_table[2, 1])
-  ensemble_rda_train_true_negative_rate_mean <- mean(ensemble_rda_train_true_negative_rate)
-  ensemble_rda_train_false_positive_rate[i] <- ensemble_rda_train_table[2, 1] / sum(ensemble_rda_train_table[2, 1] + ensemble_rda_train_table[1, 1])
-  ensemble_rda_train_false_positive_rate_mean <- mean(ensemble_rda_train_false_positive_rate)
-  ensemble_rda_train_false_negative_rate[i] <- ensemble_rda_train_table[1, 2] / sum(ensemble_rda_train_table[1, 2] + ensemble_rda_train_table[2, 2])
-  ensemble_rda_train_false_negative_rate_mean <- mean(ensemble_rda_train_false_negative_rate)
-  ensemble_rda_train_accuracy[i] <- (ensemble_rda_train_table[1, 1] + ensemble_rda_train_table[2, 2]) / sum(ensemble_rda_train_table)
-  ensemble_rda_train_accuracy_mean <- mean(ensemble_rda_train_accuracy)
-  ensemble_rda_train_F1_score[i] <- 2 * (ensemble_rda_train_table[2, 2]) / sum(2 * ensemble_rda_train_table[2, 2] + ensemble_rda_train_table[1, 2] + ensemble_rda_train_table[2, 1])
-  ensemble_rda_train_F1_score_mean <- mean(ensemble_rda_train_F1_score)
-  ensemble_rda_train_positive_predictive_value[i] <- ensemble_rda_train_table[2, 2] / sum(ensemble_rda_train_table[2, 2] + ensemble_rda_train_table[2, 1])
-  ensemble_rda_train_positive_predictive_value_mean <- mean(ensemble_rda_train_positive_predictive_value)
-  ensemble_rda_train_negative_predictive_value[i] <- ensemble_rda_train_table[1, 1] / sum(ensemble_rda_train_table[1, 1] + ensemble_rda_train_table[1, 2])
-  ensemble_rda_train_negative_predictive_value_mean <- mean(ensemble_rda_train_negative_predictive_value)
-
-  ensemble_rda_test_pred <- stats::predict(ensemble_rda_train_fit, ensemble_test, type = "response")
-  ensemble_rda_test_table <- table(ensemble_rda_test_pred$class, ensemble_y_test)
-  ensemble_rda_test_true_positive_rate[i] <- ensemble_rda_test_table[2, 2] / sum(ensemble_rda_test_table[2, 2] + ensemble_rda_test_table[1, 2])
-  ensemble_rda_test_true_positive_rate_mean <- mean(ensemble_rda_test_true_positive_rate)
-  ensemble_rda_test_true_negative_rate[i] <- ensemble_rda_test_table[1, 1] / sum(ensemble_rda_test_table[1, 1] + ensemble_rda_test_table[2, 1])
-  ensemble_rda_test_true_negative_rate_mean <- mean(ensemble_rda_test_true_negative_rate)
-  ensemble_rda_test_false_positive_rate[i] <- ensemble_rda_test_table[2, 1] / sum(ensemble_rda_test_table[2, 1] + ensemble_rda_test_table[1, 1])
-  ensemble_rda_test_false_positive_rate_mean <- mean(ensemble_rda_test_false_positive_rate)
-  ensemble_rda_test_false_negative_rate[i] <- ensemble_rda_test_table[1, 2] / sum(ensemble_rda_test_table[1, 2] + ensemble_rda_test_table[2, 2])
-  ensemble_rda_test_false_negative_rate_mean <- mean(ensemble_rda_test_false_negative_rate)
-  ensemble_rda_test_accuracy[i] <- (ensemble_rda_test_table[1, 1] + ensemble_rda_test_table[2, 2]) / sum(ensemble_rda_test_table)
-  ensemble_rda_test_accuracy_mean <- mean(ensemble_rda_test_accuracy)
-  ensemble_rda_test_F1_score[i] <- 2 * (ensemble_rda_test_table[2, 2]) / sum(2 * ensemble_rda_test_table[2, 2] + ensemble_rda_test_table[1, 2] + ensemble_rda_test_table[2, 1])
-  ensemble_rda_test_F1_score_mean <- mean(ensemble_rda_test_F1_score)
-  ensemble_rda_test_positive_predictive_value[i] <- ensemble_rda_test_table[2, 2] / sum(ensemble_rda_test_table[2, 2] + ensemble_rda_test_table[2, 1])
-  ensemble_rda_test_positive_predictive_value_mean <- mean(ensemble_rda_test_positive_predictive_value)
-  ensemble_rda_test_negative_predictive_value[i] <- ensemble_rda_test_table[1, 1] / sum(ensemble_rda_test_table[1, 1] + ensemble_rda_test_table[1, 2])
-  ensemble_rda_test_negative_predictive_value_mean <- mean(ensemble_rda_test_negative_predictive_value)
-
-  ensemble_rda_validation_pred <- stats::predict(ensemble_rda_train_fit, ensemble_validation, type = "response")
-  ensemble_rda_validation_table <- table(ensemble_rda_validation_pred$class, ensemble_y_validation)
-  ensemble_rda_validation_true_positive_rate[i] <- ensemble_rda_validation_table[2, 2] / sum(ensemble_rda_validation_table[2, 2] + ensemble_rda_validation_table[1, 2])
-  ensemble_rda_validation_true_positive_rate_mean <- mean(ensemble_rda_validation_true_positive_rate)
-  ensemble_rda_validation_true_negative_rate[i] <- ensemble_rda_validation_table[1, 1] / sum(ensemble_rda_validation_table[1, 1] + ensemble_rda_validation_table[2, 1])
-  ensemble_rda_validation_true_negative_rate_mean <- mean(ensemble_rda_validation_true_negative_rate)
-  ensemble_rda_validation_false_positive_rate[i] <- ensemble_rda_validation_table[2, 1] / sum(ensemble_rda_validation_table[2, 1] + ensemble_rda_validation_table[1, 1])
-  ensemble_rda_validation_false_positive_rate_mean <- mean(ensemble_rda_validation_false_positive_rate)
-  ensemble_rda_validation_false_negative_rate[i] <- ensemble_rda_validation_table[1, 2] / sum(ensemble_rda_validation_table[1, 2] + ensemble_rda_validation_table[2, 2])
-  ensemble_rda_validation_false_negative_rate_mean <- mean(ensemble_rda_validation_false_negative_rate)
-  ensemble_rda_validation_accuracy[i] <- (ensemble_rda_validation_table[1, 1] + ensemble_rda_validation_table[2, 2]) / sum(ensemble_rda_validation_table)
-  ensemble_rda_validation_accuracy_mean <- mean(ensemble_rda_validation_accuracy)
-  ensemble_rda_validation_F1_score[i] <- 2 * (ensemble_rda_validation_table[2, 2]) / sum(2 * ensemble_rda_validation_table[2, 2] + ensemble_rda_validation_table[1, 2] + ensemble_rda_validation_table[2, 1])
-  ensemble_rda_validation_F1_score_mean <- mean(ensemble_rda_validation_F1_score)
-  ensemble_rda_validation_positive_predictive_value[i] <- ensemble_rda_validation_table[2, 2] / sum(ensemble_rda_validation_table[2, 2] + ensemble_rda_validation_table[2, 1])
-  ensemble_rda_validation_positive_predictive_value_mean <- mean(ensemble_rda_validation_positive_predictive_value)
-  ensemble_rda_validation_negative_predictive_value[i] <- ensemble_rda_validation_table[1, 1] / sum(ensemble_rda_validation_table[1, 1] + ensemble_rda_validation_table[1, 2])
-  ensemble_rda_validation_negative_predictive_value_mean <- mean(ensemble_rda_validation_negative_predictive_value)
-
-  ensemble_rda_holdout_true_positive_rate[i] <- (ensemble_rda_test_true_positive_rate[i] + ensemble_rda_validation_true_positive_rate[i]) / 2
-  ensemble_rda_holdout_true_positive_rate_mean <- mean(ensemble_rda_holdout_true_positive_rate)
-  ensemble_rda_holdout_true_negative_rate[i] <- (ensemble_rda_test_true_negative_rate[i] + ensemble_rda_validation_true_negative_rate[i]) / 2
-  ensemble_rda_holdout_true_negative_rate_mean <- mean(ensemble_rda_holdout_true_negative_rate)
-  ensemble_rda_holdout_false_positive_rate[i] <- (ensemble_rda_test_false_positive_rate[i] + ensemble_rda_validation_false_positive_rate[i]) / 2
-  ensemble_rda_holdout_false_positive_rate_mean <- mean(ensemble_rda_holdout_false_positive_rate)
-  ensemble_rda_holdout_false_negative_rate[i] <- (ensemble_rda_test_false_negative_rate[i] + ensemble_rda_validation_false_negative_rate[i]) / 2
-  ensemble_rda_holdout_false_negative_rate_mean <- mean(ensemble_rda_holdout_false_negative_rate)
-  ensemble_rda_holdout_accuracy[i] <- (ensemble_rda_test_accuracy[i] + ensemble_rda_validation_accuracy[i]) / 2
-  ensemble_rda_holdout_accuracy_mean <- mean(ensemble_rda_holdout_accuracy)
-  ensemble_rda_holdout_accuracy_sd <- sd(ensemble_rda_holdout_accuracy)
-  ensemble_rda_holdout_F1_score[i] <- (ensemble_rda_test_F1_score[i] + ensemble_rda_validation_F1_score[i]) / 2
-  ensemble_rda_holdout_F1_score_mean <- mean(ensemble_rda_holdout_F1_score)
-  ensemble_rda_holdout_positive_predictive_value[i] <- (ensemble_rda_test_positive_predictive_value[i] + ensemble_rda_validation_positive_predictive_value[i]) / 2
-  ensemble_rda_holdout_positive_predictive_value_mean <- mean(ensemble_rda_holdout_positive_predictive_value)
-  ensemble_rda_holdout_negative_predictive_value[i] <- (ensemble_rda_test_negative_predictive_value[i] + ensemble_rda_validation_negative_predictive_value[i]) / 2
-  ensemble_rda_holdout_negative_predictive_value_mean <- mean(ensemble_rda_holdout_negative_predictive_value)
-  ensemble_rda_holdout_overfitting[i] <- ensemble_rda_holdout_accuracy[i] / ensemble_rda_train_accuracy[i]
-  ensemble_rda_holdout_overfitting_mean <- mean(ensemble_rda_holdout_overfitting)
-  ensemble_rda_holdout_overfitting_range <- range(ensemble_rda_holdout_overfitting)
-  ensemble_rda_holdout_overfitting_sd <- sd(ensemble_rda_holdout_overfitting)
-
-  ensemble_rda_table <- ensemble_rda_test_table + ensemble_rda_validation_table
-  ensemble_rda_table_total <- ensemble_rda_table_total + ensemble_rda_table
-
-  ensemble_rda_end <- Sys.time()
-  ensemble_rda_duration[i] <- ensemble_rda_end - ensemble_rda_start
-  ensemble_rda_duration_mean <- mean(ensemble_rda_duration)
-  ensemble_rda_duration_sd <- sd(ensemble_rda_duration)
+  ensemble_ridge_end <- Sys.time()
+  ensemble_ridge_duration[i] <- ensemble_ridge_end - ensemble_ridge_start
+  ensemble_ridge_duration_mean <- mean(ensemble_ridge_duration)
+  ensemble_ridge_duration_sd <- sd(ensemble_ridge_duration)
 
 
   #### Ensemble Using RPart ####
@@ -4540,7 +3379,9 @@ for (i in 1:numresamples) {
     ensemble_rpart_train_fit <- MachineShop::fit(as.factor(y) ~ ., data = ensemble_train, model = "RPartModel")
   }
   ensemble_rpart_train_pred <- stats::predict(ensemble_rpart_train_fit, ensemble_train, type = "response")
-  ensemble_rpart_train_table <- table(ensemble_rpart_train_pred, ensemble_y_train)
+  ensemble_rpart_train_predictions <- plogis(as.numeric(ensemble_rpart_train_pred))
+  ensemble_rpart_train_predictions_binomial <- rbinom(n = length(ensemble_rpart_train_predictions), size = 1, prob = ensemble_rpart_train_predictions)
+  ensemble_rpart_train_table <- table(ensemble_rpart_train_predictions_binomial, ensemble_y_train)
   ensemble_rpart_train_true_positive_rate[i] <- ensemble_rpart_train_table[2, 2] / sum(ensemble_rpart_train_table[2, 2] + ensemble_rpart_train_table[1, 2])
   ensemble_rpart_train_true_positive_rate_mean <- mean(ensemble_rpart_train_true_positive_rate)
   ensemble_rpart_train_true_negative_rate[i] <- ensemble_rpart_train_table[1, 1] / sum(ensemble_rpart_train_table[1, 1] + ensemble_rpart_train_table[2, 1])
@@ -4559,7 +3400,9 @@ for (i in 1:numresamples) {
   ensemble_rpart_train_negative_predictive_value_mean <- mean(ensemble_rpart_train_negative_predictive_value)
 
   ensemble_rpart_test_pred <- stats::predict(ensemble_rpart_train_fit, ensemble_test, type = "response")
-  ensemble_rpart_test_table <- table(ensemble_rpart_test_pred, ensemble_y_test)
+  ensemble_rpart_test_predictions <- plogis(as.numeric(ensemble_rpart_test_pred))
+  ensemble_rpart_test_predictions_binomial <- rbinom(n = length(ensemble_rpart_test_predictions), size = 1, prob = ensemble_rpart_test_predictions)
+  ensemble_rpart_test_table <- table(ensemble_rpart_test_predictions_binomial, ensemble_y_test)
   ensemble_rpart_test_true_positive_rate[i] <- ensemble_rpart_test_table[2, 2] / sum(ensemble_rpart_test_table[2, 2] + ensemble_rpart_test_table[1, 2])
   ensemble_rpart_test_true_positive_rate_mean <- mean(ensemble_rpart_test_true_positive_rate)
   ensemble_rpart_test_true_negative_rate[i] <- ensemble_rpart_test_table[1, 1] / sum(ensemble_rpart_test_table[1, 1] + ensemble_rpart_test_table[2, 1])
@@ -4578,7 +3421,9 @@ for (i in 1:numresamples) {
   ensemble_rpart_test_negative_predictive_value_mean <- mean(ensemble_rpart_test_negative_predictive_value)
 
   ensemble_rpart_validation_pred <- stats::predict(ensemble_rpart_train_fit, ensemble_validation, type = "response")
-  ensemble_rpart_validation_table <- table(ensemble_rpart_validation_pred, ensemble_y_validation)
+  ensemble_rpart_validation_predictions <- plogis(as.numeric(ensemble_rpart_validation_pred))
+  ensemble_rpart_validation_predictions_binomial <- rbinom(n = length(ensemble_rpart_validation_predictions), size = 1, prob = ensemble_rpart_validation_predictions)
+  ensemble_rpart_validation_table <- table(ensemble_rpart_validation_predictions_binomial, ensemble_y_validation)
   ensemble_rpart_validation_true_positive_rate[i] <- ensemble_rpart_validation_table[2, 2] / sum(ensemble_rpart_validation_table[2, 2] + ensemble_rpart_validation_table[1, 2])
   ensemble_rpart_validation_true_positive_rate_mean <- mean(ensemble_rpart_validation_true_positive_rate)
   ensemble_rpart_validation_true_negative_rate[i] <- ensemble_rpart_validation_table[1, 1] / sum(ensemble_rpart_validation_table[1, 1] + ensemble_rpart_validation_table[2, 1])
@@ -4638,7 +3483,9 @@ for (i in 1:numresamples) {
     ensemble_svm_train_fit <- e1071::svm(as.factor(y) ~ ., data = ensemble_train, kernel = "radial", gamma = 1, cost = 1)
   }
   ensemble_svm_train_pred <- stats::predict(ensemble_svm_train_fit, ensemble_train, type = "response")
-  ensemble_svm_train_table <- table(ensemble_svm_train_pred, ensemble_y_train)
+  ensemble_svm_train_predictions <- plogis(as.numeric(ensemble_svm_train_pred))
+  ensemble_svm_train_predictions_binomial <- rbinom(n = length(ensemble_svm_train_predictions), size = 1, prob = ensemble_svm_train_predictions)
+  ensemble_svm_train_table <- table(ensemble_svm_train_predictions_binomial, ensemble_y_train)
   ensemble_svm_train_true_positive_rate[i] <- ensemble_svm_train_table[2, 2] / sum(ensemble_svm_train_table[2, 2] + ensemble_svm_train_table[1, 2])
   ensemble_svm_train_true_positive_rate_mean <- mean(ensemble_svm_train_true_positive_rate)
   ensemble_svm_train_true_negative_rate[i] <- ensemble_svm_train_table[1, 1] / sum(ensemble_svm_train_table[1, 1] + ensemble_svm_train_table[2, 1])
@@ -4657,7 +3504,9 @@ for (i in 1:numresamples) {
   ensemble_svm_train_negative_predictive_value_mean <- mean(ensemble_svm_train_negative_predictive_value)
 
   ensemble_svm_test_pred <- stats::predict(ensemble_svm_train_fit, ensemble_test, type = "response")
-  ensemble_svm_test_table <- table(ensemble_svm_test_pred, ensemble_y_test)
+  ensemble_svm_test_predictions <- plogis(as.numeric(ensemble_svm_test_pred))
+  ensemble_svm_test_predictions_binomial <- rbinom(n = length(ensemble_svm_test_predictions), size = 1, prob = ensemble_svm_test_predictions)
+  ensemble_svm_test_table <- table(ensemble_svm_test_predictions_binomial, ensemble_y_test)
   ensemble_svm_test_true_positive_rate[i] <- ensemble_svm_test_table[2, 2] / sum(ensemble_svm_test_table[2, 2] + ensemble_svm_test_table[1, 2])
   ensemble_svm_test_true_positive_rate_mean <- mean(ensemble_svm_test_true_positive_rate)
   ensemble_svm_test_true_negative_rate[i] <- ensemble_svm_test_table[1, 1] / sum(ensemble_svm_test_table[1, 1] + ensemble_svm_test_table[2, 1])
@@ -4676,7 +3525,9 @@ for (i in 1:numresamples) {
   ensemble_svm_test_negative_predictive_value_mean <- mean(ensemble_svm_test_negative_predictive_value)
 
   ensemble_svm_validation_pred <- stats::predict(ensemble_svm_train_fit, ensemble_validation, type = "response")
-  ensemble_svm_validation_table <- table(ensemble_svm_validation_pred, ensemble_y_validation)
+  ensemble_svm_validation_predictions <- plogis(as.numeric(ensemble_svm_validation_pred))
+  ensemble_svm_validation_predictions_binomial <- rbinom(n = length(ensemble_svm_validation_predictions), size = 1, prob = ensemble_svm_validation_predictions)
+  ensemble_svm_validation_table <- table(ensemble_svm_validation_predictions_binomial, ensemble_y_validation)
   ensemble_svm_validation_true_positive_rate[i] <- ensemble_svm_validation_table[2, 2] / sum(ensemble_svm_validation_table[2, 2] + ensemble_svm_validation_table[1, 2])
   ensemble_svm_validation_true_positive_rate_mean <- mean(ensemble_svm_validation_true_positive_rate)
   ensemble_svm_validation_true_negative_rate[i] <- ensemble_svm_validation_table[1, 1] / sum(ensemble_svm_validation_table[1, 1] + ensemble_svm_validation_table[2, 1])
@@ -4736,8 +3587,9 @@ for (i in 1:numresamples) {
     ensemble_tree_train_fit <- tree::tree(ensemble_train$y ~ ., data = ensemble_train)
   }
   ensemble_tree_train_pred <- stats::predict(ensemble_tree_train_fit, ensemble_train, type = "vector")
-  ensemble_tree_train_probabilities <- ifelse(ensemble_tree_train_pred > 0.5, 1, 0)
-  ensemble_tree_train_table <- table(ensemble_tree_train_probabilities, ensemble_y_train)
+  ensemble_tree_train_predictions <- plogis(as.numeric(ensemble_tree_train_pred))
+  ensemble_tree_train_predictions_binomial <- rbinom(n = length(ensemble_tree_train_predictions), size = 1, prob = ensemble_tree_train_predictions)
+  ensemble_tree_train_table <- table(ensemble_tree_train_predictions_binomial, ensemble_y_train)
   ensemble_tree_train_true_positive_rate[i] <- ensemble_tree_train_table[2, 2] / sum(ensemble_tree_train_table[2, 2] + ensemble_tree_train_table[1, 2])
   ensemble_tree_train_true_positive_rate_mean <- mean(ensemble_tree_train_true_positive_rate)
   ensemble_tree_train_true_negative_rate[i] <- ensemble_tree_train_table[1, 1] / sum(ensemble_tree_train_table[1, 1] + ensemble_tree_train_table[2, 1])
@@ -4756,8 +3608,9 @@ for (i in 1:numresamples) {
   ensemble_tree_train_negative_predictive_value_mean <- mean(ensemble_tree_train_negative_predictive_value)
 
   ensemble_tree_test_pred <- stats::predict(ensemble_tree_train_fit, ensemble_test, type = "vector")
-  ensemble_tree_test_probabilities <- ifelse(ensemble_tree_test_pred > 0.5, 1, 0)
-  ensemble_tree_test_table <- table(ensemble_tree_test_probabilities, ensemble_y_test)
+  ensemble_tree_test_predictions <- plogis(as.numeric(ensemble_tree_test_pred))
+  ensemble_tree_test_predictions_binomial <- rbinom(n = length(ensemble_tree_test_predictions), size = 1, prob = ensemble_tree_test_predictions)
+  ensemble_tree_test_table <- table(ensemble_tree_test_predictions_binomial, ensemble_y_test)
   ensemble_tree_test_true_positive_rate[i] <- ensemble_tree_test_table[2, 2] / sum(ensemble_tree_test_table[2, 2] + ensemble_tree_test_table[1, 2])
   ensemble_tree_test_true_positive_rate_mean <- mean(ensemble_tree_test_true_positive_rate)
   ensemble_tree_test_true_negative_rate[i] <- ensemble_tree_test_table[1, 1] / sum(ensemble_tree_test_table[1, 1] + ensemble_tree_test_table[2, 1])
@@ -4776,8 +3629,9 @@ for (i in 1:numresamples) {
   ensemble_tree_test_negative_predictive_value_mean <- mean(ensemble_tree_test_negative_predictive_value)
 
   ensemble_tree_validation_pred <- stats::predict(ensemble_tree_train_fit, ensemble_validation, type = "vector")
-  ensemble_tree_validation_probabilities <- ifelse(ensemble_tree_validation_pred > 0.5, 1, 0)
-  ensemble_tree_validation_table <- table(ensemble_tree_validation_probabilities, ensemble_y_validation)
+  ensemble_tree_validation_predictions <- plogis(as.numeric(ensemble_tree_validation_pred))
+  ensemble_tree_validation_predictions_binomial <- rbinom(n = length(ensemble_tree_validation_predictions), size = 1, prob = ensemble_tree_validation_predictions)
+  ensemble_tree_validation_table <- table(ensemble_tree_validation_predictions_binomial, ensemble_y_validation)
   ensemble_tree_validation_true_positive_rate[i] <- ensemble_tree_validation_table[2, 2] / sum(ensemble_tree_validation_table[2, 2] + ensemble_tree_validation_table[1, 2])
   ensemble_tree_validation_true_positive_rate_mean <- mean(ensemble_tree_validation_true_positive_rate)
   ensemble_tree_validation_true_negative_rate[i] <- ensemble_tree_validation_table[1, 1] / sum(ensemble_tree_validation_table[1, 1] + ensemble_tree_validation_table[2, 1])
@@ -4865,9 +3719,10 @@ for (i in 1:numresamples) {
 
     ensemble_xgboost_min <- which.min(ensemble_xgb_model$evaluation_log$validation_rmse)
   }
-  ensemble_xgb_train_pred <- predict(object = ensemble_xgb_model, newdata = ensemble_train_x, type = "response")
-  ensemble_xgb_train_probabilities <- ifelse(ensemble_xgb_train_pred > 0.5, 1, 0)
-  ensemble_xgb_train_table <- table(ensemble_xgb_train_probabilities, ensemble_y_train)
+  ensemble_xgb_train_pred <- stats::predict(ensemble_xgb_model, ensemble_train_x, type = "response")
+  ensemble_xgb_train_predictions <- plogis(as.numeric(ensemble_xgb_train_pred))
+  ensemble_xgb_train_predictions_binomial <- rbinom(n = length(ensemble_xgb_train_predictions), size = 1, prob = ensemble_xgb_train_predictions)
+  ensemble_xgb_train_table <- table(ensemble_xgb_train_predictions_binomial, ensemble_y_train)
   ensemble_xgb_train_true_positive_rate[i] <- ensemble_xgb_train_table[2, 2] / sum(ensemble_xgb_train_table[2, 2] + ensemble_xgb_train_table[1, 2])
   ensemble_xgb_train_true_positive_rate_mean <- mean(ensemble_xgb_train_true_positive_rate)
   ensemble_xgb_train_true_negative_rate[i] <- ensemble_xgb_train_table[1, 1] / sum(ensemble_xgb_train_table[1, 1] + ensemble_xgb_train_table[2, 1])
@@ -4885,9 +3740,10 @@ for (i in 1:numresamples) {
   ensemble_xgb_train_negative_predictive_value[i] <- ensemble_xgb_train_table[1, 1] / sum(ensemble_xgb_train_table[1, 1] + ensemble_xgb_train_table[1, 2])
   ensemble_xgb_train_negative_predictive_value_mean <- mean(ensemble_xgb_train_negative_predictive_value)
 
-  ensemble_xgb_test_pred <- predict(object = ensemble_xgb_model, newdata = ensemble_test_x, type = "response")
-  ensemble_xgb_test_probabilities <- ifelse(ensemble_xgb_test_pred > 0.5, 1, 0)
-  ensemble_xgb_test_table <- table(ensemble_xgb_test_probabilities, ensemble_y_test)
+  ensemble_xgb_test_pred <- stats::predict(ensemble_xgb_model, ensemble_test_x, type = "response")
+  ensemble_xgb_test_predictions <- plogis(as.numeric(ensemble_xgb_test_pred))
+  ensemble_xgb_test_predictions_binomial <- rbinom(n = length(ensemble_xgb_test_predictions), size = 1, prob = ensemble_xgb_test_predictions)
+  ensemble_xgb_test_table <- table(ensemble_xgb_test_predictions_binomial, ensemble_y_test)
   ensemble_xgb_test_true_positive_rate[i] <- ensemble_xgb_test_table[2, 2] / sum(ensemble_xgb_test_table[2, 2] + ensemble_xgb_test_table[1, 2])
   ensemble_xgb_test_true_positive_rate_mean <- mean(ensemble_xgb_test_true_positive_rate)
   ensemble_xgb_test_true_negative_rate[i] <- ensemble_xgb_test_table[1, 1] / sum(ensemble_xgb_test_table[1, 1] + ensemble_xgb_test_table[2, 1])
@@ -4905,9 +3761,10 @@ for (i in 1:numresamples) {
   ensemble_xgb_test_negative_predictive_value[i] <- ensemble_xgb_test_table[1, 1] / sum(ensemble_xgb_test_table[1, 1] + ensemble_xgb_test_table[1, 2])
   ensemble_xgb_test_negative_predictive_value_mean <- mean(ensemble_xgb_test_negative_predictive_value)
 
-  ensemble_xgb_validation_pred <- predict(object = ensemble_xgb_model, newdata = ensemble_validation_x, type = "response")
-  ensemble_xgb_validation_probabilities <- ifelse(ensemble_xgb_validation_pred > 0.5, 1, 0)
-  ensemble_xgb_validation_table <- table(ensemble_xgb_validation_probabilities, ensemble_y_validation)
+  ensemble_xgb_validation_pred <- stats::predict(ensemble_xgb_model, ensemble_validation_x, type = "response")
+  ensemble_xgb_validation_predictions <- plogis(as.numeric(ensemble_xgb_validation_pred))
+  ensemble_xgb_validation_predictions_binomial <- rbinom(n = length(ensemble_xgb_validation_predictions), size = 1, prob = ensemble_xgb_validation_predictions)
+  ensemble_xgb_validation_table <- table(ensemble_xgb_validation_predictions_binomial, ensemble_y_validation)
   ensemble_xgb_validation_true_positive_rate[i] <- ensemble_xgb_validation_table[2, 2] / sum(ensemble_xgb_validation_table[2, 2] + ensemble_xgb_validation_table[1, 2])
   ensemble_xgb_validation_true_positive_rate_mean <- mean(ensemble_xgb_validation_true_positive_rate)
   ensemble_xgb_validation_true_negative_rate[i] <- ensemble_xgb_validation_table[1, 1] / sum(ensemble_xgb_validation_table[1, 1] + ensemble_xgb_validation_table[2, 1])
@@ -4962,73 +3819,45 @@ for (i in 1:numresamples) {
 
 ##################################
 
-bag_rf_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(bag_rf_test_predictions[, 2], bag_rf_validation_predictions[, 2])) - 1)
-bag_rf_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(bag_rf_test_predictions[, 2], bag_rf_validation_predictions[, 2])) - 1)), 4)
-bag_rf_ROC <- pROC::ggroc(bag_rf_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Bagged Random Forest ", "(AUC = ", bag_rf_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-bagging_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(bagging_test_predictions[, 2], bagging_validation_predictions[, 2])))
-bagging_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(bagging_test_predictions[, 2], bagging_validation_predictions[, 2])) - 1)), 4)
-bagging_ROC <- pROC::ggroc(bagging_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Bagging ", "(AUC = ", bagging_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-bayesglm_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(bayesglm_test_predictions, bayesglm_validation_predictions)))
-bayesglm_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(bayesglm_test_predictions, bayesglm_validation_predictions)) - 1)), 4)
-bayesglm_ROC <- pROC::ggroc(bayesglm_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("BayesGLM ", "(AUC = ", bayesglm_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-C50_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(C50_test_predictions, C50_validation_predictions)))
-C50_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(C50_test_predictions, C50_validation_predictions)) - 1)), 4)
-C50_ROC <- pROC::ggroc(C50_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("C50 ROC curve ", "(AUC = ", C50_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-cubist_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(cubist_test_pred, cubist_validation_pred)))
-cubist_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(cubist_test_pred, cubist_validation_pred)) - 1)), 4)
+cubist_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(cubist_test_predictions_binomial, cubist_validation_predictions_binomial)))
+cubist_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(cubist_test_predictions_binomial, cubist_validation_predictions_binomial)) - 1)), 4)
 cubist_ROC <- pROC::ggroc(cubist_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Cubist ", "(AUC = ", cubist_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-fda_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(fda_test_predictions, fda_validation_predictions)))
-fda_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(fda_test_predictions, fda_validation_predictions)) - 1)), 4)
+fda_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(fda_test_predictions_binomial, fda_validation_predictions_binomial)))
+fda_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(fda_test_predictions_binomial, fda_validation_predictions_binomial)) - 1)), 4)
 fda_ROC <- pROC::ggroc(fda_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Flexible Discriminant Analysis ", "(AUC = ", fda_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-gam_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(gam_test_predictions, gam_validation_predictions)))
-gam_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(gam_test_predictions, gam_validation_predictions)) - 1)), 4)
+gam_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(gam_test_predictions_binomial, gam_validation_predictions_binomial)))
+gam_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(gam_test_predictions_binomial, gam_validation_predictions_binomial)) - 1)), 4)
 gam_ROC <- pROC::ggroc(gam_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Generalized Additve Models ", "(AUC = ", gam_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-gb_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(gb_test_predictions, gb_validation_predictions)))
-gb_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(gb_test_predictions, gb_validation_predictions)) - 1)), 4)
-gb_ROC <- pROC::ggroc(gb_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Gradient Boosted ", "(AUC = ", gb_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-glm_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), c(glm_test_pred, glm_validation_pred))
-glm_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(glm_test_pred, glm_validation_pred)) - 1)), 4)
+glm_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), c(glm_test_predictions_binomial, glm_validation_predictions_binomial))
+glm_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(glm_test_predictions_binomial, glm_validation_predictions_binomial)) - 1)), 4)
 glm_ROC <- pROC::ggroc(glm_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Generalized Linear Models ", "(AUC = ", glm_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-linear_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(linear_test_pred, linear_validation_pred)))
+lasso_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(lasso_test_predictions_binomial, lasso_validation_predictions_binomial)))
+lasso_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(lasso_test_predictions_binomial, lasso_validation_predictions_binomial)))), 4)
+lasso_ROC <- pROC::ggroc(lasso_roc_obj, color = "steelblue", size = 2) +
+  ggplot2::ggtitle(paste0("Lasso Models ", "(AUC = ", lasso_auc, ")")) +
+  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
+  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
+
+linear_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(linear_test_predictions_binomial, linear_validation_predictions_binomial)))
 linear_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(linear_test_pred, linear_validation_pred)))), 4)
 linear_ROC <- pROC::ggroc(linear_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Linear Models ROC ", "(AUC = ", linear_auc, ")")) +
+  ggplot2::ggtitle(paste0("Linear Models ", "(AUC = ", linear_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
@@ -5039,180 +3868,146 @@ lda_ROC <- pROC::ggroc(lda_roc_obj, color = "steelblue", size = 2) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-mda_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(mda_test_predictions, mda_validation_predictions)))
-mda_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(mda_test_predictions, mda_validation_predictions)) - 1)), 4)
-mda_ROC <- pROC::ggroc(mda_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Mixture Discriminant Analysis ", "(AUC = ", mda_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-n_bayes_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(n_bayes_test_predictions, n_bayes_validation_predictions)))
-n_bayes_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(n_bayes_test_predictions, n_bayes_validation_predictions)) - 1)), 4)
-n_bayes_ROC <- pROC::ggroc(n_bayes_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Naive Bayes ", "(AUC = ", n_bayes_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-pda_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(pda_test_pred, pda_validation_pred)))
-pda_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(pda_test_pred, pda_validation_pred)) - 1)), 4)
+pda_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(pda_test_predictions_binomial, pda_validation_predictions_binomial)))
+pda_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(pda_test_predictions_binomial, pda_validation_predictions_binomial)) - 1)), 4)
 pda_ROC <- pROC::ggroc(pda_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Penalized Discriiminant Analysis ", "(AUC = ", pda_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
 qda_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(qda_test_pred$class, qda_validation_pred$class)))
-qda_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(qda_test_pred$class, qda_validation_pred$class)) - 1)), 4)
+qda_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(qda_test_predictions_binomial, qda_validation_predictions_binomial)) - 1)), 4)
 qda_ROC <- pROC::ggroc(qda_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Quadratic Discriminant Analysis ", "(AUC = ", qda_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-rf_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(rf_test_probabilities, rf_validation_probabilities)))
-rf_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(rf_test_probabilities, rf_validation_probabilities)) - 1)), 4)
+rf_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(rf_test_predictions_binomial, rf_validation_predictions_binomial)))
+rf_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(rf_test_predictions_binomial, rf_validation_predictions_binomial)) - 1)), 4)
 rf_ROC <- pROC::ggroc(rf_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Random Forest ", "(AUC = ", rf_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-ranger_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(ranger_test_pred, ranger_validation_pred)))
-ranger_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(ranger_test_pred, ranger_validation_pred)) - 1)), 4)
-ranger_ROC <- pROC::ggroc(ranger_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Ranger ", "(AUC = ", ranger_auc, ")")) +
+ridge_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(ridge_test_predictions_binomial, ridge_validation_predictions_binomial)))
+ridge_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(ridge_test_predictions_binomial, ridge_validation_predictions_binomial)) - 1)), 4)
+ridge_ROC <- pROC::ggroc(ridge_roc_obj, color = "steelblue", size = 2) +
+  ggplot2::ggtitle(paste0("Ridge Forest ", "(AUC = ", ridge_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-rpart_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(rpart_test_pred, rpart_validation_pred)))
-rpart_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(rpart_test_pred, rpart_validation_pred)) - 1)), 4)
-rpart_ROC <- pROC::ggroc(rpart_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("RPart ", "(AUC = ", rpart_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-svm_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(svm_test_pred, svm_validation_pred)))
-svm_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(svm_test_pred, svm_validation_pred)) - 1)), 4)
+svm_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(svm_test_predictions_binomial, svm_validation_predictions_binomial)))
+svm_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(svm_test_predictions_binomial, svm_validation_predictions_binomial)) - 1)), 4)
 svm_ROC <- pROC::ggroc(svm_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Support Vector Machines ", "(AUC = ", svm_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
 tree_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(tree_test_pred, tree_validation_pred)))
-tree_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(tree_test_pred, tree_validation_pred)) - 1)), 4)
+tree_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(tree_test_predictions_binomial, tree_validation_predictions_binomial)) - 1)), 4)
 tree_ROC <- pROC::ggroc(tree_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Trees ", "(AUC = ", tree_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-xgb_roc_obj <- pROC::roc(as.numeric(c(test01$y, validation01$y)), as.numeric(c(xgb_test_pred, xgb_validation_pred)))
-xgb_auc <- round((pROC::auc(c(test01$y, validation01$y), as.numeric(c(xgb_test_pred, xgb_validation_pred)) - 1)), 4)
-xgb_ROC <- pROC::ggroc(xgb_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("XGBoost ", "(AUC = ", xgb_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-
-ensemble_bagging_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_bagging_test_pred[, 2], ensemble_bagging_validation_pred[, 2])))
-ensemble_bagging_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_bagging_test_pred[, 2], ensemble_bagging_validation_pred[, 2])) - 1)), 4)
+ensemble_bagging_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_bagging_test_predictions_binomial, ensemble_bagging_validation_predictions_binomial)))
+ensemble_bagging_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_bagging_test_predictions_binomial, ensemble_bagging_validation_predictions_binomial)) - 1)), 4)
 ensemble_bagging_ROC <- pROC::ggroc(ensemble_bagging_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Ensemble Bagging ", "(AUC = ", ensemble_bagging_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-ensemble_C50_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_C50_test_pred[, 2], ensemble_C50_validation_pred[, 2])))
-ensemble_C50_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_C50_test_pred[, 2], ensemble_C50_validation_pred[, 2])) - 1)), 4)
+ensemble_C50_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_C50_test_predictions_binomial, ensemble_C50_validation_predictions_binomial)))
+ensemble_C50_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_C50_test_predictions_binomial, ensemble_C50_validation_predictions_binomial)) - 1)), 4)
 ensemble_C50_ROC <- pROC::ggroc(ensemble_C50_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Ensemble_C50 ", "(AUC = ", ensemble_C50_auc, ")")) +
+  ggplot2::ggtitle(paste0("Ensemble C50 ", "(AUC = ", ensemble_C50_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-ensemble_gb_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_gb_test_pred, ensemble_gb_validation_pred)))
-ensemble_gb_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_gb_test_pred, ensemble_gb_validation_pred)) - 1)), 4)
+ensemble_gb_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_gb_test_predictions_binomial, ensemble_gb_validation_predictions_binomial)))
+ensemble_gb_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_gb_test_predictions_binomial, ensemble_gb_validation_predictions_binomial)) - 1)), 4)
 ensemble_gb_ROC <- pROC::ggroc(ensemble_gb_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Ensemble Gradient Boosted ", "(AUC = ", ensemble_gb_auc, ")")) +
+  ggplot2::ggtitle(paste0("Ensemble GB ", "(AUC = ", ensemble_gb_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-ensemble_pls_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_pls_test_pred, ensemble_pls_validation_pred)))
-ensemble_pls_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_pls_test_pred, ensemble_pls_validation_pred)) - 1)), 4)
+ensemble_lasso_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_lasso_test_predictions_binomial, ensemble_lasso_validation_predictions_binomial)))
+ensemble_lasso_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_lasso_test_predictions_binomial, ensemble_lasso_validation_predictions_binomial)) - 1)), 4)
+ensemble_lasso_ROC <- pROC::ggroc(ensemble_lasso_roc_obj, color = "steelblue", size = 2) +
+  ggplot2::ggtitle(paste0("Ensemble Lasso ", "(AUC = ", ensemble_lasso_auc, ")")) +
+  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
+  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
+
+ensemble_pls_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_pls_test_predictions_binomial, ensemble_pls_validation_predictions_binomial)))
+ensemble_pls_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_pls_test_predictions_binomial, ensemble_pls_validation_predictions_binomial)) - 1)), 4)
 ensemble_pls_ROC <- pROC::ggroc(ensemble_pls_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Ensemble PLS ", "(AUC = ", ensemble_pls_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-ensemble_pda_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_pda_test_pred, ensemble_pda_validation_pred)))
-ensemble_pda_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_pda_test_pred, ensemble_pda_validation_pred)))), 4)
+ensemble_pda_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_pda_test_predictions_binomial, ensemble_pda_validation_predictions_binomial)))
+ensemble_pda_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_pda_test_predictions_binomial, ensemble_pda_validation_predictions_binomial)) - 1)), 4)
 ensemble_pda_ROC <- pROC::ggroc(ensemble_pda_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Ensemble PDA ", "(AUC = ", ensemble_pda_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-ensemble_rf_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_rf_test_pred[, 2], ensemble_rf_validation_pred[, 2])))
-ensemble_rf_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_rf_test_pred[, 2], ensemble_rf_validation_pred[, 2])) - 1)), 4)
-ensemble_rf_ROC <- pROC::ggroc(ensemble_rf_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Ensemble Random Forest ", "(AUC = ", ensemble_rf_auc, ")")) +
+ensemble_ridge_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_ridge_test_predictions_binomial, ensemble_ridge_validation_predictions_binomial)))
+ensemble_ridge_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_ridge_test_predictions_binomial, ensemble_ridge_validation_predictions_binomial)) - 1)), 4)
+ensemble_ridge_ROC <- pROC::ggroc(ensemble_ridge_roc_obj, color = "steelblue", size = 2) +
+  ggplot2::ggtitle(paste0("Ensemble Ridge ", "(AUC = ", ensemble_ridge_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-ensemble_ranger_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_ranger_test_pred, ensemble_ranger_validation_pred)))
-ensemble_ranger_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_ranger_test_pred, ensemble_ranger_validation_pred)) - 1)), 4)
-ensemble_ranger_ROC <- pROC::ggroc(ensemble_ranger_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Ensemble Ranger ", "(AUC = ", ensemble_ranger_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-ensemble_rda_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_rda_test_pred$posterior[, 2], ensemble_rda_validation_pred$posterior[, 2])))
-ensemble_rda_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_rda_test_pred$posterior[, 2], ensemble_rda_validation_pred$posterior[, 2])) - 1)), 4)
-ensemble_rda_ROC <- pROC::ggroc(ensemble_rda_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Ensemble RDA ROC curve ", "(AUC = ", ensemble_rda_auc, ")")) +
-  ggplot2::labs(x = "Specificity", y = "Sensitivity") +
-  ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
-
-ensemble_rpart_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_rpart_test_pred, ensemble_rpart_validation_pred)))
-ensemble_rpart_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_rpart_test_pred, ensemble_rpart_validation_pred)))), 4)
+ensemble_rpart_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_rpart_test_predictions_binomial, ensemble_rpart_validation_predictions_binomial)))
+ensemble_rpart_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_rpart_test_predictions_binomial, ensemble_rpart_validation_predictions_binomial)) - 1)), 4)
 ensemble_rpart_ROC <- pROC::ggroc(ensemble_rpart_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Ensemble Rpart ", "(AUC = ", ensemble_rpart_auc, ")")) +
+  ggplot2::ggtitle(paste0("Ensemble RPart ", "(AUC = ", ensemble_rpart_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-ensemble_svm_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_svm_test_pred, ensemble_svm_validation_pred)))
-ensemble_svm_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_svm_test_pred, ensemble_svm_validation_pred)))), 4)
+ensemble_svm_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_svm_test_predictions_binomial, ensemble_svm_validation_predictions_binomial)))
+ensemble_svm_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_svm_test_predictions_binomial, ensemble_svm_validation_predictions_binomial)) - 1)), 4)
 ensemble_svm_ROC <- pROC::ggroc(ensemble_svm_roc_obj, color = "steelblue", size = 2) +
   ggplot2::ggtitle(paste0("Ensemble SVM ", "(AUC = ", ensemble_svm_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-ensemble_tree_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_tree_test_pred, ensemble_tree_validation_pred)))
-ensemble_tree_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_tree_test_pred, ensemble_tree_validation_pred)) - 1)), 4)
+ensemble_tree_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_tree_test_predictions_binomial, ensemble_tree_validation_predictions_binomial)))
+ensemble_tree_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_tree_test_predictions_binomial, ensemble_tree_validation_predictions_binomial)) - 1)), 4)
 ensemble_tree_ROC <- pROC::ggroc(ensemble_tree_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Ensemble Trees ", "(AUC = ", ensemble_tree_auc, ")")) +
+  ggplot2::ggtitle(paste0("Ensemble Tree ", "(AUC = ", ensemble_tree_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
-ensemble_xgb_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_xgb_test_pred, ensemble_xgb_validation_pred)))
-ensemble_xgb_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_xgb_test_pred, ensemble_xgb_validation_pred)) - 1)), 4)
+ensemble_xgb_roc_obj <- pROC::roc(as.numeric(c(ensemble_test$y, ensemble_validation$y)), as.numeric(c(ensemble_xgb_test_predictions_binomial, ensemble_xgb_validation_predictions_binomial)))
+ensemble_xgb_auc <- round((pROC::auc(c(ensemble_test$y, ensemble_validation$y), as.numeric(c(ensemble_xgb_test_predictions_binomial, ensemble_xgb_validation_predictions_binomial)) - 1)), 4)
 ensemble_xgb_ROC <- pROC::ggroc(ensemble_xgb_roc_obj, color = "steelblue", size = 2) +
-  ggplot2::ggtitle(paste0("Ensemble XGBoost ", "(AUC = ", ensemble_xgb_auc, ")")) +
+  ggplot2::ggtitle(paste0("Ensemble XGB ", "(AUC = ", ensemble_xgb_auc, ")")) +
   ggplot2::labs(x = "Specificity", y = "Sensitivity") +
   ggplot2::annotate("segment", x = 1, xend = 0, y = 0, yend = 1, color = "grey")
 
 
-ROC_curves <- gridExtra::grid.arrange(bag_rf_ROC, bagging_ROC,
-                                      bayesglm_ROC, C50_ROC,
-                                      cubist_ROC, fda_ROC, gam_ROC,
-                                      gb_ROC, glm_ROC, linear_ROC,
-                                      lda_ROC, mda_ROC, n_bayes_ROC,
-                                      pda_ROC, qda_ROC,
-                                      rf_ROC, ranger_ROC,
-                                      rpart_ROC, svm_ROC, tree_ROC, xgb_ROC,
+ROC_curves <- gridExtra::grid.arrange(cubist_ROC, fda_ROC, gam_ROC,
+                                      glm_ROC, lasso_ROC,
+                                      linear_ROC,
+                                      lda_ROC,
+                                      pda_ROC,
+                                      qda_ROC,
+                                      rf_ROC,
+                                      ridge_ROC,
+                                      svm_ROC, tree_ROC,
                                       ensemble_bagging_ROC,
                                       ensemble_C50_ROC,
                                       ensemble_gb_ROC,
+                                      ensemble_lasso_ROC,
                                       ensemble_pls_ROC,
                                       ensemble_pda_ROC,
-                                      ensemble_rf_ROC, ensemble_ranger_ROC,
-                                      ensemble_rda_ROC, ensemble_rpart_ROC,
+                                      ensemble_ridge_ROC,
+                                      ensemble_rpart_ROC,
                                       ensemble_svm_ROC,
                                       ensemble_tree_ROC, ensemble_xgb_ROC,
-                                      ncol = 6
+                                      ncol = 4
 )
 
 ROC_curves <- ggplotify::as.ggplot(ROC_curves)
@@ -5239,182 +4034,183 @@ if(save_all_plots == "Y" && device == "tiff"){
 
 holdout_results <- data.frame(
   Model = c(
-    "Bagged Random Forest", "Bagging", "Bayes GLM", "C50", "Cubist", "Flexible Discriminant Analysis",
-    "Generalized Additive Models", "Gradient Boosted", "Generalized Linear Models", "Linear Model",
-    "Linear Discrmininant Analysis", "Mixed Discriminant Analysis", "Naive Bayes",
-    "Penalized Discriminant Analysis", "Quadratic Discriminant Analysis", "Random Forest",
-    "Ranger", "RPart", "Support Vector Machines", "Trees", "XGBoost",
-    "Ensemble Bagging", "Ensemble C50", "Ensemble Gradient Boosted",
-    "Ensemble Partial Least Squares", "Ensemble Penalized Discrmininat Analysis", "Ensemble Random Forest",
-    "Ensemble Ranger", "Ensemble Regularized Discriminant Analysis", "Ensemble RPart", "Ensemble Support Vector Machines",
+    "Cubist", "Flexible Discriminant Analysis",
+    "Generalized Additive Models", "Generalized Linear Models", "Lasso", "Linear Model",
+    "Linear Discrmininant Analysis",
+    "Penalized Discriminant Analysis", "Quadratic Discriminant Analysis",
+    "Random Forest", "Ridge", "Support Vector Machines", "Trees",
+    "Ensemble Bagging", "Ensemble C50", "Ensemble Gradient Boosted", "Ensemble Lasso",
+    "Ensemble Partial Least Squares", "Ensemble Penalized Discrmininat Analysis",
+    "Ensemble Ridge", "Ensemble RPart", "Ensemble Support Vector Machines",
     "Ensemble Trees", "Ensemble XGBoost"
   ),
   "Accuracy" = round(c(
-    bag_rf_holdout_accuracy_mean, bagging_holdout_accuracy_mean, bayesglm_holdout_accuracy_mean,
-    C50_holdout_accuracy_mean, cubist_holdout_accuracy_mean, fda_holdout_accuracy_mean,
-    gam_holdout_accuracy_mean, gb_holdout_accuracy_mean, glm_holdout_accuracy_mean, linear_holdout_accuracy_mean,
-    lda_holdout_accuracy_mean, mda_holdout_accuracy_mean, n_bayes_holdout_accuracy_mean,
-    pda_holdout_accuracy_mean, qda_holdout_accuracy_mean, rf_holdout_accuracy_mean, ranger_holdout_accuracy_mean,
-    rpart_holdout_accuracy_mean, svm_holdout_accuracy_mean, tree_holdout_accuracy_mean, xgb_holdout_accuracy_mean,
+    cubist_holdout_accuracy_mean, fda_holdout_accuracy_mean,
+    gam_holdout_accuracy_mean, glm_holdout_accuracy_mean, lasso_holdout_accuracy_mean, linear_holdout_accuracy_mean,
+    lda_holdout_accuracy_mean,
+    pda_holdout_accuracy_mean, qda_holdout_accuracy_mean,
+    rf_holdout_accuracy_mean, ridge_holdout_accuracy_mean,
+    svm_holdout_accuracy_mean, tree_holdout_accuracy_mean,
     ensemble_bagging_holdout_accuracy_mean, ensemble_C50_holdout_accuracy_mean,
-    ensemble_gb_holdout_accuracy_mean, ensemble_pls_holdout_accuracy_mean, ensemble_pda_holdout_accuracy_mean, ensemble_rf_holdout_accuracy_mean,
-    ensemble_ranger_holdout_accuracy_mean, ensemble_rda_holdout_accuracy_mean, ensemble_rpart_holdout_accuracy_mean,
+    ensemble_gb_holdout_accuracy_mean, ensemble_lasso_holdout_accuracy_mean, ensemble_pls_holdout_accuracy_mean, ensemble_pda_holdout_accuracy_mean,
+    ensemble_ridge_holdout_accuracy_mean, ensemble_rpart_holdout_accuracy_mean,
     ensemble_svm_holdout_accuracy_mean, ensemble_tree_holdout_accuracy_mean, ensemble_xgb_holdout_accuracy_mean
   ), 4),
   "Accuracy_sd" = round(c(
-    bag_rf_holdout_accuracy_sd, bagging_holdout_accuracy_sd, bayesglm_holdout_accuracy_sd,
-    C50_holdout_accuracy_sd, cubist_holdout_accuracy_sd, fda_holdout_accuracy_sd,
-    gam_holdout_accuracy_sd, gb_holdout_accuracy_sd, glm_holdout_accuracy_sd, linear_holdout_accuracy_sd,
-    lda_holdout_accuracy_sd, mda_holdout_accuracy_sd, n_bayes_holdout_accuracy_sd,
-    pda_holdout_accuracy_sd, qda_holdout_accuracy_sd, rf_holdout_accuracy_sd, ranger_holdout_accuracy_sd,
-    rpart_holdout_accuracy_sd, svm_holdout_accuracy_sd, tree_holdout_accuracy_sd, xgb_holdout_accuracy_sd,
+    cubist_holdout_accuracy_sd, fda_holdout_accuracy_sd,
+    gam_holdout_accuracy_sd, glm_holdout_accuracy_sd, lasso_holdout_accuracy_sd, linear_holdout_accuracy_sd,
+    lda_holdout_accuracy_sd,
+    pda_holdout_accuracy_sd, qda_holdout_accuracy_sd,
+    rf_holdout_accuracy_sd, ridge_holdout_accuracy_sd,
+    svm_holdout_accuracy_sd, tree_holdout_accuracy_sd,
     ensemble_bagging_holdout_accuracy_sd, ensemble_C50_holdout_accuracy_sd,
-    ensemble_gb_holdout_accuracy_sd, ensemble_pls_holdout_accuracy_sd, ensemble_pda_holdout_accuracy_sd, ensemble_rf_holdout_accuracy_sd,
-    ensemble_ranger_holdout_accuracy_sd, ensemble_rda_holdout_accuracy_sd, ensemble_rpart_holdout_accuracy_sd,
+    ensemble_gb_holdout_accuracy_sd, ensemble_lasso_holdout_accuracy_sd, ensemble_pls_holdout_accuracy_sd, ensemble_pda_holdout_accuracy_sd,
+    ensemble_ridge_holdout_accuracy_sd, ensemble_rpart_holdout_accuracy_sd,
     ensemble_svm_holdout_accuracy_sd, ensemble_tree_holdout_accuracy_sd, ensemble_xgb_holdout_accuracy_sd
   ), 4),
   "True_Positive_Rate_aka_Sensitivity" = round(c(
-    bag_rf_holdout_true_positive_rate_mean, bagging_holdout_true_positive_rate_mean, bayesglm_holdout_true_positive_rate_mean,
-    C50_holdout_true_positive_rate_mean, cubist_holdout_true_positive_rate_mean, fda_holdout_true_positive_rate_mean,
-    gam_holdout_true_positive_rate_mean, gb_holdout_true_positive_rate_mean, glm_holdout_true_positive_rate_mean, linear_holdout_true_positive_rate_mean,
-    lda_holdout_true_positive_rate_mean, mda_holdout_true_positive_rate_mean, n_bayes_holdout_true_positive_rate_mean,
-    pda_holdout_true_positive_rate_mean, qda_holdout_true_positive_rate_mean, rf_holdout_true_positive_rate_mean, ranger_holdout_true_positive_rate_mean,
-    rpart_holdout_true_positive_rate_mean, svm_holdout_true_positive_rate_mean, tree_holdout_true_positive_rate_mean, xgb_holdout_true_positive_rate_mean,
+    cubist_holdout_true_positive_rate_mean, fda_holdout_true_positive_rate_mean,
+    gam_holdout_true_positive_rate_mean, glm_holdout_true_positive_rate_mean, lasso_holdout_true_positive_rate_mean, linear_holdout_true_positive_rate_mean,
+    lda_holdout_true_positive_rate_mean,
+    pda_holdout_true_positive_rate_mean, qda_holdout_true_positive_rate_mean,
+    rf_holdout_true_positive_rate_mean, ridge_holdout_true_negative_rate_mean,
+    svm_holdout_true_positive_rate_mean, tree_holdout_true_positive_rate_mean,
     ensemble_bagging_holdout_true_positive_rate_mean, ensemble_C50_holdout_true_positive_rate_mean,
-    ensemble_gb_holdout_true_positive_rate_mean, ensemble_pls_holdout_true_positive_rate_mean, ensemble_pda_holdout_true_positive_rate_mean, ensemble_rf_holdout_true_positive_rate_mean,
-    ensemble_ranger_holdout_true_positive_rate_mean, ensemble_rda_holdout_true_positive_rate_mean, ensemble_rpart_holdout_true_positive_rate_mean,
+    ensemble_gb_holdout_true_positive_rate_mean, ensemble_lasso_holdout_true_positive_rate_mean, ensemble_pls_holdout_true_positive_rate_mean, ensemble_pda_holdout_true_positive_rate_mean,
+    ensemble_ridge_holdout_true_positive_rate_mean, ensemble_rpart_holdout_true_positive_rate_mean,
     ensemble_svm_holdout_true_positive_rate_mean, ensemble_tree_holdout_true_positive_rate_mean, ensemble_xgb_holdout_true_positive_rate_mean
   ), 4),
   "True_Negative_Rate_aka_Specificity" = round(c(
-    bag_rf_holdout_true_negative_rate_mean, bagging_holdout_true_negative_rate_mean, bayesglm_holdout_true_negative_rate_mean,
-    C50_holdout_true_negative_rate_mean, cubist_holdout_true_negative_rate_mean, fda_holdout_true_negative_rate_mean,
-    gam_holdout_true_negative_rate_mean, gb_holdout_true_negative_rate_mean, glm_holdout_true_negative_rate_mean, linear_holdout_true_negative_rate_mean,
-    lda_holdout_true_negative_rate_mean, mda_holdout_true_negative_rate_mean, n_bayes_holdout_true_negative_rate_mean,
-    pda_holdout_true_negative_rate_mean, qda_holdout_true_negative_rate_mean, rf_holdout_true_negative_rate_mean, ranger_holdout_true_negative_rate_mean,
-    rpart_holdout_true_negative_rate_mean, svm_holdout_true_negative_rate_mean, tree_holdout_true_negative_rate_mean, xgb_holdout_true_negative_rate_mean,
+    cubist_holdout_true_negative_rate_mean, fda_holdout_true_negative_rate_mean,
+    gam_holdout_true_negative_rate_mean, glm_holdout_true_negative_rate_mean, lasso_holdout_true_negative_rate_mean, linear_holdout_true_negative_rate_mean,
+    lda_holdout_true_negative_rate_mean,
+    pda_holdout_true_negative_rate_mean, qda_holdout_true_negative_rate_mean,
+    rf_holdout_true_negative_rate_mean, ridge_holdout_true_negative_rate_mean,
+    svm_holdout_true_negative_rate_mean, tree_holdout_true_negative_rate_mean,
     ensemble_bagging_holdout_true_negative_rate_mean, ensemble_C50_holdout_true_negative_rate_mean,
-    ensemble_gb_holdout_true_negative_rate_mean, ensemble_pls_holdout_true_negative_rate_mean, ensemble_pda_holdout_true_negative_rate_mean, ensemble_rf_holdout_true_negative_rate_mean,
-    ensemble_ranger_holdout_true_negative_rate_mean, ensemble_rda_holdout_true_negative_rate_mean, ensemble_rpart_holdout_true_negative_rate_mean,
+    ensemble_gb_holdout_true_negative_rate_mean, ensemble_lasso_holdout_true_negative_rate_mean, ensemble_pls_holdout_true_negative_rate_mean, ensemble_pda_holdout_true_negative_rate_mean,
+    ensemble_ridge_holdout_true_negative_rate_mean, ensemble_rpart_holdout_true_negative_rate_mean,
     ensemble_svm_holdout_true_negative_rate_mean, ensemble_tree_holdout_true_negative_rate_mean, ensemble_xgb_holdout_true_negative_rate_mean
   ), 4),
   "False_Positive_Rate_aka_Type_I_Error" = round(c(
-    bag_rf_holdout_false_positive_rate_mean, bagging_holdout_false_positive_rate_mean, bayesglm_holdout_false_positive_rate_mean,
-    C50_holdout_false_positive_rate_mean, cubist_holdout_false_positive_rate_mean, fda_holdout_false_positive_rate_mean,
-    gam_holdout_false_positive_rate_mean, gb_holdout_false_positive_rate_mean, glm_holdout_false_positive_rate_mean, linear_holdout_false_positive_rate_mean,
-    lda_holdout_false_positive_rate_mean, mda_holdout_false_positive_rate_mean, n_bayes_holdout_false_positive_rate_mean,
-    pda_holdout_false_positive_rate_mean, qda_holdout_false_positive_rate_mean, rf_holdout_false_positive_rate_mean, ranger_holdout_false_positive_rate_mean,
-    rpart_holdout_false_positive_rate_mean, svm_holdout_false_positive_rate_mean, tree_holdout_false_positive_rate_mean, xgb_holdout_false_positive_rate_mean,
+    cubist_holdout_false_positive_rate_mean, fda_holdout_false_positive_rate_mean,
+    gam_holdout_false_positive_rate_mean, glm_holdout_false_positive_rate_mean, lasso_holdout_false_positive_rate_mean, linear_holdout_false_positive_rate_mean,
+    lda_holdout_false_positive_rate_mean,
+    pda_holdout_false_positive_rate_mean, qda_holdout_false_positive_rate_mean,
+    rf_holdout_false_positive_rate_mean, ridge_holdout_false_negative_rate_mean,
+    svm_holdout_false_positive_rate_mean, tree_holdout_false_positive_rate_mean,
     ensemble_bagging_holdout_false_positive_rate_mean, ensemble_C50_holdout_false_positive_rate_mean,
-    ensemble_gb_holdout_false_positive_rate_mean, ensemble_pls_holdout_false_positive_rate_mean, ensemble_pda_holdout_false_positive_rate_mean, ensemble_rf_holdout_false_positive_rate_mean,
-    ensemble_ranger_holdout_false_positive_rate_mean, ensemble_rda_holdout_false_positive_rate_mean, ensemble_rpart_holdout_false_positive_rate_mean,
+    ensemble_gb_holdout_false_positive_rate_mean, ensemble_lasso_holdout_false_positive_rate_mean, ensemble_pls_holdout_false_positive_rate_mean, ensemble_pda_holdout_false_positive_rate_mean,
+    ensemble_ridge_holdout_false_positive_rate_mean, ensemble_rpart_holdout_false_positive_rate_mean,
     ensemble_svm_holdout_false_positive_rate_mean, ensemble_tree_holdout_false_positive_rate_mean, ensemble_xgb_holdout_false_positive_rate_mean
   ), 4),
   "False_Negative_Rate_aka_Type_II_Error" = round(c(
-    bag_rf_holdout_false_negative_rate_mean, bagging_holdout_false_negative_rate_mean, bayesglm_holdout_false_negative_rate_mean,
-    C50_holdout_false_negative_rate_mean, cubist_holdout_false_negative_rate_mean, fda_holdout_false_negative_rate_mean,
-    gam_holdout_false_negative_rate_mean, gb_holdout_false_negative_rate_mean, glm_holdout_false_negative_rate_mean, linear_holdout_false_negative_rate_mean,
-    lda_holdout_false_negative_rate_mean, mda_holdout_false_negative_rate_mean, n_bayes_holdout_false_negative_rate_mean,
-    pda_holdout_false_negative_rate_mean, qda_holdout_false_negative_rate_mean, rf_holdout_false_negative_rate_mean, ranger_holdout_false_negative_rate_mean,
-    rpart_holdout_false_negative_rate_mean, svm_holdout_false_negative_rate_mean, tree_holdout_false_negative_rate_mean, xgb_holdout_false_negative_rate_mean,
+    cubist_holdout_false_negative_rate_mean, fda_holdout_false_negative_rate_mean,
+    gam_holdout_false_negative_rate_mean, glm_holdout_false_negative_rate_mean, lasso_holdout_false_negative_rate_mean, linear_holdout_false_negative_rate_mean,
+    lda_holdout_false_negative_rate_mean,
+    pda_holdout_false_negative_rate_mean, qda_holdout_false_negative_rate_mean,
+    rf_holdout_false_negative_rate_mean, ridge_holdout_false_negative_rate_mean,
+    svm_holdout_false_negative_rate_mean, tree_holdout_false_negative_rate_mean,
     ensemble_bagging_holdout_false_negative_rate_mean, ensemble_C50_holdout_false_negative_rate_mean,
-    ensemble_gb_holdout_false_negative_rate_mean, ensemble_pls_holdout_false_negative_rate_mean, ensemble_pda_holdout_false_negative_rate_mean, ensemble_rf_holdout_false_negative_rate_mean,
-    ensemble_ranger_holdout_false_negative_rate_mean, ensemble_rda_holdout_false_negative_rate_mean, ensemble_rpart_holdout_false_negative_rate_mean,
+    ensemble_gb_holdout_false_negative_rate_mean, ensemble_lasso_holdout_false_negative_rate_mean, ensemble_pls_holdout_false_negative_rate_mean, ensemble_pda_holdout_false_negative_rate_mean,
+    ensemble_ridge_holdout_false_negative_rate_mean, ensemble_rpart_holdout_false_negative_rate_mean,
     ensemble_svm_holdout_false_negative_rate_mean, ensemble_tree_holdout_false_negative_rate_mean, ensemble_xgb_holdout_false_negative_rate_mean
   ), 4),
   "Positive_Predictive_Value_aka_Precision" = round(c(
-    bag_rf_holdout_positive_predictive_value_mean, bagging_holdout_positive_predictive_value_mean, bayesglm_holdout_positive_predictive_value_mean,
-    C50_holdout_positive_predictive_value_mean, cubist_holdout_positive_predictive_value_mean, fda_holdout_positive_predictive_value_mean,
-    gam_holdout_positive_predictive_value_mean, gb_holdout_positive_predictive_value_mean, glm_holdout_positive_predictive_value_mean, linear_holdout_positive_predictive_value_mean,
-    lda_holdout_positive_predictive_value_mean, mda_holdout_positive_predictive_value_mean, n_bayes_holdout_positive_predictive_value_mean,
-    pda_holdout_positive_predictive_value_mean, qda_holdout_positive_predictive_value_mean, rf_holdout_positive_predictive_value_mean, ranger_holdout_positive_predictive_value_mean,
-    rpart_holdout_positive_predictive_value_mean, svm_holdout_positive_predictive_value_mean, tree_holdout_positive_predictive_value_mean, xgb_holdout_positive_predictive_value_mean,
+    cubist_holdout_positive_predictive_value_mean, fda_holdout_positive_predictive_value_mean,
+    gam_holdout_positive_predictive_value_mean, glm_holdout_positive_predictive_value_mean, lasso_holdout_positive_predictive_value_mean, linear_holdout_positive_predictive_value_mean,
+    lda_holdout_positive_predictive_value_mean,
+    pda_holdout_positive_predictive_value_mean, qda_holdout_positive_predictive_value_mean,
+    rf_holdout_positive_predictive_value_mean, ridge_holdout_positive_predictive_value_mean,
+    svm_holdout_positive_predictive_value_mean, tree_holdout_positive_predictive_value_mean,
     ensemble_bagging_holdout_positive_predictive_value_mean, ensemble_C50_holdout_positive_predictive_value_mean,
-    ensemble_gb_holdout_positive_predictive_value_mean, ensemble_pls_holdout_positive_predictive_value_mean, ensemble_pda_holdout_positive_predictive_value_mean, ensemble_rf_holdout_positive_predictive_value_mean,
-    ensemble_ranger_holdout_positive_predictive_value_mean, ensemble_rda_holdout_positive_predictive_value_mean, ensemble_rpart_holdout_positive_predictive_value_mean,
+    ensemble_gb_holdout_positive_predictive_value_mean, ensemble_lasso_holdout_positive_predictive_value_mean, ensemble_pls_holdout_positive_predictive_value_mean, ensemble_pda_holdout_positive_predictive_value_mean,
+    ensemble_ridge_holdout_positive_predictive_value_mean, ensemble_rpart_holdout_positive_predictive_value_mean,
     ensemble_svm_holdout_positive_predictive_value_mean, ensemble_tree_holdout_positive_predictive_value_mean, ensemble_xgb_holdout_positive_predictive_value_mean
   ), 4),
   "Negative_Predictive_Value" = round(c(
-    bag_rf_holdout_negative_predictive_value_mean, bagging_holdout_negative_predictive_value_mean, bayesglm_holdout_negative_predictive_value_mean,
-    C50_holdout_negative_predictive_value_mean, cubist_holdout_negative_predictive_value_mean, fda_holdout_negative_predictive_value_mean,
-    gam_holdout_negative_predictive_value_mean, gb_holdout_negative_predictive_value_mean, glm_holdout_negative_predictive_value_mean, linear_holdout_negative_predictive_value_mean,
-    lda_holdout_negative_predictive_value_mean, mda_holdout_negative_predictive_value_mean, n_bayes_holdout_negative_predictive_value_mean,
-    pda_holdout_negative_predictive_value_mean, qda_holdout_negative_predictive_value_mean, rf_holdout_negative_predictive_value_mean, ranger_holdout_negative_predictive_value_mean,
-    rpart_holdout_negative_predictive_value_mean, svm_holdout_negative_predictive_value_mean, tree_holdout_negative_predictive_value_mean, xgb_holdout_negative_predictive_value_mean,
+    cubist_holdout_negative_predictive_value_mean, fda_holdout_negative_predictive_value_mean,
+    gam_holdout_negative_predictive_value_mean, glm_holdout_negative_predictive_value_mean, lasso_holdout_negative_predictive_value_mean, linear_holdout_negative_predictive_value_mean,
+    lda_holdout_negative_predictive_value_mean,
+    pda_holdout_negative_predictive_value_mean, qda_holdout_negative_predictive_value_mean,
+    rf_holdout_negative_predictive_value_mean, ridge_holdout_negative_predictive_value_mean,
+    svm_holdout_negative_predictive_value_mean, tree_holdout_negative_predictive_value_mean,
     ensemble_bagging_holdout_negative_predictive_value_mean, ensemble_C50_holdout_negative_predictive_value_mean,
-    ensemble_gb_holdout_negative_predictive_value_mean, ensemble_pls_holdout_negative_predictive_value_mean, ensemble_pda_holdout_negative_predictive_value_mean, ensemble_rf_holdout_negative_predictive_value_mean,
-    ensemble_ranger_holdout_negative_predictive_value_mean, ensemble_rda_holdout_negative_predictive_value_mean, ensemble_rpart_holdout_negative_predictive_value_mean,
+    ensemble_gb_holdout_negative_predictive_value_mean, ensemble_lasso_holdout_negative_predictive_value_mean, ensemble_pls_holdout_negative_predictive_value_mean, ensemble_pda_holdout_negative_predictive_value_mean,
+    ensemble_ridge_holdout_negative_predictive_value_mean, ensemble_rpart_holdout_negative_predictive_value_mean,
     ensemble_svm_holdout_negative_predictive_value_mean, ensemble_tree_holdout_negative_predictive_value_mean, ensemble_xgb_holdout_negative_predictive_value_mean
   ), 4),
   "F1_Score" = round(c(
-    bag_rf_holdout_F1_score_mean, bagging_holdout_F1_score_mean, bayesglm_holdout_F1_score_mean,
-    C50_holdout_F1_score_mean, cubist_holdout_F1_score_mean, fda_holdout_F1_score_mean,
-    gam_holdout_F1_score_mean, gb_holdout_F1_score_mean, glm_holdout_F1_score_mean, linear_holdout_F1_score_mean,
-    lda_holdout_F1_score_mean, mda_holdout_F1_score_mean, n_bayes_holdout_F1_score_mean,
-    pda_holdout_F1_score_mean, qda_holdout_F1_score_mean, rf_holdout_F1_score_mean, ranger_holdout_F1_score_mean,
-    rpart_holdout_F1_score_mean, svm_holdout_F1_score_mean, tree_holdout_F1_score_mean, xgb_holdout_F1_score_mean,
+    cubist_holdout_F1_score_mean, fda_holdout_F1_score_mean,
+    gam_holdout_F1_score_mean, glm_holdout_F1_score_mean, lasso_holdout_F1_score_mean, linear_holdout_F1_score_mean,
+    lda_holdout_F1_score_mean,
+    pda_holdout_F1_score_mean, qda_holdout_F1_score_mean,
+    rf_holdout_F1_score_mean, ridge_holdout_F1_score_mean,
+    svm_holdout_F1_score_mean, tree_holdout_F1_score_mean,
     ensemble_bagging_holdout_F1_score_mean, ensemble_C50_holdout_F1_score_mean,
-    ensemble_gb_holdout_F1_score_mean, ensemble_pls_holdout_F1_score_mean, ensemble_pda_holdout_F1_score_mean, ensemble_rf_holdout_F1_score_mean,
-    ensemble_ranger_holdout_F1_score_mean, ensemble_rda_holdout_F1_score_mean, ensemble_rpart_holdout_F1_score_mean,
+    ensemble_gb_holdout_F1_score_mean, ensemble_lasso_holdout_F1_score_mean, ensemble_pls_holdout_F1_score_mean, ensemble_pda_holdout_F1_score_mean,
+    ensemble_ridge_holdout_F1_score_mean, ensemble_rpart_holdout_F1_score_mean,
     ensemble_svm_holdout_F1_score_mean, ensemble_tree_holdout_F1_score_mean, ensemble_xgb_holdout_F1_score_mean
   ), 4),
   "Area_Under_Curve" = c(
-    bag_rf_auc, bagging_auc, bayesglm_auc,
-    C50_auc, cubist_auc, fda_auc,
-    gam_auc, gb_auc, glm_auc, linear_auc,
-    lda_auc, mda_auc, n_bayes_auc,
-    pda_auc, qda_auc, rf_auc, ranger_auc,
-    rpart_auc, svm_auc, tree_auc, xgb_auc,
+    cubist_auc, fda_auc,
+    gam_auc, glm_auc, linear_auc,
+    lasso_auc,
+    lda_auc,
+    pda_auc, qda_auc,
+    rf_auc, ridge_auc,
+    svm_auc, tree_auc,
     ensemble_bagging_auc, ensemble_C50_auc,
-    ensemble_gb_auc, ensemble_pls_auc, ensemble_pda_auc, ensemble_rf_auc,
-    ensemble_ranger_auc, ensemble_rda_auc, ensemble_rpart_auc,
+    ensemble_gb_auc, ensemble_lasso_auc, ensemble_pls_auc, ensemble_pda_auc,
+    ensemble_ridge_auc, ensemble_rpart_auc,
     ensemble_svm_auc, ensemble_tree_auc, ensemble_xgb_auc
   ),
   "Overfitting_Mean" = round(c(
-    bag_rf_holdout_overfitting_mean, bagging_holdout_overfitting_mean, bayesglm_holdout_overfitting_mean,
-    C50_holdout_overfitting_mean, cubist_holdout_overfitting_mean, fda_holdout_overfitting_mean,
-    gam_holdout_overfitting_mean, gb_holdout_overfitting_mean, glm_holdout_overfitting_mean, linear_holdout_overfitting_mean,
-    lda_holdout_overfitting_mean, mda_holdout_overfitting_mean, n_bayes_holdout_overfitting_mean,
-    pda_holdout_overfitting_mean, qda_holdout_overfitting_mean, rf_holdout_overfitting_mean, ranger_holdout_overfitting_mean,
-    rpart_holdout_overfitting_mean, svm_holdout_overfitting_mean, tree_holdout_overfitting_mean, xgb_holdout_overfitting_mean,
+    cubist_holdout_overfitting_mean, fda_holdout_overfitting_mean,
+    gam_holdout_overfitting_mean, glm_holdout_overfitting_mean, lasso_holdout_overfitting_mean, linear_holdout_overfitting_mean,
+    lda_holdout_overfitting_mean,
+    pda_holdout_overfitting_mean, qda_holdout_overfitting_mean,
+    rf_holdout_overfitting_mean, ridge_holdout_overfitting_mean,
+    svm_holdout_overfitting_mean, tree_holdout_overfitting_mean,
     ensemble_bagging_holdout_overfitting_mean, ensemble_C50_holdout_overfitting_mean,
-    ensemble_gb_holdout_overfitting_mean, ensemble_pls_holdout_overfitting_mean, ensemble_pda_holdout_overfitting_mean, ensemble_rf_holdout_overfitting_mean,
-    ensemble_ranger_holdout_overfitting_mean, ensemble_rda_holdout_overfitting_mean, ensemble_rpart_holdout_overfitting_mean,
+    ensemble_gb_holdout_overfitting_mean, ensemble_lasso_holdout_overfitting_mean, ensemble_pls_holdout_overfitting_mean, ensemble_pda_holdout_overfitting_mean,
+    ensemble_ridge_holdout_overfitting_mean, ensemble_rpart_holdout_overfitting_mean,
     ensemble_svm_holdout_overfitting_mean, ensemble_tree_holdout_overfitting_mean, ensemble_xgb_holdout_overfitting_mean
   ), 4),
   "Overfitting_sd" = round(c(
-    bag_rf_holdout_overfitting_sd, bagging_holdout_overfitting_sd, bayesglm_holdout_overfitting_sd,
-    C50_holdout_overfitting_sd, cubist_holdout_overfitting_sd, fda_holdout_overfitting_sd,
-    gam_holdout_overfitting_sd, gb_holdout_overfitting_sd, glm_holdout_overfitting_sd, linear_holdout_overfitting_sd,
-    lda_holdout_overfitting_sd, mda_holdout_overfitting_sd, n_bayes_holdout_overfitting_sd,
-    pda_holdout_overfitting_sd, qda_holdout_overfitting_sd, rf_holdout_overfitting_sd, ranger_holdout_overfitting_sd,
-    rpart_holdout_overfitting_sd, svm_holdout_overfitting_sd, tree_holdout_overfitting_sd, xgb_holdout_overfitting_sd,
+    cubist_holdout_overfitting_sd, fda_holdout_overfitting_sd,
+    gam_holdout_overfitting_sd, glm_holdout_overfitting_sd, lasso_holdout_overfitting_sd, linear_holdout_overfitting_sd,
+    lda_holdout_overfitting_sd,
+    pda_holdout_overfitting_sd, qda_holdout_overfitting_sd,
+    rf_holdout_overfitting_sd, ridge_holdout_overfitting_sd,
+    svm_holdout_overfitting_sd, tree_holdout_overfitting_sd,
     ensemble_bagging_holdout_overfitting_sd, ensemble_C50_holdout_overfitting_sd,
-    ensemble_gb_holdout_overfitting_sd, ensemble_pls_holdout_overfitting_sd, ensemble_pda_holdout_overfitting_sd, ensemble_rf_holdout_overfitting_sd,
-    ensemble_ranger_holdout_overfitting_sd, ensemble_rda_holdout_overfitting_sd, ensemble_rpart_holdout_overfitting_sd,
+    ensemble_gb_holdout_overfitting_sd, ensemble_lasso_holdout_overfitting_sd, ensemble_pls_holdout_overfitting_sd, ensemble_pda_holdout_overfitting_sd,
+    ensemble_ridge_holdout_overfitting_sd, ensemble_rpart_holdout_overfitting_sd,
     ensemble_svm_holdout_overfitting_sd, ensemble_tree_holdout_overfitting_sd, ensemble_xgb_holdout_overfitting_sd
   ), 4),
   "Duration" = round(c(
-    bag_rf_duration_mean, bagging_duration_mean, bayesglm_duration_mean,
-    C50_duration_mean, cubist_duration_mean, fda_duration_mean,
-    gam_duration_mean, gb_duration_mean, glm_duration_mean, linear_duration_mean,
-    lda_duration_mean, mda_duration_mean, n_bayes_duration_mean,
-    pda_duration_mean, qda_duration_mean, rf_duration_mean, ranger_duration_mean,
-    rpart_duration_mean, svm_duration_mean, tree_duration_mean, xgb_duration_mean,
+    cubist_duration_mean, fda_duration_mean,
+    gam_duration_mean, glm_duration_mean, lasso_duration_mean, linear_duration_mean,
+    lda_duration_mean,
+    pda_duration_mean, qda_duration_mean,
+    rf_duration_mean, ridge_duration_mean,
+    svm_duration_mean, tree_duration_mean,
     ensemble_bagging_duration_mean, ensemble_C50_duration_mean,
-    ensemble_gb_duration_mean, ensemble_pls_duration_mean, ensemble_pda_duration_mean, ensemble_rf_duration_mean,
-    ensemble_ranger_duration_mean, ensemble_rda_duration_mean, ensemble_rpart_duration_mean,
+    ensemble_gb_duration_mean, ensemble_lasso_duration_mean, ensemble_pls_duration_mean, ensemble_pda_duration_mean,
+    ensemble_ridge_duration_mean, ensemble_rpart_duration_mean,
     ensemble_svm_duration_mean, ensemble_tree_duration_mean, ensemble_xgb_duration_mean
   ), 4),
   "Duration_sd" = round(c(
-    bag_rf_duration_sd, bagging_duration_sd, bayesglm_duration_sd,
-    C50_duration_sd, cubist_duration_sd, fda_duration_sd,
-    gam_duration_sd, gb_duration_sd, glm_duration_sd, linear_duration_sd,
-    lda_duration_sd, mda_duration_sd, n_bayes_duration_sd,
-    pda_duration_sd, qda_duration_sd, rf_duration_sd, ranger_duration_sd,
-    rpart_duration_sd, svm_duration_sd, tree_duration_sd, xgb_duration_sd,
+    cubist_duration_sd, fda_duration_sd,
+    gam_duration_sd, glm_duration_sd, lasso_duration_sd, linear_duration_sd,
+    lda_duration_sd,
+    pda_duration_sd, qda_duration_sd,
+    rf_duration_sd, ridge_duration_sd,
+    svm_duration_sd, tree_duration_sd,
     ensemble_bagging_duration_sd, ensemble_C50_duration_sd,
-    ensemble_gb_duration_sd, ensemble_pls_duration_sd, ensemble_pda_duration_sd, ensemble_rf_duration_sd,
-    ensemble_ranger_duration_sd, ensemble_rda_duration_sd, ensemble_rpart_duration_sd,
+    ensemble_gb_duration_sd, ensemble_lasso_duration_sd, ensemble_pls_duration_sd, ensemble_pda_duration_sd,
+    ensemble_ridge_duration_sd, ensemble_rpart_duration_sd,
     ensemble_svm_duration_sd, ensemble_tree_duration_sd, ensemble_xgb_duration_sd
   ), 4)
 )
@@ -5431,56 +4227,53 @@ holdout_results_final <- reactable::reactable(holdout_results,
 accuracy_data <- data.frame(
   "count" = 1:numresamples,
   "model" = c(
-    rep("Bagged Random Forest", numresamples), rep("Bagging", numresamples),
-    rep("BayesGLM", numresamples),rep("C50", numresamples),
     rep("Cubist", numresamples), rep("Flexible Discriminant Analysis", numresamples), rep("Generalized Additive Models", numresamples),
-    rep("Generalized Linear Models", numresamples), rep("Gradient Boosted", numresamples), rep("Linear", numresamples),
-    rep("Linear Discrmininant Analysis", numresamples), rep("Mixture Discriminant Analysis", numresamples), rep("Naive Bayes", numresamples),
+    rep("Generalized Linear Models", numresamples), rep("Lasso", numresamples), rep("Linear", numresamples),
+    rep("Linear Discrmininant Analysis", numresamples),
     rep("Penalized Discrmininant Analysis", numresamples), rep("Quadratic Discrmininant Analysis", numresamples),
-    rep("Random Forest", numresamples), rep("Ranger", numresamples),
-    rep("RPart", numresamples), rep("Support Vector Machines", numresamples),
-    rep("Trees", numresamples), rep("XGBoost", numresamples),
+    rep("Random Forest", numresamples), rep("Ridge", numresamples),
+    rep("Support Vector Machines", numresamples),
+    rep("Trees", numresamples),
     rep("Ensemble Bagging", numresamples),
     rep("Ensemble C50", numresamples), rep("Ensemble Gradient Boosted", numresamples),
+    rep("Ensemble Lasso", numresamples),
     rep("Ensemble Partial Least Squares", numresamples),
-    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Random Forest", numresamples),
-    rep("Ensemble Ranger", numresamples), rep("Ensemble Regularized Discriminant Analysis", numresamples),
+    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Ridge", numresamples),
     rep("Ensemble RPart", numresamples), rep("Ensemble Support Vector Machines", numresamples),
     rep("Ensemble Trees", numresamples), rep("Ensemble XGBoost", numresamples)
   ),
   "data" = c(
-    bag_rf_holdout_accuracy, bagging_holdout_accuracy,
-    bayesglm_holdout_accuracy, C50_holdout_accuracy,
     cubist_holdout_accuracy, fda_holdout_accuracy, gam_holdout_accuracy,
-    glm_holdout_accuracy, gb_holdout_accuracy,
-    linear_holdout_accuracy, lda_holdout_accuracy, mda_holdout_accuracy,
-    n_bayes_holdout_accuracy, pda_holdout_accuracy,
-    qda_holdout_accuracy, rf_holdout_accuracy, ranger_holdout_accuracy,
-    rpart_holdout_accuracy, svm_holdout_accuracy,
+    glm_holdout_accuracy, lasso_holdout_accuracy,
+    linear_holdout_accuracy, lda_holdout_accuracy,
+    pda_holdout_accuracy,
+    qda_holdout_accuracy,
+    rf_holdout_accuracy, ridge_holdout_accuracy,
     tree_holdout_accuracy, svm_holdout_accuracy,
     ensemble_bagging_holdout_accuracy,
     ensemble_C50_holdout_accuracy, ensemble_gb_holdout_accuracy,
+    ensemble_lasso_holdout_accuracy,
     ensemble_pls_holdout_accuracy,
-    ensemble_pda_holdout_accuracy, ensemble_rf_holdout_accuracy,
-    ensemble_ranger_holdout_accuracy, ensemble_rda_holdout_accuracy,
+    ensemble_pda_holdout_accuracy,
+    ensemble_ridge_holdout_accuracy,
     ensemble_rpart_holdout_accuracy, ensemble_svm_holdout_accuracy,
     ensemble_tree_holdout_accuracy, ensemble_xgb_holdout_accuracy
   ),
   "mean" = rep(c(
-    bag_rf_holdout_accuracy_mean, bagging_holdout_accuracy_mean,
-    bayesglm_holdout_accuracy_mean, C50_holdout_accuracy_mean,
     cubist_holdout_accuracy_mean, fda_holdout_accuracy_mean, gam_holdout_accuracy_mean,
-    glm_holdout_accuracy_mean, gb_holdout_accuracy_mean,
-    linear_holdout_accuracy_mean, lda_holdout_accuracy_mean, mda_holdout_accuracy_mean,
-    n_bayes_holdout_accuracy_mean, pda_holdout_accuracy_mean,
-    qda_holdout_accuracy_mean, rf_holdout_accuracy_mean, ranger_holdout_accuracy_mean,
-    rpart_holdout_accuracy_mean, svm_holdout_accuracy_mean,
-    tree_holdout_accuracy_mean, svm_holdout_accuracy_mean,
+    glm_holdout_accuracy_mean, lasso_holdout_accuracy_mean,
+    linear_holdout_accuracy_mean, lda_holdout_accuracy_mean,
+    pda_holdout_accuracy_mean,
+    qda_holdout_accuracy_mean,
+    rf_holdout_accuracy_mean, ridge_holdout_accuracy_mean,
+    svm_holdout_accuracy_mean,
+    tree_holdout_accuracy_mean,
     ensemble_bagging_holdout_accuracy_mean,
     ensemble_C50_holdout_accuracy_mean, ensemble_gb_holdout_accuracy_mean,
+    ensemble_lasso_holdout_accuracy_mean,
     ensemble_pls_holdout_accuracy_mean,
-    ensemble_pda_holdout_accuracy_mean, ensemble_rf_holdout_accuracy_mean,
-    ensemble_ranger_holdout_accuracy_mean, ensemble_rda_holdout_accuracy_mean,
+    ensemble_pda_holdout_accuracy_mean,
+    ensemble_ridge_holdout_accuracy_mean,
     ensemble_rpart_holdout_accuracy_mean, ensemble_svm_holdout_accuracy_mean,
     ensemble_tree_holdout_accuracy_mean, ensemble_xgb_holdout_accuracy_mean
   ), each = numresamples)
@@ -5491,7 +4284,7 @@ accuracy_plot <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x 
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "fixed") +
+  ggplot2::facet_wrap(~model, ncol = 4 , scales = "fixed") +
   ggplot2::ggtitle("Accuracy by model fixed scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Accuracy by model fixed scales, higher is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
@@ -5520,7 +4313,7 @@ accuracy_plot2 <- ggplot2::ggplot(data = accuracy_data, mapping = ggplot2::aes(x
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "free") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::ggtitle("Accuracy by model free scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Accuracy by model free scales, higher is better \n The black horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
@@ -5547,67 +4340,67 @@ if(save_all_plots == "Y" && device == "tiff"){
 total_accuracy_data <- data.frame(
   "count" = 1:numresamples,
   "model" = c(
-    rep("Bagged Random Forest", numresamples), rep("Bagging", numresamples),
-    rep("BayesGLM", numresamples), rep("C50", numresamples),
     rep("Cubist", numresamples), rep("Flexible Discriminant Analysis", numresamples), rep("Generalized Additive Models", numresamples),
-    rep("Generalized Linear Models", numresamples), rep("Gradient Boosted", numresamples),
-    rep("Linear", numresamples), rep("Linear Discrmininant Analysis", numresamples), rep("Mixture Discriminant Analysis", numresamples),
-    rep("Naive Bayes", numresamples), rep("Penalized Discrmininant Analysis", numresamples),
-    rep("Quadratic Discrmininant Analysis", numresamples), rep("Random Forest", numresamples), rep("Ranger", numresamples),
-    rep("RPart", numresamples), rep("Support Vector Machines", numresamples),
-    rep("Trees", numresamples), rep("XGBoost", numresamples),
+    rep("Generalized Linear Models", numresamples), rep("Lasso", numresamples),
+    rep("Linear", numresamples), rep("Linear Discrmininant Analysis", numresamples),
+    rep("Penalized Discrmininant Analysis", numresamples),
+    rep("Quadratic Discrmininant Analysis", numresamples),
+    rep("Random Forest", numresamples), rep("Ridge", numresamples),
+    rep("Support Vector Machines", numresamples),
+    rep("Trees", numresamples),
     rep("Ensemble Bagging", numresamples),
     rep("Ensemble C50", numresamples), rep("Ensemble Gradient Boosted", numresamples),
+    rep("Ensemble Lasso", numresamples),
     rep("Ensemble Partial Least Squares", numresamples),
-    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Random Forest", numresamples),
-    rep("Ensemble Ranger", numresamples), rep("Ensemble Regularized Discriminant Analysis", numresamples),
+    rep("Ensemble Penalized Discrmininant Analysis", numresamples),
+    rep("Ensemble Ridge", numresamples),
     rep("Ensemble RPart", numresamples), rep("Ensemble Support Vector Machines", numresamples),
     rep("Ensemble Trees", numresamples), rep("Ensemble XGBoost", numresamples)
   ),
   "train" = c(
-    bag_rf_train_accuracy, bagging_train_accuracy,
-    bayesglm_train_accuracy, C50_train_accuracy,
     cubist_train_accuracy, fda_train_accuracy, gam_train_accuracy,
-    glm_train_accuracy, gb_train_accuracy,
-    linear_train_accuracy, lda_train_accuracy, mda_train_accuracy,
-    n_bayes_train_accuracy, pda_train_accuracy,
-    qda_train_accuracy, rf_train_accuracy, ranger_train_accuracy,
-    rpart_train_accuracy, svm_train_accuracy,
-    tree_train_accuracy, svm_train_accuracy,
+    glm_train_accuracy, lasso_train_accuracy,
+    linear_train_accuracy, lda_train_accuracy,
+    pda_train_accuracy,
+    qda_train_accuracy,
+    rf_train_accuracy, ridge_train_accuracy,
+    svm_train_accuracy,
+    tree_train_accuracy,
     ensemble_bagging_train_accuracy,
     ensemble_C50_train_accuracy, ensemble_gb_train_accuracy,
+    ensemble_lasso_train_accuracy,
     ensemble_pls_train_accuracy,
-    ensemble_pda_train_accuracy, ensemble_rf_train_accuracy,
-    ensemble_ranger_train_accuracy, ensemble_rda_train_accuracy,
+    ensemble_pda_train_accuracy,
+    ensemble_ridge_train_accuracy,
     ensemble_rpart_train_accuracy, ensemble_svm_train_accuracy,
     ensemble_tree_train_accuracy, ensemble_xgb_train_accuracy
   ),
   "holdout" = c(
-    bag_rf_holdout_accuracy, bagging_holdout_accuracy,
-    bayesglm_holdout_accuracy, C50_holdout_accuracy,
     cubist_holdout_accuracy, fda_holdout_accuracy, gam_holdout_accuracy,
-    glm_holdout_accuracy, gb_holdout_accuracy,
-    linear_holdout_accuracy, lda_holdout_accuracy, mda_holdout_accuracy,
-    n_bayes_holdout_accuracy, pda_holdout_accuracy,
-    qda_holdout_accuracy, rf_holdout_accuracy, ranger_holdout_accuracy,
-    rpart_holdout_accuracy, svm_holdout_accuracy,
-    tree_holdout_accuracy, svm_holdout_accuracy,
+    glm_holdout_accuracy, lasso_holdout_accuracy,
+    linear_holdout_accuracy, lda_holdout_accuracy,
+    pda_holdout_accuracy,
+    qda_holdout_accuracy,
+    rf_holdout_accuracy, ridge_holdout_accuracy,
+    svm_holdout_accuracy,
+    tree_holdout_accuracy,
     ensemble_bagging_holdout_accuracy,
     ensemble_C50_holdout_accuracy, ensemble_gb_holdout_accuracy,
+    ensemble_lasso_holdout_accuracy,
     ensemble_pls_holdout_accuracy,
-    ensemble_pda_holdout_accuracy, ensemble_rf_holdout_accuracy,
-    ensemble_ranger_holdout_accuracy, ensemble_rda_holdout_accuracy,
+    ensemble_pda_holdout_accuracy,
+    ensemble_ridge_holdout_accuracy,
     ensemble_rpart_holdout_accuracy, ensemble_svm_holdout_accuracy,
     ensemble_tree_holdout_accuracy, ensemble_xgb_holdout_accuracy
   )
 )
 
-total_plot <- ggplot2::ggplot(data = total_accuracy_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+total_plot_fixed_scales <- ggplot2::ggplot(data = total_accuracy_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = train, color = "train")) +
   ggplot2::geom_point(mapping = aes(x = count, y = train)) +
   ggplot2::geom_line(mapping = aes(x = count, y = holdout, color = "holdout")) +
   ggplot2::geom_point(mapping = aes(x = count, y = holdout)) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "fixed") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
   ggplot2::ggtitle("Accuracy data including train and holdout results, by model and resample. The best possible result is 1.0") +
   ggplot2::labs(y = "Accuracy, the best possible result is 1.0") +
   ggplot2::scale_color_manual(
@@ -5619,30 +4412,30 @@ total_plot <- ggplot2::ggplot(data = total_accuracy_data, mapping = ggplot2::aes
   )
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("total_plot.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_fixed_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("total_plot.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_fixed_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("total_plot.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_fixed_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("total_plot.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_fixed_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("total_plot.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_fixed_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("total_plot.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_fixed_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
-total_plot2 <- ggplot2::ggplot(data = total_accuracy_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+total_plot_free_scales <- ggplot2::ggplot(data = total_accuracy_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = train, color = "train")) +
   ggplot2::geom_point(mapping = aes(x = count, y = train)) +
   ggplot2::geom_line(mapping = aes(x = count, y = holdout, color = "holdout")) +
   ggplot2::geom_point(mapping = aes(x = count, y = holdout)) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "free") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::ggtitle("Accuracy data including train and holdout results, by model and resample. The best possible result is 1.0") +
   ggplot2::labs(y = "Accuracy, the best possible result is 1.0") +
   ggplot2::scale_color_manual(
@@ -5654,929 +4447,935 @@ total_plot2 <- ggplot2::ggplot(data = total_accuracy_data, mapping = ggplot2::ae
   )
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("total_plot2.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_free_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("total_plot2.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_free_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("total_plot2.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_free_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("total_plot2.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_free_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("total_plot2.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_free_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("total_plot2.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("total_plot_free_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 true_positive_rate_data <- data.frame(
   "count" = 1:numresamples,
   "model" = c(
-    rep("Bagged Random Forest", numresamples), rep("Bagging", numresamples),
-    rep("BayesGLM", numresamples),rep("C50", numresamples),
     rep("Cubist", numresamples), rep("Flexible Discriminant Analysis", numresamples), rep("Generalized Additive Models", numresamples),
-    rep("Generalized Linear Models", numresamples), rep("Gradient Boosted", numresamples), rep("Linear", numresamples),
-    rep("Linear Discrmininant Analysis", numresamples), rep("Mixture Discriminant Analysis", numresamples), rep("Naive Bayes", numresamples),
+    rep("Generalized Linear Models", numresamples), rep("Lasso", numresamples), rep("Linear", numresamples),
+    rep("Linear Discrmininant Analysis", numresamples),
     rep("Penalized Discrmininant Analysis", numresamples), rep("Quadratic Discrmininant Analysis", numresamples),
-    rep("Random Forest", numresamples), rep("Ranger", numresamples),
-    rep("RPart", numresamples), rep("Support Vector Machines", numresamples),
-    rep("Trees", numresamples), rep("XGBoost", numresamples),
+    rep("Random Forest", numresamples), rep("Ridge", numresamples),
+    rep("Support Vector Machines", numresamples),
+    rep("Trees", numresamples),
     rep("Ensemble Bagging", numresamples),
     rep("Ensemble C50", numresamples), rep("Ensemble Gradient Boosted", numresamples),
+    rep("Ensemble Lasso", numresamples),
     rep("Ensemble Partial Least Squares", numresamples),
-    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Random Forest", numresamples),
-    rep("Ensemble Ranger", numresamples), rep("Ensemble Regularized Discriminant Analysis", numresamples),
+    rep("Ensemble Penalized Discrmininant Analysis", numresamples),
+    rep("Ensemble Ridge", numresamples),
     rep("Ensemble RPart", numresamples), rep("Ensemble Support Vector Machines", numresamples),
     rep("Ensemble Trees", numresamples), rep("Ensemble XGBoost", numresamples)
   ),
   "data" = c(
-    bag_rf_holdout_true_positive_rate, bagging_holdout_true_positive_rate,
-    bayesglm_holdout_true_positive_rate, C50_holdout_true_positive_rate,
     cubist_holdout_true_positive_rate, fda_holdout_true_positive_rate, gam_holdout_true_positive_rate,
-    glm_holdout_true_positive_rate, gb_holdout_true_positive_rate,
-    linear_holdout_true_positive_rate, lda_holdout_true_positive_rate, mda_holdout_true_positive_rate,
-    n_bayes_holdout_true_positive_rate, pda_holdout_true_positive_rate,
-    qda_holdout_true_positive_rate, rf_holdout_true_positive_rate, ranger_holdout_true_positive_rate,
-    rpart_holdout_true_positive_rate, svm_holdout_true_positive_rate,
-    tree_holdout_true_positive_rate, svm_holdout_true_positive_rate,
+    glm_holdout_true_positive_rate, lasso_holdout_true_positive_rate,
+    linear_holdout_true_positive_rate, lda_holdout_true_positive_rate,
+    pda_holdout_true_positive_rate,
+    qda_holdout_true_positive_rate,
+    rf_holdout_true_positive_rate,
+    ridge_holdout_true_positive_rate,
+    svm_holdout_true_positive_rate,
+    tree_holdout_true_positive_rate,
     ensemble_bagging_holdout_true_positive_rate,
     ensemble_C50_holdout_true_positive_rate, ensemble_gb_holdout_true_positive_rate,
+    ensemble_lasso_holdout_true_positive_rate,
     ensemble_pls_holdout_true_positive_rate,
-    ensemble_pda_holdout_true_positive_rate, ensemble_rf_holdout_true_positive_rate,
-    ensemble_ranger_holdout_true_positive_rate, ensemble_rda_holdout_true_positive_rate,
+    ensemble_pda_holdout_true_positive_rate,
+    ensemble_ridge_holdout_true_positive_rate,
     ensemble_rpart_holdout_true_positive_rate, ensemble_svm_holdout_true_positive_rate,
     ensemble_tree_holdout_true_positive_rate, ensemble_xgb_holdout_true_positive_rate
   ),
   "mean" = rep(c(
-    bag_rf_holdout_true_positive_rate_mean, bagging_holdout_true_positive_rate_mean,
-    bayesglm_holdout_true_positive_rate_mean, C50_holdout_true_positive_rate_mean,
     cubist_holdout_true_positive_rate_mean, fda_holdout_true_positive_rate_mean, gam_holdout_true_positive_rate_mean,
-    glm_holdout_true_positive_rate_mean, gb_holdout_true_positive_rate_mean,
-    linear_holdout_true_positive_rate_mean, lda_holdout_true_positive_rate_mean, mda_holdout_true_positive_rate_mean,
-    n_bayes_holdout_true_positive_rate_mean, pda_holdout_true_positive_rate_mean,
-    qda_holdout_true_positive_rate_mean, rf_holdout_true_positive_rate_mean, ranger_holdout_true_positive_rate_mean,
-    rpart_holdout_true_positive_rate_mean, svm_holdout_true_positive_rate_mean,
-    tree_holdout_true_positive_rate_mean, svm_holdout_true_positive_rate_mean,
+    glm_holdout_true_positive_rate_mean, lasso_holdout_true_positive_rate_mean,
+    linear_holdout_true_positive_rate_mean, lda_holdout_true_positive_rate_mean,
+    pda_holdout_true_positive_rate_mean,
+    qda_holdout_true_positive_rate_mean,
+    rf_holdout_true_positive_rate_mean,
+    ridge_holdout_true_positive_rate_mean,
+    svm_holdout_true_positive_rate_mean,
+    tree_holdout_true_positive_rate_mean,
     ensemble_bagging_holdout_true_positive_rate_mean,
     ensemble_C50_holdout_true_positive_rate_mean, ensemble_gb_holdout_true_positive_rate_mean,
+    ensemble_lasso_holdout_true_positive_rate_mean,
     ensemble_pls_holdout_true_positive_rate_mean,
-    ensemble_pda_holdout_true_positive_rate_mean, ensemble_rf_holdout_true_positive_rate_mean,
-    ensemble_ranger_holdout_true_positive_rate_mean, ensemble_rda_holdout_true_positive_rate_mean,
+    ensemble_pda_holdout_true_positive_rate_mean,
+    ensemble_ridge_holdout_true_negative_rate_mean,
     ensemble_rpart_holdout_true_positive_rate_mean, ensemble_svm_holdout_true_positive_rate_mean,
     ensemble_tree_holdout_true_positive_rate_mean, ensemble_xgb_holdout_true_positive_rate_mean
   ), each = numresamples)
 )
 
-true_positive_rate_plot <- ggplot2::ggplot(data = true_positive_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+true_positive_rate_fixed_scales <- ggplot2::ggplot(data = true_positive_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "fixed") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
   ggplot2::ggtitle("True Positive Rate by model fixed scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "True Positive Rate by model fixed scales, higher is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("true_positive_rate_plot.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_fixed_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("true_positive_rate_plot.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_fixed_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("true_positive_rate_plot.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_fixed_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("true_positive_rate_plot.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_fixed_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("true_positive_rate_plot.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_fixed_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("true_positive_rate_plot.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_fixed_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
-true_positive_rate_plot2 <- ggplot2::ggplot(data = true_positive_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+true_positive_rate_free_scales <- ggplot2::ggplot(data = true_positive_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "free") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::ggtitle("True positive rate by model free scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "True positive rate by model free scales, higher is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("true_positive_rate_plot2.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_free_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("true_positive_rate_plot2.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_free_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("true_positive_rate_plot2.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_free_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("true_positive_rate_plot2.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_free_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("true_positive_rate_plot2.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_free_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("true_positive_rate_plot2.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_positive_rate_free_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 true_negative_rate_data <- data.frame(
   "count" = 1:numresamples,
   "model" = c(
-    rep("Bagged Random Forest", numresamples), rep("Bagging", numresamples),
-    rep("BayesGLM", numresamples),rep("C50", numresamples),
     rep("Cubist", numresamples), rep("Flexible Discriminant Analysis", numresamples), rep("Generalized Additive Models", numresamples),
-    rep("Generalized Linear Models", numresamples), rep("Gradient Boosted", numresamples), rep("Linear", numresamples),
-    rep("Linear Discrmininant Analysis", numresamples), rep("Mixture Discriminant Analysis", numresamples), rep("Naive Bayes", numresamples),
+    rep("Generalized Linear Models", numresamples), rep("Lasso", numresamples), rep("Linear", numresamples),
+    rep("Linear Discrmininant Analysis", numresamples),
     rep("Penalized Discrmininant Analysis", numresamples), rep("Quadratic Discrmininant Analysis", numresamples),
-    rep("Random Forest", numresamples), rep("Ranger", numresamples),
-    rep("RPart", numresamples), rep("Support Vector Machines", numresamples),
-    rep("Trees", numresamples), rep("XGBoost", numresamples),
+    rep("Random Forest", numresamples), rep("Ridge", numresamples),
+    rep("Support Vector Machines", numresamples),
+    rep("Trees", numresamples),
     rep("Ensemble Bagging", numresamples),
     rep("Ensemble C50", numresamples), rep("Ensemble Gradient Boosted", numresamples),
+    rep("Ensemble Lasso", numresamples),
     rep("Ensemble Partial Least Squares", numresamples),
-    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Random Forest", numresamples),
-    rep("Ensemble Ranger", numresamples), rep("Ensemble Regularized Discriminant Analysis", numresamples),
+    rep("Ensemble Penalized Discrmininant Analysis", numresamples),
+    rep("Ensemble Ridge", numresamples),
     rep("Ensemble RPart", numresamples), rep("Ensemble Support Vector Machines", numresamples),
     rep("Ensemble Trees", numresamples), rep("Ensemble XGBoost", numresamples)
   ),
   "data" = c(
-    bag_rf_holdout_true_negative_rate, bagging_holdout_true_negative_rate,
-    bayesglm_holdout_true_negative_rate, C50_holdout_true_negative_rate,
     cubist_holdout_true_negative_rate, fda_holdout_true_negative_rate, gam_holdout_true_negative_rate,
-    glm_holdout_true_negative_rate, gb_holdout_true_negative_rate,
-    linear_holdout_true_negative_rate, lda_holdout_true_negative_rate, mda_holdout_true_negative_rate,
-    n_bayes_holdout_true_negative_rate, pda_holdout_true_negative_rate,
-    qda_holdout_true_negative_rate, rf_holdout_true_negative_rate, ranger_holdout_true_negative_rate,
-    rpart_holdout_true_negative_rate, svm_holdout_true_negative_rate,
-    tree_holdout_true_negative_rate, svm_holdout_true_negative_rate,
+    glm_holdout_true_negative_rate, lasso_holdout_true_negative_rate,
+    linear_holdout_true_negative_rate, lda_holdout_true_negative_rate,
+    pda_holdout_true_negative_rate,
+    qda_holdout_true_negative_rate,
+    rf_holdout_true_negative_rate, ridge_holdout_true_negative_rate,
+    svm_holdout_true_negative_rate,
+    tree_holdout_true_negative_rate,
     ensemble_bagging_holdout_true_negative_rate,
     ensemble_C50_holdout_true_negative_rate, ensemble_gb_holdout_true_negative_rate,
+    ensemble_lasso_holdout_true_negative_rate,
     ensemble_pls_holdout_true_negative_rate,
-    ensemble_pda_holdout_true_negative_rate, ensemble_rf_holdout_true_negative_rate,
-    ensemble_ranger_holdout_true_negative_rate, ensemble_rda_holdout_true_negative_rate,
+    ensemble_pda_holdout_true_negative_rate,
+    ensemble_ridge_holdout_true_negative_rate,
     ensemble_rpart_holdout_true_negative_rate, ensemble_svm_holdout_true_negative_rate,
     ensemble_tree_holdout_true_negative_rate, ensemble_xgb_holdout_true_negative_rate
   ),
   "mean" = rep(c(
-    bag_rf_holdout_true_negative_rate_mean, bagging_holdout_true_negative_rate_mean,
-    bayesglm_holdout_true_negative_rate_mean, C50_holdout_true_negative_rate_mean,
     cubist_holdout_true_negative_rate_mean, fda_holdout_true_negative_rate_mean, gam_holdout_true_negative_rate_mean,
-    glm_holdout_true_negative_rate_mean, gb_holdout_true_negative_rate_mean,
-    linear_holdout_true_negative_rate_mean, lda_holdout_true_negative_rate_mean, mda_holdout_true_negative_rate_mean,
-    n_bayes_holdout_true_negative_rate_mean, pda_holdout_true_negative_rate_mean,
-    qda_holdout_true_negative_rate_mean, rf_holdout_true_negative_rate_mean, ranger_holdout_true_negative_rate_mean,
-    rpart_holdout_true_negative_rate_mean, svm_holdout_true_negative_rate_mean,
-    tree_holdout_true_negative_rate_mean, svm_holdout_true_negative_rate_mean,
+    glm_holdout_true_negative_rate_mean, lasso_holdout_true_negative_rate_mean,
+    linear_holdout_true_negative_rate_mean, lda_holdout_true_negative_rate_mean,
+    pda_holdout_true_negative_rate_mean,
+    qda_holdout_true_negative_rate_mean,
+    rf_holdout_true_negative_rate_mean,
+    ridge_holdout_true_negative_rate_mean,
+    svm_holdout_true_negative_rate_mean,
+    tree_holdout_true_negative_rate_mean,
     ensemble_bagging_holdout_true_negative_rate_mean,
     ensemble_C50_holdout_true_negative_rate_mean, ensemble_gb_holdout_true_negative_rate_mean,
+    ensemble_lasso_train_true_negative_rate_mean,
     ensemble_pls_holdout_true_negative_rate_mean,
-    ensemble_pda_holdout_true_negative_rate_mean, ensemble_rf_holdout_true_negative_rate_mean,
-    ensemble_ranger_holdout_true_negative_rate_mean, ensemble_rda_holdout_true_negative_rate_mean,
+    ensemble_pda_holdout_true_negative_rate_mean,
+    ensemble_ridge_holdout_true_negative_rate_mean,
     ensemble_rpart_holdout_true_negative_rate_mean, ensemble_svm_holdout_true_negative_rate_mean,
     ensemble_tree_holdout_true_negative_rate_mean, ensemble_xgb_holdout_true_negative_rate_mean
   ), each = numresamples)
 )
 
-true_negative_rate_plot <- ggplot2::ggplot(data = true_negative_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+true_negative_rate_fixed_scales <- ggplot2::ggplot(data = true_negative_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "fixed") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
   ggplot2::ggtitle("True negative rate by model fixed scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "True negative rate by model fixed scales, higher is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("true_negative_rate_plot.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_fixed_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("true_negative_rate_plot.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_fixed_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("true_negative_rate_plot.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_fixed_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("true_negative_rate_plot.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_fixed_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("true_negative_rate_plot.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_fixed_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("true_negative_rate_plot.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_fixed_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
-true_negative_rate_plot2 <- ggplot2::ggplot(data = true_negative_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+true_negative_rate_free_scales <- ggplot2::ggplot(data = true_negative_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "free") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::ggtitle("True negative rate by model free scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "True negative rate by model free scales, higher is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("true_negative_rate_plot2.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_free_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("true_negative_rate_plot2.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_free_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("true_negative_rate_plot2.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_free_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("true_negative_rate_plot2.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_free_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("true_negative_rate_plot2.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_free_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("true_negative_rate_plot2.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("true_negative_rate_free_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 false_positive_rate_data <- data.frame(
   "count" = 1:numresamples,
   "model" = c(
-    rep("Bagged Random Forest", numresamples), rep("Bagging", numresamples),
-    rep("BayesGLM", numresamples),rep("C50", numresamples),
     rep("Cubist", numresamples), rep("Flexible Discriminant Analysis", numresamples), rep("Generalized Additive Models", numresamples),
-    rep("Generalized Linear Models", numresamples), rep("Gradient Boosted", numresamples), rep("Linear", numresamples),
-    rep("Linear Discrmininant Analysis", numresamples), rep("Mixture Discriminant Analysis", numresamples), rep("Naive Bayes", numresamples),
+    rep("Generalized Linear Models", numresamples), rep("Lasso", numresamples), rep("Linear", numresamples),
+    rep("Linear Discrmininant Analysis", numresamples),
     rep("Penalized Discrmininant Analysis", numresamples), rep("Quadratic Discrmininant Analysis", numresamples),
-    rep("Random Forest", numresamples), rep("Ranger", numresamples),
-    rep("RPart", numresamples), rep("Support Vector Machines", numresamples),
-    rep("Trees", numresamples), rep("XGBoost", numresamples),
+    rep("Random Forest", numresamples), rep("Ridge", numresamples),
+    rep("Support Vector Machines", numresamples),
+    rep("Trees", numresamples),
     rep("Ensemble Bagging", numresamples),
     rep("Ensemble C50", numresamples), rep("Ensemble Gradient Boosted", numresamples),
+    rep("Ensemble Lasso", numresamples),
     rep("Ensemble Partial Least Squares", numresamples),
-    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Random Forest", numresamples),
-    rep("Ensemble Ranger", numresamples), rep("Ensemble Regularized Discriminant Analysis", numresamples),
+    rep("Ensemble Penalized Discrmininant Analysis", numresamples),
+    rep("Ensemble Ridge",numresamples),
     rep("Ensemble RPart", numresamples), rep("Ensemble Support Vector Machines", numresamples),
     rep("Ensemble Trees", numresamples), rep("Ensemble XGBoost", numresamples)
   ),
   "data" = c(
-    bag_rf_holdout_false_positive_rate, bagging_holdout_false_positive_rate,
-    bayesglm_holdout_false_positive_rate, C50_holdout_false_positive_rate,
     cubist_holdout_false_positive_rate, fda_holdout_false_positive_rate, gam_holdout_false_positive_rate,
-    glm_holdout_false_positive_rate, gb_holdout_false_positive_rate,
-    linear_holdout_false_positive_rate, lda_holdout_false_positive_rate, mda_holdout_false_positive_rate,
-    n_bayes_holdout_false_positive_rate, pda_holdout_false_positive_rate,
-    qda_holdout_false_positive_rate, rf_holdout_false_positive_rate, ranger_holdout_false_positive_rate,
-    rpart_holdout_false_positive_rate, svm_holdout_false_positive_rate,
-    tree_holdout_false_positive_rate, svm_holdout_false_positive_rate,
+    glm_holdout_false_positive_rate, lasso_holdout_false_positive_rate,
+    linear_holdout_false_positive_rate, lda_holdout_false_positive_rate,
+    pda_holdout_false_positive_rate,
+    qda_holdout_false_positive_rate,
+    rf_holdout_false_negative_rate,
+    ridge_holdout_false_negative_rate,
+    svm_holdout_false_positive_rate,
+    tree_holdout_false_positive_rate,
     ensemble_bagging_holdout_false_positive_rate,
     ensemble_C50_holdout_false_positive_rate, ensemble_gb_holdout_false_positive_rate,
+    ensemble_lasso_holdout_false_negative_rate,
     ensemble_pls_holdout_false_positive_rate,
-    ensemble_pda_holdout_false_positive_rate, ensemble_rf_holdout_false_positive_rate,
-    ensemble_ranger_holdout_false_positive_rate, ensemble_rda_holdout_false_positive_rate,
+    ensemble_pda_holdout_false_positive_rate,
+    ensemble_ridge_holdout_false_positive_rate,
     ensemble_rpart_holdout_false_positive_rate, ensemble_svm_holdout_false_positive_rate,
     ensemble_tree_holdout_false_positive_rate, ensemble_xgb_holdout_false_positive_rate
   ),
   "mean" = rep(c(
-    bag_rf_holdout_false_positive_rate_mean, bagging_holdout_false_positive_rate_mean,
-    bayesglm_holdout_false_positive_rate_mean, C50_holdout_false_positive_rate_mean,
     cubist_holdout_false_positive_rate_mean, fda_holdout_false_positive_rate_mean, gam_holdout_false_positive_rate_mean,
-    glm_holdout_false_positive_rate_mean, gb_holdout_false_positive_rate_mean,
-    linear_holdout_false_positive_rate_mean, lda_holdout_false_positive_rate_mean, mda_holdout_false_positive_rate_mean,
-    n_bayes_holdout_false_positive_rate_mean, pda_holdout_false_positive_rate_mean,
-    qda_holdout_false_positive_rate_mean, rf_holdout_false_positive_rate_mean, ranger_holdout_false_positive_rate_mean,
-    rpart_holdout_false_positive_rate_mean, svm_holdout_false_positive_rate_mean,
-    tree_holdout_false_positive_rate_mean, svm_holdout_false_positive_rate_mean,
+    glm_holdout_false_positive_rate_mean, lasso_holdout_false_positive_rate_mean,
+    linear_holdout_false_positive_rate_mean, lda_holdout_false_positive_rate_mean,
+    pda_holdout_false_positive_rate_mean,
+    qda_holdout_false_positive_rate_mean,
+    rf_holdout_false_positive_rate_mean,
+    ridge_holdout_false_positive_rate_mean,
+    svm_holdout_false_positive_rate_mean,
+    tree_holdout_false_positive_rate_mean,
     ensemble_bagging_holdout_false_positive_rate_mean,
     ensemble_C50_holdout_false_positive_rate_mean, ensemble_gb_holdout_false_positive_rate_mean,
+    ensemble_lasso_holdout_false_positive_rate_mean,
     ensemble_pls_holdout_false_positive_rate_mean,
-    ensemble_pda_holdout_false_positive_rate_mean, ensemble_rf_holdout_false_positive_rate_mean,
-    ensemble_ranger_holdout_false_positive_rate_mean, ensemble_rda_holdout_false_positive_rate_mean,
+    ensemble_pda_holdout_false_positive_rate_mean,
+    ensemble_ridge_holdout_false_negative_rate_mean,
     ensemble_rpart_holdout_false_positive_rate_mean, ensemble_svm_holdout_false_positive_rate_mean,
     ensemble_tree_holdout_false_positive_rate_mean, ensemble_xgb_holdout_false_positive_rate_mean
   ), each = numresamples)
 )
 
-false_positive_rate_plot <- ggplot2::ggplot(data = false_positive_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+false_positive_rate_fixed_scales <- ggplot2::ggplot(data = false_positive_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 0, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "fixed") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
   ggplot2::ggtitle("False positive rate by model fixed scales, lower is better. \n The black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "False positive rate by model fixed scales, lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("false_positive_rate_plot.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_fixed_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("false_positive_rate_plot.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_fixed_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("false_positive_rate_plot.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_fixed_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("false_positive_rate_plot.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_fixed_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("false_positive_rate_plot.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_fixed_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("false_positive_rate_plot.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_fixed_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
-false_positive_rate_plot2 <- ggplot2::ggplot(data = false_positive_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+false_positive_rate_free_scales <- ggplot2::ggplot(data = false_positive_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 0, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "free") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::ggtitle("False positive rate by model free scales, lower is better. \n The black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "False positive rate by model free scales, lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("false_positive_rate_plot2.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_free_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("false_positive_rate_plot2.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_free_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("false_positive_rate_plot2.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_free_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("false_positive_rate_plot2.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_free_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("false_positive_rate_plot2.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_free_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("false_positive_rate_plot2.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_positive_rate_free_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 
 false_negative_rate_data <- data.frame(
   "count" = 1:numresamples,
   "model" = c(
-    rep("Bagged Random Forest", numresamples), rep("Bagging", numresamples),
-    rep("BayesGLM", numresamples),rep("C50", numresamples),
     rep("Cubist", numresamples), rep("Flexible Discriminant Analysis", numresamples), rep("Generalized Additive Models", numresamples),
-    rep("Generalized Linear Models", numresamples), rep("Gradient Boosted", numresamples), rep("Linear", numresamples),
-    rep("Linear Discrmininant Analysis", numresamples), rep("Mixture Discriminant Analysis", numresamples), rep("Naive Bayes", numresamples),
+    rep("Generalized Linear Models", numresamples), rep("Lasso", numresamples), rep("Linear", numresamples),
+    rep("Linear Discrmininant Analysis", numresamples),
     rep("Penalized Discrmininant Analysis", numresamples), rep("Quadratic Discrmininant Analysis", numresamples),
-    rep("Random Forest", numresamples), rep("Ranger", numresamples),
-    rep("RPart", numresamples), rep("Support Vector Machines", numresamples),
-    rep("Trees", numresamples), rep("XGBoost", numresamples),
+    rep("Random Forest", numresamples), rep("Ridge", numresamples),
+    rep("Support Vector Machines", numresamples),
+    rep("Trees", numresamples),
     rep("Ensemble Bagging", numresamples),
     rep("Ensemble C50", numresamples), rep("Ensemble Gradient Boosted", numresamples),
+    rep("Ensemble Lasso", numresamples),
     rep("Ensemble Partial Least Squares", numresamples),
-    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Random Forest", numresamples),
-    rep("Ensemble Ranger", numresamples), rep("Ensemble Regularized Discriminant Analysis", numresamples),
+    rep("Ensemble Penalized Discrmininant Analysis", numresamples),
+    rep("Ensemble Ridge", numresamples),
     rep("Ensemble RPart", numresamples), rep("Ensemble Support Vector Machines", numresamples),
     rep("Ensemble Trees", numresamples), rep("Ensemble XGBoost", numresamples)
   ),
   "data" = c(
-    bag_rf_holdout_false_negative_rate, bagging_holdout_false_negative_rate,
-    bayesglm_holdout_false_negative_rate, C50_holdout_false_negative_rate,
     cubist_holdout_false_negative_rate, fda_holdout_false_negative_rate, gam_holdout_false_negative_rate,
-    glm_holdout_false_negative_rate, gb_holdout_false_negative_rate,
-    linear_holdout_false_negative_rate, lda_holdout_false_negative_rate, mda_holdout_false_negative_rate,
-    n_bayes_holdout_false_negative_rate, pda_holdout_false_negative_rate,
-    qda_holdout_false_negative_rate, rf_holdout_false_negative_rate, ranger_holdout_false_negative_rate,
-    rpart_holdout_false_negative_rate, svm_holdout_false_negative_rate,
-    tree_holdout_false_negative_rate, svm_holdout_false_negative_rate,
+    glm_holdout_false_negative_rate, lasso_holdout_false_negative_rate,
+    linear_holdout_false_negative_rate, lda_holdout_false_negative_rate,
+    pda_holdout_false_negative_rate,
+    qda_holdout_false_negative_rate,
+    rf_holdout_false_negative_rate,
+    ridge_holdout_false_negative_rate,
+    svm_holdout_false_negative_rate,
+    tree_holdout_false_negative_rate,
     ensemble_bagging_holdout_false_negative_rate,
     ensemble_C50_holdout_false_negative_rate, ensemble_gb_holdout_false_negative_rate,
+    ensemble_lasso_holdout_false_negative_rate,
     ensemble_pls_holdout_false_negative_rate,
-    ensemble_pda_holdout_false_negative_rate, ensemble_rf_holdout_false_negative_rate,
-    ensemble_ranger_holdout_false_negative_rate, ensemble_rda_holdout_false_negative_rate,
+    ensemble_pda_holdout_false_negative_rate,
+    ensemble_ridge_holdout_false_negative_rate,
     ensemble_rpart_holdout_false_negative_rate, ensemble_svm_holdout_false_negative_rate,
     ensemble_tree_holdout_false_negative_rate, ensemble_xgb_holdout_false_negative_rate
   ),
   "mean" = rep(c(
-    bag_rf_holdout_false_negative_rate_mean, bagging_holdout_false_negative_rate_mean,
-    bayesglm_holdout_false_negative_rate_mean, C50_holdout_false_negative_rate_mean,
     cubist_holdout_false_negative_rate_mean, fda_holdout_false_negative_rate_mean, gam_holdout_false_negative_rate_mean,
-    glm_holdout_false_negative_rate_mean, gb_holdout_false_negative_rate_mean,
-    linear_holdout_false_negative_rate_mean, lda_holdout_false_negative_rate_mean, mda_holdout_false_negative_rate_mean,
-    n_bayes_holdout_false_negative_rate_mean, pda_holdout_false_negative_rate_mean,
-    qda_holdout_false_negative_rate_mean, rf_holdout_false_negative_rate_mean, ranger_holdout_false_negative_rate_mean,
-    rpart_holdout_false_negative_rate_mean, svm_holdout_false_negative_rate_mean,
-    tree_holdout_false_negative_rate_mean, svm_holdout_false_negative_rate_mean,
+    glm_holdout_false_negative_rate_mean, lasso_holdout_false_negative_rate_mean,
+    linear_holdout_false_negative_rate_mean, lda_holdout_false_negative_rate_mean,
+    pda_holdout_false_negative_rate_mean,
+    qda_holdout_false_negative_rate_mean,
+    rf_holdout_false_negative_rate_mean,
+    ridge_holdout_false_negative_rate_mean,
+    svm_holdout_false_negative_rate_mean,
+    tree_holdout_false_negative_rate_mean,
     ensemble_bagging_holdout_false_negative_rate_mean,
     ensemble_C50_holdout_false_negative_rate_mean, ensemble_gb_holdout_false_negative_rate_mean,
+    ensemble_lasso_holdout_false_negative_rate_mean,
     ensemble_pls_holdout_false_negative_rate_mean,
-    ensemble_pda_holdout_false_negative_rate_mean, ensemble_rf_holdout_false_negative_rate_mean,
-    ensemble_ranger_holdout_false_negative_rate_mean, ensemble_rda_holdout_false_negative_rate_mean,
+    ensemble_pda_holdout_false_negative_rate_mean,
+    ensemble_ridge_holdout_false_negative_rate_mean,
     ensemble_rpart_holdout_false_negative_rate_mean, ensemble_svm_holdout_false_negative_rate_mean,
     ensemble_tree_holdout_false_negative_rate_mean, ensemble_xgb_holdout_false_negative_rate_mean
   ), each = numresamples)
 )
 
-false_negative_rate_plot <- ggplot2::ggplot(data = false_negative_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+false_negative_rate_fixed_scales <- ggplot2::ggplot(data = false_negative_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 0, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "fixed") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
   ggplot2::ggtitle("False negative rate by model fixed scales, lower is better. \n The black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "False negative rate by model fixed scales, lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("false_negative_rate_plot.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_fixed_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("false_negative_rate_plot.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_fixed_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("false_negative_rate_plot.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_fixed_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("false_negative_rate_plot.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_fixed_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("false_negative_rate_plot.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_fixed_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("false_negative_rate_plot.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_fixed_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
-false_negative_rate_plot2 <- ggplot2::ggplot(data = false_negative_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+false_negative_rate_free_scales <- ggplot2::ggplot(data = false_negative_rate_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 0, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "free") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::ggtitle("False negative rate by model free scales, lower is better. \n The black horizontal line is the mean of the results, the red horizontal line is 0.") +
   ggplot2::labs(y = "False negative rate by model free scales, lower is better \n The horizontal line is the mean of the results, the red line is 0.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("false_negative_rate_plot2.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_free_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("false_negative_rate_plot2.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_free_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("false_negative_rate_plot2.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_free_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("false_negative_rate_plot2.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_free_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("false_negative_rate_plot2.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_free_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("false_negative_rate_plot2.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("false_negative_rate_free_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 F1_score_data <- data.frame(
   "count" = 1:numresamples,
   "model" = c(
-    rep("Bagged Random Forest", numresamples), rep("Bagging", numresamples),
-    rep("BayesGLM", numresamples),rep("C50", numresamples),
     rep("Cubist", numresamples), rep("Flexible Discriminant Analysis", numresamples), rep("Generalized Additive Models", numresamples),
-    rep("Generalized Linear Models", numresamples), rep("Gradient Boosted", numresamples), rep("Linear", numresamples),
-    rep("Linear Discrmininant Analysis", numresamples), rep("Mixture Discriminant Analysis", numresamples), rep("Naive Bayes", numresamples),
+    rep("Generalized Linear Models", numresamples), rep("Lasso", numresamples), rep("Linear", numresamples),
+    rep("Linear Discrmininant Analysis", numresamples),
     rep("Penalized Discrmininant Analysis", numresamples), rep("Quadratic Discrmininant Analysis", numresamples),
-    rep("Random Forest", numresamples), rep("Ranger", numresamples),
-    rep("RPart", numresamples), rep("Support Vector Machines", numresamples),
-    rep("Trees", numresamples), rep("XGBoost", numresamples),
+    rep("Random Forest", numresamples), rep("Ridge", numresamples),
+    rep("Support Vector Machines", numresamples),
+    rep("Trees", numresamples),
     rep("Ensemble Bagging", numresamples),
     rep("Ensemble C50", numresamples), rep("Ensemble Gradient Boosted", numresamples),
+    rep("Ensemble Lasso", numresamples),
     rep("Ensemble Partial Least Squares", numresamples),
-    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Random Forest", numresamples),
-    rep("Ensemble Ranger", numresamples), rep("Ensemble Regularized Discriminant Analysis", numresamples),
+    rep("Ensemble Penalized Discrmininant Analysis", numresamples),
+    rep("Ensemble Ridge", numresamples),
     rep("Ensemble RPart", numresamples), rep("Ensemble Support Vector Machines", numresamples),
     rep("Ensemble Trees", numresamples), rep("Ensemble XGBoost", numresamples)
   ),
   "data" = c(
-    bag_rf_holdout_F1_score, bagging_holdout_F1_score,
-    bayesglm_holdout_F1_score, C50_holdout_F1_score,
     cubist_holdout_F1_score, fda_holdout_F1_score, gam_holdout_F1_score,
-    glm_holdout_F1_score, gb_holdout_F1_score,
-    linear_holdout_F1_score, lda_holdout_F1_score, mda_holdout_F1_score,
-    n_bayes_holdout_F1_score, pda_holdout_F1_score,
-    qda_holdout_F1_score, rf_holdout_F1_score, ranger_holdout_F1_score,
-    rpart_holdout_F1_score, svm_holdout_F1_score,
-    tree_holdout_F1_score, svm_holdout_F1_score,
+    glm_holdout_F1_score, lasso_holdout_F1_score,
+    linear_holdout_F1_score, lda_holdout_F1_score,
+    pda_holdout_F1_score,
+    qda_holdout_F1_score,
+    rf_holdout_F1_score,
+    ridge_holdout_F1_score,
+    svm_holdout_F1_score,
+    tree_holdout_F1_score,
     ensemble_bagging_holdout_F1_score,
     ensemble_C50_holdout_F1_score, ensemble_gb_holdout_F1_score,
+    ensemble_lasso_holdout_F1_score,
     ensemble_pls_holdout_F1_score,
-    ensemble_pda_holdout_F1_score, ensemble_rf_holdout_F1_score,
-    ensemble_ranger_holdout_F1_score, ensemble_rda_holdout_F1_score,
+    ensemble_pda_holdout_F1_score,
+    ensemble_ridge_holdout_F1_score,
     ensemble_rpart_holdout_F1_score, ensemble_svm_holdout_F1_score,
     ensemble_tree_holdout_F1_score, ensemble_xgb_holdout_F1_score
   ),
   "mean" = rep(c(
-    bag_rf_holdout_F1_score_mean, bagging_holdout_F1_score_mean,
-    bayesglm_holdout_F1_score_mean, C50_holdout_F1_score_mean,
     cubist_holdout_F1_score_mean, fda_holdout_F1_score_mean, gam_holdout_F1_score_mean,
-    glm_holdout_F1_score_mean, gb_holdout_F1_score_mean,
-    linear_holdout_F1_score_mean, lda_holdout_F1_score_mean, mda_holdout_F1_score_mean,
-    n_bayes_holdout_F1_score_mean, pda_holdout_F1_score_mean,
-    qda_holdout_F1_score_mean, rf_holdout_F1_score_mean, ranger_holdout_F1_score_mean,
-    rpart_holdout_F1_score_mean, svm_holdout_F1_score_mean,
-    tree_holdout_F1_score_mean, svm_holdout_F1_score_mean,
+    glm_holdout_F1_score_mean, lasso_holdout_F1_score_mean,
+    linear_holdout_F1_score_mean, lda_holdout_F1_score_mean,
+    pda_holdout_F1_score_mean,
+    qda_holdout_F1_score_mean,
+    rf_holdout_F1_score_mean,
+    ridge_holdout_F1_score_mean,
+    svm_holdout_F1_score_mean,
+    tree_holdout_F1_score_mean,
     ensemble_bagging_holdout_F1_score_mean,
     ensemble_C50_holdout_F1_score_mean, ensemble_gb_holdout_F1_score_mean,
+    ensemble_lasso_holdout_F1_score_mean,
     ensemble_pls_holdout_F1_score_mean,
-    ensemble_pda_holdout_F1_score_mean, ensemble_rf_holdout_F1_score_mean,
-    ensemble_ranger_holdout_F1_score_mean, ensemble_rda_holdout_F1_score_mean,
+    ensemble_pda_holdout_F1_score_mean,
+    ensemble_ridge_holdout_F1_score_mean,
     ensemble_rpart_holdout_F1_score_mean, ensemble_svm_holdout_F1_score_mean,
     ensemble_tree_holdout_F1_score_mean, ensemble_xgb_holdout_F1_score_mean
   ), each = numresamples)
 )
 
-F1_score_plot <- ggplot2::ggplot(data = F1_score_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+F1_score_fixed_scales <- ggplot2::ggplot(data = F1_score_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "fixed") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
   ggplot2::ggtitle("F1 score by model fixed scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "F1 score by model fixed scales, higher is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("F1_score_plot.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_fixed_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("F1_score_plot.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_fixed_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("F1_score_plot.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_fixed_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("F1_score_plot.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_fixed_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("F1_score_plot.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_fixed_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("F1_score_plot.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_fixed_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
-F1_score_plot2 <- ggplot2::ggplot(data = F1_score_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+F1_score_free_scales <- ggplot2::ggplot(data = F1_score_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "free") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::ggtitle("F1 score by model free scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "F1 score by model free scales, higher is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("F1_score_plot2.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_free_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("F1_score_plot2.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_free_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("F1_score_plot2.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_free_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("F1_score_plot2.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_free_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("F1_score_plot2.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_free_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("F1_score_plot2.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("F1_score_free_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 positive_predictive_value_data <- data.frame(
   "count" = 1:numresamples,
   "model" = c(
-    rep("Bagged Random Forest", numresamples), rep("Bagging", numresamples),
-    rep("BayesGLM", numresamples),rep("C50", numresamples),
     rep("Cubist", numresamples), rep("Flexible Discriminant Analysis", numresamples), rep("Generalized Additive Models", numresamples),
-    rep("Generalized Linear Models", numresamples), rep("Gradient Boosted", numresamples), rep("Linear", numresamples),
-    rep("Linear Discrmininant Analysis", numresamples), rep("Mixture Discriminant Analysis", numresamples), rep("Naive Bayes", numresamples),
+    rep("Generalized Linear Models", numresamples), rep("Lasso", numresamples), rep("Linear", numresamples),
+    rep("Linear Discrmininant Analysis", numresamples),
     rep("Penalized Discrmininant Analysis", numresamples), rep("Quadratic Discrmininant Analysis", numresamples),
-    rep("Random Forest", numresamples), rep("Ranger", numresamples),
-    rep("RPart", numresamples), rep("Support Vector Machines", numresamples),
-    rep("Trees", numresamples), rep("XGBoost", numresamples),
+    rep("Random Forest", numresamples), rep("Ridge", numresamples),
+    rep("Support Vector Machines", numresamples),
+    rep("Trees", numresamples),
     rep("Ensemble Bagging", numresamples),
     rep("Ensemble C50", numresamples), rep("Ensemble Gradient Boosted", numresamples),
+    rep("Ensemble Lasso", numresamples),
     rep("Ensemble Partial Least Squares", numresamples),
-    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Random Forest", numresamples),
-    rep("Ensemble Ranger", numresamples), rep("Ensemble Regularized Discriminant Analysis", numresamples),
+    rep("Ensemble Penalized Discrmininant Analysis", numresamples),
+    rep("Ensemble Ridge", numresamples),
     rep("Ensemble RPart", numresamples), rep("Ensemble Support Vector Machines", numresamples),
     rep("Ensemble Trees", numresamples), rep("Ensemble XGBoost", numresamples)
   ),
   "data" = c(
-    bag_rf_holdout_positive_predictive_value, bagging_holdout_positive_predictive_value,
-    bayesglm_holdout_positive_predictive_value, C50_holdout_positive_predictive_value,
     cubist_holdout_positive_predictive_value, fda_holdout_positive_predictive_value, gam_holdout_positive_predictive_value,
-    glm_holdout_positive_predictive_value, gb_holdout_positive_predictive_value,
-    linear_holdout_positive_predictive_value, lda_holdout_positive_predictive_value, mda_holdout_positive_predictive_value,
-    n_bayes_holdout_positive_predictive_value, pda_holdout_positive_predictive_value,
-    qda_holdout_positive_predictive_value, rf_holdout_positive_predictive_value, ranger_holdout_positive_predictive_value,
-    rpart_holdout_positive_predictive_value, svm_holdout_positive_predictive_value,
-    tree_holdout_positive_predictive_value, svm_holdout_positive_predictive_value,
+    glm_holdout_positive_predictive_value, lasso_holdout_positive_predictive_value,
+    linear_holdout_positive_predictive_value, lda_holdout_positive_predictive_value,
+    pda_holdout_positive_predictive_value,
+    qda_holdout_positive_predictive_value,
+    rf_holdout_positive_predictive_value,
+    ridge_holdout_positive_predictive_value,
+    svm_holdout_positive_predictive_value,
+    tree_holdout_positive_predictive_value,
     ensemble_bagging_holdout_positive_predictive_value,
     ensemble_C50_holdout_positive_predictive_value, ensemble_gb_holdout_positive_predictive_value,
+    ensemble_lasso_holdout_positive_predictive_value,
     ensemble_pls_holdout_positive_predictive_value,
-    ensemble_pda_holdout_positive_predictive_value, ensemble_rf_holdout_positive_predictive_value,
-    ensemble_ranger_holdout_positive_predictive_value, ensemble_rda_holdout_positive_predictive_value,
+    ensemble_pda_holdout_positive_predictive_value,
+    ensemble_ridge_holdout_positive_predictive_value,
     ensemble_rpart_holdout_positive_predictive_value, ensemble_svm_holdout_positive_predictive_value,
     ensemble_tree_holdout_positive_predictive_value, ensemble_xgb_holdout_positive_predictive_value
   ),
   "mean" = rep(c(
-    bag_rf_holdout_positive_predictive_value_mean, bagging_holdout_positive_predictive_value_mean,
-    bayesglm_holdout_positive_predictive_value_mean, C50_holdout_positive_predictive_value_mean,
     cubist_holdout_positive_predictive_value_mean, fda_holdout_positive_predictive_value_mean, gam_holdout_positive_predictive_value_mean,
-    glm_holdout_positive_predictive_value_mean, gb_holdout_positive_predictive_value_mean,
-    linear_holdout_positive_predictive_value_mean, lda_holdout_positive_predictive_value_mean, mda_holdout_positive_predictive_value_mean,
-    n_bayes_holdout_positive_predictive_value_mean, pda_holdout_positive_predictive_value_mean,
-    qda_holdout_positive_predictive_value_mean, rf_holdout_positive_predictive_value_mean, ranger_holdout_positive_predictive_value_mean,
-    rpart_holdout_positive_predictive_value_mean, svm_holdout_positive_predictive_value_mean,
-    tree_holdout_positive_predictive_value_mean, svm_holdout_positive_predictive_value_mean,
+    glm_holdout_positive_predictive_value_mean, lasso_holdout_positive_predictive_value_mean,
+    linear_holdout_positive_predictive_value_mean, lda_holdout_positive_predictive_value_mean,
+    pda_holdout_positive_predictive_value_mean,
+    qda_holdout_positive_predictive_value_mean,
+    rf_holdout_positive_predictive_value_mean,
+    ridge_holdout_positive_predictive_value_mean,
+    svm_holdout_positive_predictive_value_mean,
+    tree_holdout_positive_predictive_value_mean,
     ensemble_bagging_holdout_positive_predictive_value_mean,
     ensemble_C50_holdout_positive_predictive_value_mean, ensemble_gb_holdout_positive_predictive_value_mean,
+    ensemble_lasso_holdout_positive_predictive_value_mean,
     ensemble_pls_holdout_positive_predictive_value_mean,
-    ensemble_pda_holdout_positive_predictive_value_mean, ensemble_rf_holdout_positive_predictive_value_mean,
-    ensemble_ranger_holdout_positive_predictive_value_mean, ensemble_rda_holdout_positive_predictive_value_mean,
+    ensemble_pda_holdout_positive_predictive_value_mean,
+    ensemble_ridge_holdout_positive_predictive_value_mean,
     ensemble_rpart_holdout_positive_predictive_value_mean, ensemble_svm_holdout_positive_predictive_value_mean,
     ensemble_tree_holdout_positive_predictive_value_mean, ensemble_xgb_holdout_positive_predictive_value_mean
   ), each = numresamples)
 )
 
-positive_predictive_value_plot <- ggplot2::ggplot(data = positive_predictive_value_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+positive_predictive_value_fixed_scales <- ggplot2::ggplot(data = positive_predictive_value_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "fixed") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
   ggplot2::ggtitle("Positive predictive value by model fixed scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Positive predictive value by model fixed scales, higher is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("positive_predictive_value_plot.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_fixed_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("positive_predictive_value_plot.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_fixed_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("positive_predictive_value_plot.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_fixed_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("positive_predictive_value_plot.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_fixed_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("positive_predictive_value_plot.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_fixed_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("positive_predictive_value_plot.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_fixed_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
-positive_predictive_value_plot2 <- ggplot2::ggplot(data = positive_predictive_value_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+positive_predictive_value_free_scales <- ggplot2::ggplot(data = positive_predictive_value_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "free") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::ggtitle("Positive predictive value by model free scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Positive predictive value by model free scales, higher is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("positive_predictive_value_plot2.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_free_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("positive_predictive_value_plot2.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_free_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("positive_predictive_value_plot2.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_free_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("positive_predictive_value_plot2.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_free_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("positive_predictive_value_plot2.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_free_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("positive_predictive_value_plot2.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("positive_predictive_value_free_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 negative_predictive_value_data <- data.frame(
   "count" = 1:numresamples,
   "model" = c(
-    rep("Bagged Random Forest", numresamples), rep("Bagging", numresamples),
-    rep("BayesGLM", numresamples),rep("C50", numresamples),
     rep("Cubist", numresamples), rep("Flexible Discriminant Analysis", numresamples), rep("Generalized Additive Models", numresamples),
-    rep("Generalized Linear Models", numresamples), rep("Gradient Boosted", numresamples), rep("Linear", numresamples),
-    rep("Linear Discrmininant Analysis", numresamples), rep("Mixture Discriminant Analysis", numresamples), rep("Naive Bayes", numresamples),
+    rep("Generalized Linear Models", numresamples), rep("Lasso", numresamples), rep("Linear", numresamples),
+    rep("Linear Discrmininant Analysis", numresamples),
     rep("Penalized Discrmininant Analysis", numresamples), rep("Quadratic Discrmininant Analysis", numresamples),
-    rep("Random Forest", numresamples), rep("Ranger", numresamples),
-    rep("RPart", numresamples), rep("Support Vector Machines", numresamples),
-    rep("Trees", numresamples), rep("XGBoost", numresamples),
+    rep("Random Forest", numresamples), rep("Ridge", numresamples),
+    rep("Support Vector Machines", numresamples),
+    rep("Trees", numresamples),
     rep("Ensemble Bagging", numresamples),
     rep("Ensemble C50", numresamples), rep("Ensemble Gradient Boosted", numresamples),
+    rep("Ensemble Lasso", numresamples),
     rep("Ensemble Partial Least Squares", numresamples),
-    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Random Forest", numresamples),
-    rep("Ensemble Ranger", numresamples), rep("Ensemble Regularized Discriminant Analysis", numresamples),
+    rep("Ensemble Penalized Discrmininant Analysis", numresamples),
+    rep("Ensemble Ridge", numresamples),
     rep("Ensemble RPart", numresamples), rep("Ensemble Support Vector Machines", numresamples),
     rep("Ensemble Trees", numresamples), rep("Ensemble XGBoost", numresamples)
   ),
   "data" = c(
-    bag_rf_holdout_negative_predictive_value, bagging_holdout_negative_predictive_value,
-    bayesglm_holdout_negative_predictive_value, C50_holdout_negative_predictive_value,
     cubist_holdout_negative_predictive_value, fda_holdout_negative_predictive_value, gam_holdout_negative_predictive_value,
-    glm_holdout_negative_predictive_value, gb_holdout_negative_predictive_value,
-    linear_holdout_negative_predictive_value, lda_holdout_negative_predictive_value, mda_holdout_negative_predictive_value,
-    n_bayes_holdout_negative_predictive_value, pda_holdout_negative_predictive_value,
-    qda_holdout_negative_predictive_value, rf_holdout_negative_predictive_value, ranger_holdout_negative_predictive_value,
-    rpart_holdout_negative_predictive_value, svm_holdout_negative_predictive_value,
-    tree_holdout_negative_predictive_value, svm_holdout_negative_predictive_value,
+    glm_holdout_negative_predictive_value, lasso_holdout_negative_predictive_value,
+    linear_holdout_negative_predictive_value, lda_holdout_negative_predictive_value,
+    pda_holdout_negative_predictive_value,
+    qda_holdout_negative_predictive_value,
+    rf_holdout_negative_predictive_value,
+    ridge_holdout_negative_predictive_value,
+    svm_holdout_negative_predictive_value,
+    tree_holdout_negative_predictive_value,
     ensemble_bagging_holdout_negative_predictive_value,
     ensemble_C50_holdout_negative_predictive_value, ensemble_gb_holdout_negative_predictive_value,
+    ensemble_lasso_holdout_negative_predictive_value,
     ensemble_pls_holdout_negative_predictive_value,
-    ensemble_pda_holdout_negative_predictive_value, ensemble_rf_holdout_negative_predictive_value,
-    ensemble_ranger_holdout_negative_predictive_value, ensemble_rda_holdout_negative_predictive_value,
+    ensemble_pda_holdout_negative_predictive_value,
+    ensemble_ridge_holdout_negative_predictive_value,
     ensemble_rpart_holdout_negative_predictive_value, ensemble_svm_holdout_negative_predictive_value,
     ensemble_tree_holdout_negative_predictive_value, ensemble_xgb_holdout_negative_predictive_value
   ),
   "mean" = rep(c(
-    bag_rf_holdout_negative_predictive_value_mean, bagging_holdout_negative_predictive_value_mean,
-    bayesglm_holdout_negative_predictive_value_mean, C50_holdout_negative_predictive_value_mean,
     cubist_holdout_negative_predictive_value_mean, fda_holdout_negative_predictive_value_mean, gam_holdout_negative_predictive_value_mean,
-    glm_holdout_negative_predictive_value_mean, gb_holdout_negative_predictive_value_mean,
-    linear_holdout_negative_predictive_value_mean, lda_holdout_negative_predictive_value_mean, mda_holdout_negative_predictive_value_mean,
-    n_bayes_holdout_negative_predictive_value_mean, pda_holdout_negative_predictive_value_mean,
-    qda_holdout_negative_predictive_value_mean, rf_holdout_negative_predictive_value_mean, ranger_holdout_negative_predictive_value_mean,
-    rpart_holdout_negative_predictive_value_mean, svm_holdout_negative_predictive_value_mean,
-    tree_holdout_negative_predictive_value_mean, svm_holdout_negative_predictive_value_mean,
+    glm_holdout_negative_predictive_value_mean, lasso_holdout_negative_predictive_value_mean,
+    linear_holdout_negative_predictive_value_mean, lda_holdout_negative_predictive_value_mean,
+    pda_holdout_negative_predictive_value_mean,
+    qda_holdout_negative_predictive_value_mean,
+    rf_holdout_negative_predictive_value_mean,
+    ridge_holdout_negative_predictive_value_mean,
+    svm_holdout_negative_predictive_value_mean,
+    tree_holdout_negative_predictive_value_mean,
     ensemble_bagging_holdout_negative_predictive_value_mean,
     ensemble_C50_holdout_negative_predictive_value_mean, ensemble_gb_holdout_negative_predictive_value_mean,
+    ensemble_lasso_holdout_negative_predictive_value_mean,
     ensemble_pls_holdout_negative_predictive_value_mean,
-    ensemble_pda_holdout_negative_predictive_value_mean, ensemble_rf_holdout_negative_predictive_value_mean,
-    ensemble_ranger_holdout_negative_predictive_value_mean, ensemble_rda_holdout_negative_predictive_value_mean,
+    ensemble_pda_holdout_negative_predictive_value_mean,
+    ensemble_ridge_holdout_negative_predictive_value_mean,
     ensemble_rpart_holdout_negative_predictive_value_mean, ensemble_svm_holdout_negative_predictive_value_mean,
     ensemble_tree_holdout_negative_predictive_value_mean, ensemble_xgb_holdout_negative_predictive_value_mean
   ), each = numresamples)
 )
 
-negative_predictive_value_plot <- ggplot2::ggplot(data = negative_predictive_value_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+negative_predictive_value_fixed_scales <- ggplot2::ggplot(data = negative_predictive_value_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "fixed") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
   ggplot2::ggtitle("Negative predictive value by model fixed scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Negative predictive value by model fixed scales, higher is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("negative_predictive_value_plot.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_fixed_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("negative_predictive_value_plot.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_fixed_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("negative_predictive_value_plot.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_fixed_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("negative_predictive_value_plot.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_fixed_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("negative_predictive_value_plot.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_fixed_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("negative_predictive_value_plot.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_fixed_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
-negative_predictive_value_plot2 <- ggplot2::ggplot(data = negative_predictive_value_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+negative_predictive_value_free_scales <- ggplot2::ggplot(data = negative_predictive_value_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = mean), linewidth = 1.25) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "free") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::ggtitle("Negative predictive value by model free scales, higher is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Negative predictive value by model free scales, higher is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("negative_predictive_value_plot2.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_free_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("negative_predictive_value_plot2.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_free_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("negative_predictive_value_plot2.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_free_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("negative_predictive_value_plot2.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_free_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("negative_predictive_value_plot2.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_free_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("negative_predictive_value_plot2.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("negative_predictive_value_free_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 overfitting_data <- data.frame(
   "count" = 1:numresamples,
   "model" = c(
-    rep("Bagged Random Forest", numresamples), rep("Bagging", numresamples),
-    rep("BayesGLM", numresamples), rep("C50", numresamples),
     rep("Cubist", numresamples), rep("Flexible Discriminant Analysis", numresamples), rep("Generalized Additive Models", numresamples),
-    rep("Generalized Linear Models", numresamples), rep("Gradient Boosted", numresamples), rep("Linear", numresamples),
-    rep("Linear Discrmininant Analysis", numresamples), rep("Mixture Discriminant Analysis", numresamples), rep("Naive Bayes", numresamples),
+    rep("Generalized Linear Models", numresamples), rep("Lasso", numresamples), rep("Linear", numresamples),
+    rep("Linear Discrmininant Analysis", numresamples),
     rep("Penalized Discrmininant Analysis", numresamples), rep("Quadratic Discrmininant Analysis", numresamples),
-    rep("Random Forest", numresamples), rep("Ranger", numresamples),
-    rep("RPart", numresamples), rep("Support Vector Machines", numresamples),
-    rep("Trees", numresamples), rep("XGBoost", numresamples),
+    rep("Random Forest", numresamples), rep("Ridge", numresamples),
+    rep("Support Vector Machines", numresamples),
+    rep("Trees", numresamples),
     rep("Ensemble Bagging", numresamples),
     rep("Ensemble C50", numresamples), rep("Ensemble Gradient Boosted", numresamples),
+    rep("Ensemble Lasso", numresamples),
     rep("Ensemble Partial Least Squares", numresamples),
-    rep("Ensemble Penalized Discrmininant Analysis", numresamples), rep("Ensemble Random Forest", numresamples),
-    rep("Ensemble Ranger", numresamples), rep("Ensemble Regularized Discriminant Analysis", numresamples),
+    rep("Ensemble Penalized Discrmininant Analysis", numresamples),
+    rep("Ensemble Ridge", numresamples),
     rep("Ensemble RPart", numresamples), rep("Ensemble Support Vector Machines", numresamples),
     rep("Ensemble Trees", numresamples), rep("Ensemble XGBoost", numresamples)
   ),
   "data" = c(
-    bag_rf_holdout_overfitting, bagging_holdout_overfitting,
-    bayesglm_holdout_overfitting, C50_holdout_overfitting,
     cubist_holdout_overfitting, fda_holdout_overfitting, gam_holdout_overfitting,
-    glm_holdout_overfitting, gb_holdout_overfitting,
-    linear_holdout_overfitting, lda_holdout_overfitting, mda_holdout_overfitting,
-    n_bayes_holdout_overfitting, pda_holdout_overfitting,
-    qda_holdout_overfitting, rf_holdout_overfitting, ranger_holdout_overfitting,
-    rpart_holdout_overfitting, svm_holdout_overfitting,
-    tree_holdout_overfitting, svm_holdout_overfitting,
+    glm_holdout_overfitting, lasso_holdout_overfitting,
+    linear_holdout_overfitting, lda_holdout_overfitting,
+    pda_holdout_overfitting,
+    qda_holdout_overfitting,
+    rf_holdout_overfitting,
+    ridge_holdout_overfitting,
+    svm_holdout_overfitting,
+    tree_holdout_overfitting,
     ensemble_bagging_holdout_overfitting,
     ensemble_C50_holdout_overfitting, ensemble_gb_holdout_overfitting,
+    ensemble_lasso_holdout_overfitting,
     ensemble_pls_holdout_overfitting,
-    ensemble_pda_holdout_overfitting, ensemble_rf_holdout_overfitting,
-    ensemble_ranger_holdout_overfitting, ensemble_rda_holdout_overfitting,
+    ensemble_pda_holdout_overfitting,
+    ensemble_ridge_holdout_overfitting,
     ensemble_rpart_holdout_overfitting, ensemble_svm_holdout_overfitting,
     ensemble_tree_holdout_overfitting, ensemble_xgb_holdout_overfitting
   )
 )
 
-overfitting_plot <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+overfitting_fixed_scales <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "fixed") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "fixed") +
   ggplot2::ggtitle("Overfitting plot fixed scales\nOverfitting value by model, closer to one is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Overfititng value fixed scales, closer to one is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("overfitting_plot.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_fixed_sales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("overfitting_plot.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_fixed_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("overfitting_plot.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_fixed_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("overfitting_plot.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_fixed_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("overfitting_plot.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_fixed_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("overfitting_plot.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_fixed_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
-overfitting_plot2 <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
+overfitting_free_scales <- ggplot2::ggplot(data = overfitting_data, mapping = ggplot2::aes(x = count, y = data, color = model)) +
   ggplot2::geom_line(mapping = aes(x = count, y = data)) +
   ggplot2::geom_point(mapping = aes(x = count, y = data)) +
   ggplot2::geom_hline(aes(yintercept = 1, color = "red")) +
-  ggplot2::facet_wrap(~model, ncol = 6, scales = "free") +
+  ggplot2::facet_wrap(~model, ncol = 4, scales = "free") +
   ggplot2::ggtitle("Overfitting plot free scales\nOverfitting value by model, closer to one is better. \n The black horizontal line is the mean of the results, the red horizontal line is 1.") +
   ggplot2::labs(y = "Overfititng value free scales, closer to one is better \n The horizontal line is the mean of the results, the red line is 1.") +
   ggplot2::theme(legend.position = "none")
 if(save_all_plots == "Y" && device == "eps"){
-  ggplot2::ggsave("overfitting_plot2.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_free_scales.eps", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "jpeg"){
-  ggplot2::ggsave("overfitting_plot2.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_free_scales.jpeg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "pdf"){
-  ggplot2::ggsave("overfitting_plot2.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_free_scales.pdf", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "png"){
-  ggplot2::ggsave("overfitting_plot2.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_free_scales.png", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "svg"){
-  ggplot2::ggsave("overfitting_plot2.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_free_scales.svg", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 if(save_all_plots == "Y" && device == "tiff"){
-  ggplot2::ggsave("overfitting_plot2.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
+  ggplot2::ggsave("overfitting_free_scales.tiff", width = width, path = tempdir1, height = height, units = units, scale = scale, device = device, dpi = dpi)
 }
 
 accuracy_barchart <- ggplot2::ggplot(holdout_results, aes(x = reorder(Model, dplyr::desc(Accuracy)), y = Accuracy)) +
@@ -6659,26 +5458,6 @@ if(save_all_plots == "Y" && device == "tiff"){
 }
 
 if (save_all_trained_models == "Y") {
-  fil <- tempfile("bag_rf_train_fit", fileext = ".RDS")
-  saveRDS(bag_rf_train_fit, fil)
-}
-
-if (save_all_trained_models == "Y") {
-  fil <- tempfile("bagging_train_fit", fileext = ".RDS")
-  saveRDS(bagging_train_fit, fil)
-}
-
-if (save_all_trained_models == "Y") {
-  fil <- tempfile("bayesglm_train_fit", fileext = ".RDS")
-  saveRDS(bayesglm_train_fit, fil)
-}
-
-if (save_all_trained_models == "Y") {
-  fil <- tempfile("C50_train_fit", fileext = ".RDS")
-  saveRDS(C50_train_fit, fil)
-}
-
-if (save_all_trained_models == "Y") {
   fil <- tempfile("cubist_train_fit", fileext = ".RDS")
   saveRDS(cubist_train_fit, fil)
 }
@@ -6694,13 +5473,13 @@ if (save_all_trained_models == "Y") {
 }
 
 if (save_all_trained_models == "Y") {
-  fil <- tempfile("gb_train_fit", fileext = ".RDS")
-  saveRDS(gb_train_fit, fil)
+  fil <- tempfile("glm_train_fit", fileext = ".RDS")
+  saveRDS(glm_train_fit, fil)
 }
 
 if (save_all_trained_models == "Y") {
-  fil <- tempfile("glm_train_fit", fileext = ".RDS")
-  saveRDS(glm_train_fit, fil)
+  fil <- tempfile("lasso_train_fit", fileext = ".RDS")
+  saveRDS(lasso_train_fit, fil)
 }
 
 if (save_all_trained_models == "Y") {
@@ -6713,15 +5492,6 @@ if (save_all_trained_models == "Y") {
   saveRDS(lda_train_fit, fil)
 }
 
-if (save_all_trained_models == "Y") {
-  fil <- tempfile("mda_train_fit", fileext = ".RDS")
-  saveRDS(mda_train_fit, fil)
-}
-
-if (save_all_trained_models == "Y") {
-  fil <- tempfile("n_bayes_train_fit", fileext = ".RDS")
-  saveRDS(n_bayes_train_fit, fil)
-}
 
 if (save_all_trained_models == "Y") {
   fil <- tempfile("pda_train_fit", fileext = ".RDS")
@@ -6735,17 +5505,12 @@ if (save_all_trained_models == "Y") {
 
 if (save_all_trained_models == "Y") {
   fil <- tempfile("rf_train_fit", fileext = ".RDS")
-  saveRDS(rf_train_fit, fil)
+  saveRDS(qda_train_fit, fil)
 }
 
 if (save_all_trained_models == "Y") {
-  fil <- tempfile("ranger_train_fit", fileext = ".RDS")
-  saveRDS(ranger_train_fit, fil)
-}
-
-if (save_all_trained_models == "Y") {
-  fil <- tempfile("rpart_train_fit", fileext = ".RDS")
-  saveRDS(rpart_train_fit, fil)
+  fil <- tempfile("ridge_train_fit", fileext = ".RDS")
+  saveRDS(qda_train_fit, fil)
 }
 
 if (save_all_trained_models == "Y") {
@@ -6756,11 +5521,6 @@ if (save_all_trained_models == "Y") {
 if (save_all_trained_models == "Y") {
   fil <- tempfile("tree_train_fit", fileext = ".RDS")
   saveRDS(tree_train_fit, fil)
-}
-
-if (save_all_trained_models == "Y") {
-  fil <- tempfile("xgb_model", fileext = ".RDS")
-  saveRDS(xgb_model, fil)
 }
 
 if (save_all_trained_models == "Y") {
@@ -6779,6 +5539,11 @@ if (save_all_trained_models == "Y") {
 }
 
 if (save_all_trained_models == "Y") {
+  fil <- tempfile("ensembe_lasso_train_fit", fileext = ".RDS")
+  saveRDS(ensemble_gb_train_fit, fil)
+}
+
+if (save_all_trained_models == "Y") {
   fil <- tempfile("ensembe_pls_train_fit", fileext = ".RDS")
   saveRDS(ensemble_pls_train_fit, fil)
 }
@@ -6787,23 +5552,14 @@ if (save_all_trained_models == "Y") {
   fil <- tempfile("ensembe_pda_train_fit", fileext = ".RDS")
   saveRDS(ensemble_pda_train_fit, fil)
 }
-if (save_all_trained_models == "Y") {
-  fil <- tempfile("ensembe_rf_train_fit", fileext = ".RDS")
-  saveRDS(ensemble_rf_train_fit, fil)
-}
-
-if (save_all_trained_models == "Y") {
-  fil <- tempfile("ensembe_ranger_train_fit", fileext = ".RDS")
-  saveRDS(ensemble_ranger_train_fit, fil)
-}
-
-if (save_all_trained_models == "Y") {
-  fil <- tempfile("ensembe_rda_train_fit", fileext = ".RDS")
-  saveRDS(ensemble_rda_train_fit, fil)
-}
 
 if (save_all_trained_models == "Y") {
   fil <- tempfile("ensembe_rpart_train_fit", fileext = ".RDS")
+  saveRDS(ensemble_rpart_train_fit, fil)
+}
+
+if (save_all_trained_models == "Y") {
+  fil <- tempfile("ensembe_ridge_train_fit", fileext = ".RDS")
   saveRDS(ensemble_rpart_train_fit, fil)
 }
 
@@ -6823,51 +5579,33 @@ if (save_all_trained_models == "Y") {
 }
 
 if (do_you_have_new_data == "Y") {
-  Bagged_RF <- as.numeric(predict(object = bag_rf_train_fit, newdata = newdata)) - 1
-  Bagging <- as.numeric(predict(object = bagging_train_fit, newdata = newdata)) - 1
-  BayesGLM <- predict(object = bayesglm_train_fit, newdata = newdata)
-  BayesGLM <- ifelse(BayesGLM > 0, 0, 1)
-  C50 <- as.numeric(predict(object = C50_train_fit, newdata = newdata)) - 1
   Cubist <- predict(object = cubist_train_fit, newdata = newdata)
-  Flexible_Discriminant_Analysis <- as.numeric(predict(object = fda_train_fit, newdata = newdata)) - 1
-  Generalized_Linear_Models <- as.numeric(predict(object = glm_train_fit, newdata = newdata)) - 1
+  Flexible_Discriminant_Analysis <- as.numeric(predict(object = fda_train_fit, newdata = newdata))
+  Generalized_Linear_Models <- as.numeric(predict(object = glm_train_fit, newdata = newdata))
   Generalized_Linear_Models <- ifelse(Generalized_Linear_Models > 0, 1, 0)
-  Gradient_Boosted <- as.numeric(predict(object = gb_train_fit, newdata = newdata)) - 1
-  Gradient_Boosted <- ifelse(Gradient_Boosted > 0, 1, 0)
-  Generalized_Additive_Models <- as.numeric(predict(object = gam_train_fit, newdata = newdata)) - 1
+  Generalized_Additive_Models <- as.numeric(predict(object = gam_train_fit, newdata = newdata))
   Generalized_Additive_Models <- ifelse(Generalized_Additive_Models > 0, 1, 0)
-  Linear <- as.numeric(predict(object = linear_train_fit, newdata = newdata)) - 1
-  Mixture_Discrmininant_Analysis <- as.numeric(predict(object = mda_train_fit, newdata = newdata)) - 1
-  Naive_Bayes <- as.numeric(predict(object = n_bayes_train_fit, newdata = newdata)) - 1
-  Penalized_Discriminant_Analysis <- as.numeric(predict(object = pda_train_fit, newdata = newdata)) - 1
-  Quadratic_Discriminant_Analysis <- as.numeric(predict(object = qda_train_fit, newdata = newdata)$class) - 1
-  Random_Forest <- as.numeric(predict(object = rf_train_fit, newdata = newdata)) - 1
-  Ranger <- as.numeric(predict(object = ranger_train_fit, newdata = newdata)) - 1
-  RPart <- as.numeric(predict(object = rpart_train_fit, newdata = newdata)) - 1
-  Support_Vector_Machines <- as.numeric(predict(object = svm_train_fit, newdata = newdata)) - 1
+  Lasso <- as.numeric(predict(object = lasso_train_fit, newdata = newdata))
+  Linear <- as.numeric(predict(object = linear_train_fit, newdata = newdata))
+  Penalized_Discriminant_Analysis <- as.numeric(predict(object = pda_train_fit, newdata = newdata))
+  Quadratic_Discriminant_Analysis <- as.numeric(predict(object = qda_train_fit, newdata = newdata)$class)
+  Random_Forest_Analysis <- as.numeric(predict(object = rf_train_fit, newdata = newdata))
+  Ridge_Analysis <- as.numeric(predict(object = ridge_train_fit, newdata = newdata))
+  Support_Vector_Machines <- as.numeric(predict(object = svm_train_fit, newdata = newdata))
   Trees <- predict(object = tree_train_fit, newdata = newdata)
-  XGBoost <- predict(object = tree_train_fit, newdata = newdata) #### FIX THIS
 
   new_ensemble <- data.frame(
-    Bagged_RF,
-    Bagging,
-    BayesGLM,
-    C50,
     Cubist,
     Flexible_Discriminant_Analysis,
-    Gradient_Boosted,
     Generalized_Linear_Models,
+    Lasso,
     Linear,
-    Mixture_Discrmininant_Analysis,
-    Naive_Bayes,
     Penalized_Discriminant_Analysis,
     Quadratic_Discriminant_Analysis,
-    Random_Forest,
-    Ranger,
-    RPart,
+    Random_Forest_Analysis,
+    Ridge_Analysis,
     Support_Vector_Machines,
-    Trees,
-    XGBoost
+    Trees
   )
 
   # new_ensemble_row_numbers <- as.numeric(row.names(newdata))
@@ -6878,41 +5616,34 @@ if (do_you_have_new_data == "Y") {
   new_ensemble_bagging <- predict(object = ensemble_bagging_train_fit, newdata = new_ensemble)
   new_ensemble_C50 <- predict(object = ensemble_C50_train_fit, newdata = new_ensemble)
   new_ensemble_gb <- predict(object = ensemble_gb_train_fit, newdata = new_ensemble)
+  new_ensemble_lasso <- predict(object = ensemble_lasso_train_fit, newdata = new_ensemble)
   new_ensemble_pls <- predict(object = ensemble_pls_train_fit, newdata = new_ensemble)
   new_ensemble_pda <- predict(object = ensemble_pda_train_fit, newdata = new_ensemble)
-  new_ensemble_ranger <- predict(object = ensemble_ranger_train_fit, newdata = new_ensemble)
-  new_ensemble_rda <- predict(object = ensemble_rda_train_fit, newdata = new_ensemble)$class
+  new_ensemble_ridge <- predict(object = ensemble_ridge_train_fit, newdata = new_ensemble)
   new_ensemble_RPart <- predict(object = ensemble_rpart_train_fit, newdata = new_ensemble)
   new_ensemble_svm <- predict(object = ensemble_svm_train_fit, newdata = new_ensemble)
   new_ensemble_trees <- predict(object = ensemble_tree_train_fit, newdata = new_ensemble)
 
   new_data_results <- data.frame(
     "True_Value" = newdata$y,
-    "Bagged_Random_Forest" = Bagged_RF,
-    "Bagging" = Bagging,
-    "BayesGLM" = BayesGLM,
-    "C50" = C50,
     "Cubist" = Cubist,
     "Flexible_Discriminant_Analysis" = Flexible_Discriminant_Analysis,
     "Generalized_Linear_Models" = Generalized_Linear_Models,
-    "Gradient_Boosted" = Gradient_Boosted,
     "Generalized_Additive_Models" = Generalized_Additive_Models,
+    "Lasso" = Lasso,
     "Linear" = Linear,
-    "Mixture_Discrmininant_Analysis" = Mixture_Discrmininant_Analysis,
-    "Naive_Bayes" = Naive_Bayes,
     "Quadratic_Disrmininat_Analysis" = Quadratic_Discriminant_Analysis,
+    "Random_Forest" = Random_Forest_Analysis,
+    "Ridge" = Ridge_Analysis,
     "Penalized_Discriminant_Analysis" = Penalized_Discriminant_Analysis,
-    "Random_Forest" = Random_Forest,
-    "Ranger" = Ranger,
-    "RPart" = RPart,
     "Trees" = Trees,
     "Ensemble_Bagging" = new_ensemble_bagging,
     "Ensemble_C50" = new_ensemble_C50,
     "Ensemble_Gradient_Boosted" = new_ensemble_gb,
+    "Ensemble_Lasso" = new_ensemble_lasso,
     "Ensemble_Partial_Least_Squares" = new_ensemble_pls,
     "Ensemble_Penalized_Discrmininat_Analysis" = new_ensemble_pda,
-    "Ensemble_Ranger" = new_ensemble_ranger,
-    "Ensemble_Regularized_Discrmininat_Analysis" = new_ensemble_rda,
+    "Ensemble Ridge" = new_ensemble_ridge,
     "Ensemble_RPart" = new_ensemble_RPart,
     "Ensemble_Support_Vector_Machines" = new_ensemble_svm,
     "Ensemble_Trees" = new_ensemble_trees
@@ -6927,22 +5658,23 @@ if (do_you_have_new_data == "Y") {
     reactablefmtr::add_title("New data results")
 
   summary_tables <- list(
-    "Bagged_Random_Forest" = bag_rf_table_total, "Bagging" = bagging_table_total, "BayesGLM" = bayesglm_table_total,
-    "C50" = C50_table_total, "Cubist" = cubist_table_total, "Fixture Discrmininant Analysis" = fda_table_total, "Generalized Additive Methods" = gam_table_total,
-    "Gradient Boosted" = gb_table_total, "Generalized Linear Models" = glm_table_total, "Linear" = linear_table_total, "Linear Discrmininant Analysis" = lda_table_total,
-    "Mixture Discrminint Analysis" = mda_table_total, "Naive Bayes" = n_bayes_table_total, "Penalized Discrminant Analysis" = pda_table_total,
-    "Quadratic Discrmininant Analysis" = qda_table_total, "Random Forest" = rf_table_total, "Ranger" = ranger_table_total,
-    "RPart" = rpart_table_total, "Support Vector Machines" = svm_table_total, "Trees" = tree_table_total, "XGBoost" = xgb_table_total,
+    "Cubist" = cubist_table_total, "Fixture Discrmininant Analysis" = fda_table_total, "Generalized Additive Methods" = gam_table_total,
+    "Generalized Linear Models" = glm_table_total, "Lasso" = lasso_table_total, "Linear" = linear_table_total, "Linear Discrmininant Analysis" = lda_table_total,
+    "Penalized Discrminant Analysis" = pda_table_total,
+    "Quadratic Discrmininant Analysis" = qda_table_total,
+    "Random Forest Analysis" = rf_table_total,
+    "Ridge" = ridge_table_total,
+    "Support Vector Machines" = svm_table_total, "Trees" = tree_table_total,
     "Ensemble Bagging" = ensemble_bagging_table_total, "Ensemble C50" = ensemble_C50_table_total,
-    "Ensemble Gradient Boosted" = ensemble_gb_table_total, "Ensemble Partial Least Squares" = ensemble_pls_table_total,
-    "Ensemble Penalized Discrmininant Analysis" = ensemble_pda_table_total, "Ensemble Random Forest" = ensemble_rf_table_total,
-    "Ensemble Ranger" = ensemble_ranger_table_total, "Ensemble Regularized Discrmininant Analysis" = ensemble_rda_table_total,
+    "Ensemble Gradient Boosted" = ensemble_gb_table_total, "Ensemble Lasso" = ensemble_lasso_table_total, "Ensemble Partial Least Squares" = ensemble_pls_table_total,
+    "Ensemble Penalized Discrmininant Analysis" = ensemble_pda_table_total, "Ensemble Ridge" = ensemble_ridge_table_total,
     "Ensemble RPart" = ensemble_rpart_table_total, "Ensemble Support Vector Machines" = ensemble_svm_table_total,
     "Ensemble Trees" = ensemble_tree_table_total, "Ensemble XGBoost" = ensemble_xgb_table_total
   )
 
   return(list(
-    "Head_of_data" = head_df, "Summary_tables" = summary_tables, "accuracy_plot" = accuracy_plot, "total_plot" = total_plot, "overfitting_plot" = overfitting_plot,
+    "Head_of_data" = head_df, "Summary_tables" = summary_tables, "accuracy_plot" = accuracy_plot, "total_plot_fixed_scales" = total_plot_fixed_scales, "total_plot_free_scales" = total_plot_free_scales,
+    "overfitting_fixed_scales" = overfitting_fixed_scales, "overfitting_free_scales" = overfitting_free_scales,
     "accuracy_barchart" = accuracy_barchart, "Duration_barchart" = duration_barchart, "Overfitting_barchart" = overfitting_barchart, "ROC_curves" = ROC_curves,
     "Boxplots" = boxplots, "Barchart" = barchart, "Correlation_table" = correlation_table,
     "Ensemble Correlation" = ensemble_correlation, "Ensemble_head" = head_ensemble, "New_data_results" = new_data_results,
@@ -6952,34 +5684,32 @@ if (do_you_have_new_data == "Y") {
 }
 
 summary_tables <- list(
-  "Bagged_Random_Forest" = bag_rf_table_total, "Bagging" = bagging_table_total, "BayesGLM" = bayesglm_table_total,
-  "C50" = C50_table_total, "Cubist" = cubist_table_total, "Fixture Discrmininant Analysis" = fda_table_total, "Generalized Additive Methods" = gam_table_total,
-  "Gradient Boosted" = gb_table_total, "Generalized Linear Models" = glm_table_total, "Linear" = linear_table_total, "Linear Discrmininant Analysis" = lda_table_total,
-  "Mixture Discrminint Analysis" = mda_table_total, "Naive Bayes" = n_bayes_table_total, "Penalized Discrminant Analysis" = pda_table_total,
-  "Quadratic Discrmininant Analysis" = qda_table_total, "Random Forest" = rf_table_total, "Ranger" = ranger_table_total,
-  "RPart" = rpart_table_total, "Support Vector Machines" = svm_table_total, "Trees" = tree_table_total, "XGBoost" = xgb_table_total,
+  "Cubist" = cubist_table_total, "Fixture Discrmininant Analysis" = fda_table_total, "Generalized Additive Methods" = gam_table_total,
+  "Generalized Linear Models" = glm_table_total, "Lasso" = lasso_table_total, "Linear" = linear_table_total, "Linear Discrmininant Analysis" = lda_table_total,
+  "Penalized Discrminant Analysis" = pda_table_total,
+  "Quadratic Discrmininant Analysis" = qda_table_total, "Random Forest" = rf_table_total, "Ridge" = ridge_table_total,
+  "Support Vector Machines" = svm_table_total, "Trees" = tree_table_total,
   "Ensemble Bagging" = ensemble_bagging_table_total, "Ensemble C50" = ensemble_C50_table_total,
-  "Ensemble Gradient Boosted" = ensemble_gb_table_total, "Ensemble Partial Least Squares" = ensemble_pls_table_total,
-  "Ensemble Penalized Discrmininant Analysis" = ensemble_pda_table_total, "Ensemble Random Forest" = ensemble_rf_table_total,
-  "Ensemble Ranger" = ensemble_ranger_table_total, "Ensemble Regularized Discrmininant Analysis" = ensemble_rda_table_total,
+  "Ensemble Gradient Boosted" = ensemble_gb_table_total, "Ensemble Lasso" = ensemble_lasso_table_total, "Ensemble Partial Least Squares" = ensemble_pls_table_total,
+  "Ensemble Penalized Discrmininant Analysis" = ensemble_pda_table_total, "Ensemble Ridge" = ensemble_ridge_table_total,
   "Ensemble RPart" = ensemble_rpart_table_total, "Ensemble Support Vector Machines" = ensemble_svm_table_total,
   "Ensemble Trees" = ensemble_tree_table_total, "Ensemble XGBoost" = ensemble_xgb_table_total
 )
 
 return(list(
-  "Head_of_data" = head_df, "Summary_tables" = summary_tables, "accuracy_plot" = accuracy_plot, "total_plot" = total_plot, "accuracy_barchart" = accuracy_barchart,
-  "overfitting_plot" = overfitting_plot, "Duration_barchart" = duration_barchart, "Overfitting_barchart" = overfitting_barchart, "ROC_curves" = ROC_curves,
+  "Head_of_data" = head_df, "Summary_tables" = summary_tables, "accuracy_plot" = accuracy_plot, "total_plot_fixed_scales" = total_plot_fixed_scales, "total_plot_free_scales" = total_plot_free_scales, "accuracy_barchart" = accuracy_barchart,
+  "overfitting_plot_fixed_scales" = overfitting_fixed_scales, "overfitting_plot_free_scales" = overfitting_free_scales, "Duration_barchart" = duration_barchart, "Overfitting_barchart" = overfitting_barchart, "ROC_curves" = ROC_curves,
   "Boxplots" = boxplots, "Barchart" = barchart, "Correlation_table" = correlation_table, 'VIF_results' = VIF_results,
-  'True_positive_rate' = true_positive_rate_plot, 'True_positive_rate2' = true_positive_rate_plot2,
-  'True_negative_rate' = true_negative_rate_plot, 'True_negative_rate2' = true_negative_rate_plot2,
-  'False_positive_rate' = false_positive_rate_plot, 'False_positive_rate2' = false_positive_rate_plot2,
-  'False_negative_rate' = false_negative_rate_plot, 'False_negative_rate2' = false_negative_rate_plot2,
-  'F1_score' = F1_score_plot, 'F1_score2' = F1_score_plot2,
-  'Positive_predictive_value' = positive_predictive_value_plot, 'Positive_predictive_value2' = positive_predictive_value_plot2,
-  'Negative_predictive_value' = negative_predictive_value_plot, 'Negative_predictive_value2' = negative_predictive_value_plot2,
+  'True_positive_rate_fixed_scales' = true_positive_rate_fixed_scales, 'True_positive_rate_free_scales' = true_positive_rate_free_scales,
+  'True_negative_rate_fixed_scales' = true_negative_rate_fixed_scales, 'True_negative_rate_free_scales' = true_negative_rate_free_scales,
+  'False_positive_rate_fixed_scales' = false_positive_rate_fixed_scales, 'False_positive_rate_free_scales' = false_positive_rate_free_scales,
+  'False_negative_rate_fixed_scales' = false_negative_rate_fixed_scales, 'False_negative_rate_free_scales' = false_negative_rate_free_scales,
+  'F1_score_fixed_scales' = F1_score_fixed_scales, 'F1_score_free_scales' = F1_score_free_scales,
+  'Positive_predictive_value_fixed_scales' = positive_predictive_value_fixed_scales, 'Positive_predictive_value_free_scales' = positive_predictive_value_free_scales,
+  'Negative_predictive_value_fixed_scales' = negative_predictive_value_fixed_scales, 'Negative_predictive_value_free_scales' = negative_predictive_value_free_scales,
   "Ensemble Correlation" = ensemble_correlation, "Ensemble_head" = head_ensemble,
   "Data_Summary" = data_summary, "Holdout_results" = holdout_results_final,
   "How_to_handle_strings" = how_to_handle_strings, "Train_amount" = train_amount, "Test_amount" = test_amount, "Validation_amount" = validation_amount
-  )
+)
 )
 }

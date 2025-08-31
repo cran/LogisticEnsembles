@@ -23,103 +23,66 @@ The head of the Lebron data set looks like this:
 
 The sixth column, result, is the target column. 1 indicates Lebron made the shot, 0 indicates he missed.
 
-**How to run LogisticEnsembles (using the Lebron data as an example):**
+**How to run LogisticEnsembles (using the Lebron data in the LogisticEnsembles package as an example):**
 
 ```         
+install.packages('LogisticEnsembles') # if needed
+library(LogisticEnsembles)
 Logistic(data = Lebron,
          colnum = 6,
          numresamples = 25,
-         save_all_trained_models = "Y",
-         how_to_handle_strings = 1,
+         remove_VIF_greater_than <- 5.00,
+         save_all_trained_models = "N",
+         save_all_plots = "N",
+         set_seed = "N",
+         how_to_handle_strings = 0,
          do_you_have_new_data = "N",
-         remove_ensemble_correlations_greater_than = 1.00,
+         remove_ensemble_correlations_greater_than = 0.80,
          use_parallel = "Y",
-         train_amount = 0.60,
-         test_amount = 0.20,
-         validation_amount = 0.20)
+         train_amount = 0.50,
+         test_amount = 0.25,
+         validation_amount = 0.25)
 ```
 
 **What does LogisticEnsembles do?**
 
 The goal of LogisticEnsembles is to automatically conduct a thorough analysis of data which includes logistic data. The user only needs to provide the data and answer a few questions, such as which column is the target column, and LogisticEnsembles will do all the rest.
 
-LogisticEnsembles builds 23 individual logistic models. It does this by building a model, and then converting the results into a probability between 0 and 1. The function then makes predictions. If the probability is \>0.5, it assigns a result of 1, otherwise 0.
+LogisticEnsembles builds 24 individual logistic models. It does this by building a model, and then converting the results into a probability between 0 and 1. The function then makes predictions. If the probability is \>0.5, it assigns a result of 1, otherwise 0.
 
-One of the many results that are returned are ROC curves for all 36 models. Specificity is on the x-axis and sensitivity on the y-axis. Here are nine of the 36 total ROC curves automatically provided by the function:
+One of the many results that are returned are ROC curves for all 24 models. Specificity is on the x-axis and sensitivity on the y-axis. Here are nine of the 24 total ROC curves automatically provided by the function:
 
 ![Example of nine the ROC curves. Note that two have an AUC=1.](Example_ROC_curves.png){width="700"}
 
-The 23 individual models are:
+The 13 individual models are:
 
-ADA Boost
+1.  Cubist
+2.  Flexible Discriminant Analysis
+3.  Generalized Additive Models
+4.  Generalized Linear Models
+5.  Lasso
+6.  Linear
+7.  Linear Discriminant Analysis
+8.  Penalized Discriminant Analysis
+9.  Quadratic Discrmininant Analysis
+10. Random Forest
+11. Ridge
+12. Support Vector Machines
+13. Trees
 
-Bagged Random Forest
+The 11 ensembles of models are:
 
-Bayes GLM
-
-Bayes RNN
-
-C50
-
-Cubist
-
-Flexible Discriminant Analysis
-
-Generalized Additive Models
-
-Gradient Boosted
-
-Linear Discriminant Analysis
-
-Linear Model
-
-Mixed Discriminant Analysis
-
-Naive Bayes
-
-Penalized Discriminant Analysis
-
-Quadratic Discriminant Analysis
-
-Random Forest
-
-Ranger
-
-RPart
-
-Support Vector Machines
-
-Trees
-
-XGBoost
-
-**The 13 ensembles of models are:**
-
-Ensemble ADA Boost
-
-Ensemble Bagging
-
-Ensemble C50
-
-Ensemble Gradient Boosted
-
-Ensemble Partial Least Squares
-
-Ensemble Penalized Discriminant Analysis
-
-Ensemble Random Forest
-
-Ensemble Ranger
-
-Ensemble Regularized Discriminant Analysis
-
-Ensemble RPart
-
-Ensemble Support Vector Machines
-
-Ensemble Trees
-
-Ensemble XGBoost
+1.  Ensemble Bagging
+2.  Ensemble C50
+3.  Ensemble Gradient Boosted
+4.  Ensemble Lasso
+5.  Ensemble Partial Least Squares
+6.  Ensemble Penalized Discrmininant Analysis
+7.  Ensemble Ridge
+8.  Ensemble RPart
+9.  Ensemble Support Vector Machines
+10. Ensemble Trees
+11. Ensemble XGBoost
 
 # Installation
 
@@ -137,17 +100,20 @@ We will analyze the data on Lebron James. The LogisticEnsembles package will aut
 Logistic(data = Lebron,
          colnum = 6,
          numresamples = 25,
-         save_all_trained_models = "Y",
-         how_to_handle_strings = 1,
+         remove_VIF_greater_than <- 5.00,
+         save_all_trained_models = "N",
+         save_all_plots = "N",
+         set_seed = "N",
+         how_to_handle_strings = 0,
          do_you_have_new_data = "N",
-         remove_ensemble_correlations_greater_than = 1.00,
+         remove_ensemble_correlations_greater_than = 0.80,
          use_parallel = "Y",
-         train_amount = 0.60,
-         test_amount = 0.20,
-         validation_amount = 0.20)
+         train_amount = 0.50,
+         test_amount = 0.25,
+         validation_amount = 0.25)
 ```
 
-Here are a few of the 13 plots which are all produced automatically are:
+Here are a few of the 25 plots which are all produced automatically are:
 
 Accuracy by model and resample
 
@@ -179,7 +145,7 @@ Target vs each predictor
 
 ![Target vs each predictor](Target_vs_each_predictor.png){width="700"}
 
-# 36 summary tables (three are shown):
+# 24 summary tables (three are shown):
 
 ![Logistic summary table](Logistic_summary_table.png)
 

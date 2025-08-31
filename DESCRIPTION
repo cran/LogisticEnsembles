@@ -1,7 +1,7 @@
 Package: LogisticEnsembles
 Type: Package
 Title: Automatically Runs 36 Logistic Models (Individual and Ensembles)
-Version: 0.6.0
+Version: 0.8.0
 Authors@R: 
     person("Russ", "Conte", , "russconte@mac.com", role = c("aut", "cre", "cph"))
 Description: Automatically returns 36 logistic models including 23 individual models and 13 ensembles of models of logistic data. The package also returns 10 plots, 5 tables, and a summary report. The package automatically
@@ -11,7 +11,7 @@ Description: Automatically returns 36 logistic models including 23 individual mo
     Operating Characteristic (ROC) curves for each of the 36 models.
 License: MIT + file LICENSE
 Depends: adabag, arm, brnn, C50, car, corrplot, Cubist, doParallel,
-        dplyr, e1071, gam, gbm, ggplot2, ggplotify, graphics,
+        dplyr, e1071, gam, gbm, ggplot2, ggplotify, glmnet, graphics,
         gridExtra, gt, ipred, klaR, MachineShop, magrittr, MASS, mda,
         parallel, pls, pROC, purrr, R (>= 2.10), randomForest, ranger,
         reactable, reactablefmtr, readr, rpart, scales, stats, tidyr,
@@ -24,8 +24,8 @@ VignetteBuilder: knitr
 URL: https://github.com/InfiniteCuriosity/LogisticEnsembles
 BugReports: https://github.com/InfiniteCuriosity/LogisticEnsembles/issues
 NeedsCompilation: no
-Packaged: 2025-08-01 17:39:19 UTC; russellconte
+Packaged: 2025-08-31 20:02:14 UTC; russellconte
 Author: Russ Conte [aut, cre, cph]
 Maintainer: Russ Conte <russconte@mac.com>
 Repository: CRAN
-Date/Publication: 2025-08-24 20:30:08 UTC
+Date/Publication: 2025-08-31 20:20:02 UTC
