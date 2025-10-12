@@ -1,0 +1,254 @@
+---
+title: "Logistic report template"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Report_template}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+# Statement of the problem from the customer's perspective
+
+# History of the problem, previous results
+
+# Exploratory data analysis
+
+-   Head of the data
+
+    -   Discuss the characteristics of each feature.
+
+-   Barchart of target (0 or 1) vs each feature, by percent (%)
+
+    -   Discussion of y vs target variables
+
+-   Boxplots of the numeric data (insert plot here)
+
+    -   Discussion of boxplots of the numeric data
+
+-   Histograms of each numeric column (insert plot here)
+
+    -   Discussion of histograms of each numeric column
+
+-   Data summary (insert table here)
+
+    -   Discussion of the data summary
+
+-   Outliers in the data (insert outliers data here)
+
+    -   Discussion of outliers in the data
+
+-   Correlation of the data (table)
+
+-   Correlation plot of the numeric data as circles and colors
+
+-   Correlation of the ensemble
+
+-   Variance Inflation Factor
+
+-   The stories in the exploratory data analysis
+
+# 24 logistic models (Individual models then ensembles, in alphabetical order)
+
+One paragraph summary about statistical modeling here
+
+-   Cubist
+
+    cubist_train_fit \<- Cubist::cubist(x = as.data.frame(train), y = train\$y)
+
+-   Flexible Discriminant Analysis
+
+    fda_train_fit \<- MachineShop::fit(as.factor(y) \~ ., data = train01, model = "FDAModel")
+
+-   GAM (Generalized Additive Models) (uses smoothing splines)
+
+    f2 \<- stats::as.formula(paste0("y \~", paste0("gam::s(", names_df, ")", collapse = "+")))
+
+    gam_train_fit \<- gam(f2, data = train1)
+
+-   Generalized Linear Models
+
+    glm_train_fit \<- stats::glm(y \~ ., data = train, family = binomial)
+
+-   Lasso (uses best model)
+
+    best_lasso_lambda \<- lasso_cv\$lambda.min
+
+    best_lasso_model \<- glmnet(x, y, alpha = 1, lambda = best_lasso_lambda)
+
+-   Linear (tuned)
+
+    linear_train_fit \<- e1071::tune.rpart(formula = y \~ ., data = train)
+
+-   Linear Discriminant Analysis
+
+    lda_train_fit \<- MASS::lda(as.factor(y) \~ ., data = train01, model = "LMModel")
+
+-   Penalized Discriminant Analysis
+
+    pda_train_fit \<- MachineShop::fit(as.factor(y) \~ ., data = train01, model = "PDAModel")
+
+-   Quadratic Discriminant Analysis
+
+    qda_train_fit \<- MASS::qda(as.factor(y) \~ ., data = train01)
+
+-   Random Forest
+
+    rf_train_fit \<- randomForest(x = train, y = as.factor(y_train), data = df, family = binomial(link = "logit"))
+
+-   Ridge
+
+    best_ridge_lambda \<- ridge_cv\$lambda.min
+
+    best_ridge_model \<- glmnet(x, y, alpha = 0, lambda = best_ridge_lambda)
+
+-   RPart
+
+    rpart_train_fit \<- rpart::rpart(train\$y \~ ., data = train)
+
+-   SVM (Support Vector Machines) (tuned)
+
+    svm_train_fit \<- e1071::tune.svm(x = train, y = train\$y, data = train)
+
+-   Tree
+
+    tree_train_fit \<- tree::tree(train\$y \~ ., data = train)
+
+    **Ensemble models start here**
+
+-   Ensemble Gradient Boosted
+
+    ensemble_gb_train_fit \<- gbm::gbm(ensemble_train\$y_ensemble \~ ., data = ensemble_train, distribution = "gaussian", n.trees = 100, shrinkage = 0.1, interaction.depth = 10 )
+
+-   Ensemble Lasso (uses best model)
+
+    ensemble_best_lasso_lambda \<- ensemble_lasso_cv\$lambda.min
+
+    ensemble_best_lasso_model \<- glmnet(ensemble_x, ensemble_y, alpha = 1, lambda = ensemble_best_lasso_lambda)
+
+-   Ensemble Partial Least Squares
+
+    ensemble_pls_train_fit \<- MachineShop::fit(as.factor(y) \~ ., data = ensemble_train, model = "PLSModel")
+
+-   Ensemble Penalized Discriminant Analysis
+
+    ensemble_pda_train_fit \<- MachineShop::fit(as.factor(y) \~ ., data = ensemble_train, model = "PDAModel")
+
+-   Ensemble Ridge
+
+    x = model.matrix(y \~ ., data = ensemble_train)[, -1]
+
+    y = ensemble_train\$y
+
+    ensemble_ridge_train_fit \<- glmnet::glmnet(x, y, alpha = 0)
+
+-   Ensemble RPart
+
+    ensemble_rpart_train_fit \<- MachineShop::fit(as.factor(y) \~ ., data = ensemble_train, model = "RPartModel")
+
+-   Ensemble Support Vector Machines (SVM)
+
+    ensemble_svm_train_fit \<- e1071::svm(as.factor(y) \~ ., data = ensemble_train, kernel = "radial", gamma = 1, cost = 1)
+
+-   Ensemble Trees
+
+    ensemble_tree_train_fit \<- tree::tree(ensemble_train\$y \~ ., data = ensemble_train)
+
+-   **The stories in the models (fill in here)**
+
+# Ensembles and individual model plots
+
+-   Negative predictive value (fixed scales)
+
+-   Negative predictive value (free scales)
+
+-   Positive predictive value (fixed scales)
+
+-   Positive predictive value (free scales)
+
+-   F1 Score (fixed scales)
+
+-   F1 Score (free scales)
+
+-   False negative rate (fixed scales)
+
+-   False negative rate (free scales)
+
+-   False positive rate (fixed scales)
+
+-   False positive rate (free scales)
+
+-   True negative rate (fixed scales)
+
+-   True negative rate (free scales)
+
+-   True positive rate (fixed scales)
+
+-   True positive rate (free scales)
+
+-   ROC Curves for each of the 24 models
+
+-   Over or under fitting (closer to 1 is better) barchart
+
+-   Duration (mean) by model barchart
+
+-   Overfitting by model and resample, fixed scales
+
+-   Overfitting by model and resample, free scales
+
+-   Model accuracy bar chart
+
+-   Accuracy by model and resample, including train and holdout by each resample, fixed scales
+
+-   Accuracy by model and resample, including train and holdout by each resample, free scales
+
+-   **Summary report**
+
+    -   Accuracy (mean)
+
+    -   Accuracy (standard deviation)
+
+    -   True positive rate (also known as sensitivity)
+
+    -   True negative rate (also known as specificity)
+
+    -   False positive rate (also known as Type I error)
+
+    -   False negative rate (also known as Type II error)
+
+    -   Positive predictive value
+
+    -   Negative predictive value
+
+    -   F1 score
+
+    -   Area under the curve (AUC)
+
+    -   Overfitting (mean)
+
+    -   Overfitting (standard deviation)
+
+    -   Duration (mean)
+
+    -   Duration (standard deviation)
+
+-   Function call
+
+-   Warnings or errors
+
+-   The stories in the plots
+
+# Strongest evidence based results:
+
+-   Most accurate models with error ranges
+
+-   Strongest predictor with error ranges
+
+-   The stories of the strongest evidenced based data
+
+# Five strongest evidence based recommendations
+
+# Conclusions
+
+# References

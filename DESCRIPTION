@@ -1,7 +1,7 @@
 Package: LogisticEnsembles
 Type: Package
-Title: Automatically Runs 36 Logistic Models (Individual and Ensembles)
-Version: 0.8.1
+Title: Automatically Runs 24 Logistic Models (Individual and Ensembles)
+Version: 0.8.2
 Authors@R: 
     person("Russ", "Conte", , "russconte@mac.com", role = c("aut", "cre", "cph"))
 Description: Automatically returns 24 logistic models including 13 individual models and 11 ensembles of models of logistic data. The package also returns 25 plots, 5 tables, and a summary report. The package automatically
@@ -24,8 +24,8 @@ VignetteBuilder: knitr
 URL: https://github.com/InfiniteCuriosity/LogisticEnsembles
 BugReports: https://github.com/InfiniteCuriosity/LogisticEnsembles/issues
 NeedsCompilation: no
-Packaged: 2025-08-31 21:40:02 UTC; russellconte
+Packaged: 2025-10-12 22:30:58 UTC; russellconte
 Author: Russ Conte [aut, cre, cph]
 Maintainer: Russ Conte <russconte@mac.com>
 Repository: CRAN
-Date/Publication: 2025-08-31 22:20:07 UTC
+Date/Publication: 2025-10-12 23:00:09 UTC

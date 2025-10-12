@@ -1,4 +1,4 @@
-# LogisticEnsembles (development version)
+# LogisticEnsembles  0.8.2
 
 # LogisticEnsembles 0.6.0
 

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Logistic report template</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Logistic report template</h1>
+
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+</div>
+<div id="statement-of-the-problem-from-the-customers-perspective" class="section level1">
+<h1>Statement of the problem from the customer’s perspective</h1>
+</div>
+<div id="history-of-the-problem-previous-results" class="section level1">
+<h1>History of the problem, previous results</h1>
+</div>
+<div id="exploratory-data-analysis" class="section level1">
+<h1>Exploratory data analysis</h1>
+<ul>
+<li><p>Head of the data</p>
+<ul>
+<li>Discuss the characteristics of each feature.</li>
+</ul></li>
+<li><p>Barchart of target (0 or 1) vs each feature, by percent (%)</p>
+<ul>
+<li>Discussion of y vs target variables</li>
+</ul></li>
+<li><p>Boxplots of the numeric data (insert plot here)</p>
+<ul>
+<li>Discussion of boxplots of the numeric data</li>
+</ul></li>
+<li><p>Histograms of each numeric column (insert plot here)</p>
+<ul>
+<li>Discussion of histograms of each numeric column</li>
+</ul></li>
+<li><p>Data summary (insert table here)</p>
+<ul>
+<li>Discussion of the data summary</li>
+</ul></li>
+<li><p>Outliers in the data (insert outliers data here)</p>
+<ul>
+<li>Discussion of outliers in the data</li>
+</ul></li>
+<li><p>Correlation of the data (table)</p></li>
+<li><p>Correlation plot of the numeric data as circles and
+colors</p></li>
+<li><p>Correlation of the ensemble</p></li>
+<li><p>Variance Inflation Factor</p></li>
+<li><p>The stories in the exploratory data analysis</p></li>
+</ul>
+</div>
+<div id="logistic-models-individual-models-then-ensembles-in-alphabetical-order" class="section level1">
+<h1>24 logistic models (Individual models then ensembles, in
+alphabetical order)</h1>
+<p>One paragraph summary about statistical modeling here</p>
+<ul>
+<li><p>Cubist</p>
+<p>cubist_train_fit &lt;- Cubist::cubist(x = as.data.frame(train), y =
+train$y)</p></li>
+<li><p>Flexible Discriminant Analysis</p>
+<p>fda_train_fit &lt;- MachineShop::fit(as.factor(y) ~ ., data =
+train01, model = “FDAModel”)</p></li>
+<li><p>GAM (Generalized Additive Models) (uses smoothing splines)</p>
+<p>f2 &lt;- stats::as.formula(paste0(“y ~”, paste0(“gam::s(”, names_df,
+“)”, collapse = “+”)))</p>
+<p>gam_train_fit &lt;- gam(f2, data = train1)</p></li>
+<li><p>Generalized Linear Models</p>
+<p>glm_train_fit &lt;- stats::glm(y ~ ., data = train, family =
+binomial)</p></li>
+<li><p>Lasso (uses best model)</p>
+<p>best_lasso_lambda &lt;- lasso_cv$lambda.min</p>
+<p>best_lasso_model &lt;- glmnet(x, y, alpha = 1, lambda =
+best_lasso_lambda)</p></li>
+<li><p>Linear (tuned)</p>
+<p>linear_train_fit &lt;- e1071::tune.rpart(formula = y ~ ., data =
+train)</p></li>
+<li><p>Linear Discriminant Analysis</p>
+<p>lda_train_fit &lt;- MASS::lda(as.factor(y) ~ ., data = train01, model
+= “LMModel”)</p></li>
+<li><p>Penalized Discriminant Analysis</p>
+<p>pda_train_fit &lt;- MachineShop::fit(as.factor(y) ~ ., data =
+train01, model = “PDAModel”)</p></li>
+<li><p>Quadratic Discriminant Analysis</p>
+<p>qda_train_fit &lt;- MASS::qda(as.factor(y) ~ ., data =
+train01)</p></li>
+<li><p>Random Forest</p>
+<p>rf_train_fit &lt;- randomForest(x = train, y = as.factor(y_train),
+data = df, family = binomial(link = “logit”))</p></li>
+<li><p>Ridge</p>
+<p>best_ridge_lambda &lt;- ridge_cv$lambda.min</p>
+<p>best_ridge_model &lt;- glmnet(x, y, alpha = 0, lambda =
+best_ridge_lambda)</p></li>
+<li><p>RPart</p>
+<p>rpart_train_fit &lt;- rpart::rpart(train$y ~ ., data =
+train)</p></li>
+<li><p>SVM (Support Vector Machines) (tuned)</p>
+<p>svm_train_fit &lt;- e1071::tune.svm(x = train, y = train$y, data =
+train)</p></li>
+<li><p>Tree</p>
+<p>tree_train_fit &lt;- tree::tree(train$y ~ ., data = train)</p>
+<p><strong>Ensemble models start here</strong></p></li>
+<li><p>Ensemble Gradient Boosted</p>
+<p>ensemble_gb_train_fit &lt;- gbm::gbm(ensemble_train$y_ensemble ~ .,
+data = ensemble_train, distribution = “gaussian”, n.trees = 100,
+shrinkage = 0.1, interaction.depth = 10 )</p></li>
+<li><p>Ensemble Lasso (uses best model)</p>
+<p>ensemble_best_lasso_lambda &lt;- ensemble_lasso_cv$lambda.min</p>
+<p>ensemble_best_lasso_model &lt;- glmnet(ensemble_x, ensemble_y, alpha
+= 1, lambda = ensemble_best_lasso_lambda)</p></li>
+<li><p>Ensemble Partial Least Squares</p>
+<p>ensemble_pls_train_fit &lt;- MachineShop::fit(as.factor(y) ~ ., data
+= ensemble_train, model = “PLSModel”)</p></li>
+<li><p>Ensemble Penalized Discriminant Analysis</p>
+<p>ensemble_pda_train_fit &lt;- MachineShop::fit(as.factor(y) ~ ., data
+= ensemble_train, model = “PDAModel”)</p></li>
+<li><p>Ensemble Ridge</p>
+<p>x = model.matrix(y ~ ., data = ensemble_train)[, -1]</p>
+<p>y = ensemble_train$y</p>
+<p>ensemble_ridge_train_fit &lt;- glmnet::glmnet(x, y, alpha =
+0)</p></li>
+<li><p>Ensemble RPart</p>
+<p>ensemble_rpart_train_fit &lt;- MachineShop::fit(as.factor(y) ~ .,
+data = ensemble_train, model = “RPartModel”)</p></li>
+<li><p>Ensemble Support Vector Machines (SVM)</p>
+<p>ensemble_svm_train_fit &lt;- e1071::svm(as.factor(y) ~ ., data =
+ensemble_train, kernel = “radial”, gamma = 1, cost = 1)</p></li>
+<li><p>Ensemble Trees</p>
+<p>ensemble_tree_train_fit &lt;- tree::tree(ensemble_train$y ~ ., data =
+ensemble_train)</p></li>
+<li><p><strong>The stories in the models (fill in
+here)</strong></p></li>
+</ul>
+</div>
+<div id="ensembles-and-individual-model-plots" class="section level1">
+<h1>Ensembles and individual model plots</h1>
+<ul>
+<li><p>Negative predictive value (fixed scales)</p></li>
+<li><p>Negative predictive value (free scales)</p></li>
+<li><p>Positive predictive value (fixed scales)</p></li>
+<li><p>Positive predictive value (free scales)</p></li>
+<li><p>F1 Score (fixed scales)</p></li>
+<li><p>F1 Score (free scales)</p></li>
+<li><p>False negative rate (fixed scales)</p></li>
+<li><p>False negative rate (free scales)</p></li>
+<li><p>False positive rate (fixed scales)</p></li>
+<li><p>False positive rate (free scales)</p></li>
+<li><p>True negative rate (fixed scales)</p></li>
+<li><p>True negative rate (free scales)</p></li>
+<li><p>True positive rate (fixed scales)</p></li>
+<li><p>True positive rate (free scales)</p></li>
+<li><p>ROC Curves for each of the 24 models</p></li>
+<li><p>Over or under fitting (closer to 1 is better) barchart</p></li>
+<li><p>Duration (mean) by model barchart</p></li>
+<li><p>Overfitting by model and resample, fixed scales</p></li>
+<li><p>Overfitting by model and resample, free scales</p></li>
+<li><p>Model accuracy bar chart</p></li>
+<li><p>Accuracy by model and resample, including train and holdout by
+each resample, fixed scales</p></li>
+<li><p>Accuracy by model and resample, including train and holdout by
+each resample, free scales</p></li>
+<li><p><strong>Summary report</strong></p>
+<ul>
+<li><p>Accuracy (mean)</p></li>
+<li><p>Accuracy (standard deviation)</p></li>
+<li><p>True positive rate (also known as sensitivity)</p></li>
+<li><p>True negative rate (also known as specificity)</p></li>
+<li><p>False positive rate (also known as Type I error)</p></li>
+<li><p>False negative rate (also known as Type II error)</p></li>
+<li><p>Positive predictive value</p></li>
+<li><p>Negative predictive value</p></li>
+<li><p>F1 score</p></li>
+<li><p>Area under the curve (AUC)</p></li>
+<li><p>Overfitting (mean)</p></li>
+<li><p>Overfitting (standard deviation)</p></li>
+<li><p>Duration (mean)</p></li>
+<li><p>Duration (standard deviation)</p></li>
+</ul></li>
+<li><p>Function call</p></li>
+<li><p>Warnings or errors</p></li>
+<li><p>The stories in the plots</p></li>
+</ul>
+</div>
+<div id="strongest-evidence-based-results" class="section level1">
+<h1>Strongest evidence based results:</h1>
+<ul>
+<li><p>Most accurate models with error ranges</p></li>
+<li><p>Strongest predictor with error ranges</p></li>
+<li><p>The stories of the strongest evidenced based data</p></li>
+</ul>
+</div>
+<div id="five-strongest-evidence-based-recommendations" class="section level1">
+<h1>Five strongest evidence based recommendations</h1>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,8 +1,8 @@
 ---
-title: "LogisticEnsembles-vignette"
+title: "vignette_0_The_Hello_World_of_LogisticEnsembles"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{LogisticEnsembles-vignette}
+  %\VignetteIndexEntry{vignette_0_The_Hello_World_of_LogisticEnsembles}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
