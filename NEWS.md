@@ -1,3 +1,23 @@
+# LogisticEnsembles 1.0.0
+* All features are now included and working great, this is version 1.0.0!
+
+# LogisitcEnsembles 0.9.0
+* Added stratified random sampling
+
+# LogisticEnsembles 0.8.6
+* Added German_Credit_Risk data set
+* Added extensive documentation to the Logistic function, so it's much easier to navigate through the code quickly.
+
+# LogisticEnsembles 0.8.5
+* Added separators
+* Removed five models which were returning errors
+
+# LogisticEnsembles 0.8.4
+* Added remove_data_correlations_greater_than, and two ways to work with dummy variables.
+
+# LogisticEnsembles 0.8.3
+* Corrected error in calculating binomial.
+
 # LogisticEnsembles  0.8.2
 
 # LogisticEnsembles 0.6.0
