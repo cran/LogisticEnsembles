@@ -270,6 +270,8 @@ Logistic(data = Lebron,
          set_seed = &quot;N&quot;,
          how_to_handle_strings = 0,
          do_you_have_new_data = &quot;N&quot;,
+         stratified_column_number = 0,
+         remove_data_correlations_greater_than = 0.00,
          remove_ensemble_correlations_greater_than = 0.80,
          use_parallel = &quot;Y&quot;,
          train_amount = 0.50,
@@ -283,7 +285,7 @@ target column, and LogisticEnsembles will do all the rest.</p>
 <p>LogisticEnsembles builds 24 individual logistic models. It does this
 by building a model, and then converting the results into a probability
 between 0 and 1. The function then makes predictions. If the probability
-is &gt;0.5, it assigns a result of 1, otherwise 0.</p>
+is =&gt;0.5, it assigns a result of 1, otherwise 0.</p>
 <p>One of the many results that are returned are ROC curves for all 24
 models. Specificity is on the x-axis and sensitivity on the y-axis. Here
 are nine of the 24 total ROC curves automatically provided by the
@@ -345,6 +347,8 @@ test and holdout data.</p>
          set_seed = &quot;N&quot;,
          how_to_handle_strings = 0,
          do_you_have_new_data = &quot;N&quot;,
+         stratified_column_number = 0,
+         remove_data_correlations_greater_than = 0.00,
          remove_ensemble_correlations_greater_than = 0.80,
          use_parallel = &quot;Y&quot;,
          train_amount = 0.50,
